@@ -42,7 +42,7 @@ $('#formResetPassword').on('submit', function (e) {
 
         async function resetPassword(){
             try {
-                const response = await fetch('../../../public/router/router.php?action=reset_password', {
+                const response = await fetch('../../Handler/auth/resetPasswordHandler.php', {
                     method: 'POST',
                     body: formData
                 });

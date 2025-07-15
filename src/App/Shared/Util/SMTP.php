@@ -19,7 +19,7 @@
  * FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-namespace PHPMailer\PHPMailer;
+namespace App\Shared\Util;
 
 /**
  * PHPMailer RFC821 SMTP email transport class.

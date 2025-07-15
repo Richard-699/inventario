@@ -3,16 +3,17 @@
 namespace App\Infrastructure\Repository;
 
 use App\Domain\Model\Administradores;
+use App\Application\Interface\Repository\IAdministradoresRepository;
 use App\Infrastructure\Database\Connection;
 
-class AdministradoresRepository {
+class AdministradoresRepository implements IAdministradoresRepository{
     private $db;
 
     public function __construct() {
         $this->db = (new Connection())->dbInventarioHwi;
     }
 
-    public function onGet_Login(string $correo_hwi_administrador): ?Administradores {
+    public function onGet_By__Email(string $correo_hwi_administrador): ?Administradores {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_administradores WHERE correo_hwi_administrador = ?");
         $stmt->execute([$correo_hwi_administrador]);
         $row = $stmt->fetch();
@@ -21,6 +22,32 @@ class AdministradoresRepository {
             return null;
         }
         return Administradores::fromArray($row);
+    }
+
+    public function save(Administradores $administradores): bool{
+        $data = $administradores->toArray();
+        $columnas = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
+
+        $query = "INSERT INTO inventario_hwi_administradores ($columnas) VALUES ($placeholders)";
+        $stmt = $this->db->prepare($query);
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+        return $stmt->execute();
+    }
+
+    public function update_Password(Administradores $administradores): bool{
+        $query = "UPDATE inventario_hwi_administradores 
+                    SET password_administrador = :password, password_is_temporal = :istemporal 
+                    WHERE id_administrador = :id";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':password', $administradores->password_administrador);
+        $stmt->bindParam(':istemporal', $administradores->password_is_temporal);
+        $stmt->bindParam(':id', $administradores->id_administrador);
+
+        return $stmt->execute();
     }
 }
 

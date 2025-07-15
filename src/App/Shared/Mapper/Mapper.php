@@ -4,6 +4,10 @@ namespace App\Shared\Mapper;
 
 use App\Domain\Model\Administradores;
 use App\Domain\DTO\AdministradoresDTO;
+use App\Domain\Model\Permisos;
+use App\Domain\DTO\PermisosDTO;
+use App\Domain\Model\PermisosAdministradores;
+use App\Domain\DTO\PermisosAdministradoresDTO;
 
 class Mapper
 {
@@ -32,6 +36,40 @@ class Mapper
             $dto->password_administrador,
             $dto->password_is_temporal,
             $dto->estado_administrador
+        );
+    }
+
+    public static function modelToPermisosDTO(Permisos $model): PermisosDTO
+    {
+        return new PermisosDTO(
+            id_permiso: $model->id_permiso,
+            tipo_permiso: $model->tipo_permiso
+        );
+    }
+
+    public static function permisosDTOToModel(PermisosDTO $dto): Permisos
+    {
+        return new Permisos(
+            $dto->id_permiso,
+            $dto->tipo_permiso
+        );
+    }
+
+    public static function modelToPermisosAdministradoresDTO(PermisosAdministradores $model): PermisosAdministradoresDTO
+    {
+        return new PermisosAdministradoresDTO(
+            id_permisos_administradores: $model->id_permisos_administradores,
+            id_permiso_permisos: $model->id_permiso_permisos,
+            id_administrador_permisos: $model->id_administrador_permisos
+        );
+    }
+
+    public static function permisosAdministradoresDTOToModel(PermisosAdministradoresDTO $dto): PermisosAdministradores
+    {
+        return new PermisosAdministradores(
+            $dto->id_permisos_administradores,
+            $dto->id_permiso_permisos,
+            $dto->id_administrador_permisos
         );
     }
 }

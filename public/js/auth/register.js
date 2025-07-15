@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', async function () {
     const passwordInput = document.getElementById('inputPassword');
-    const confirmPasswordInput = document.getElementById('confirmPassword');
     const passwordToggle = document.getElementById('passwordToggle');
     const cedula_administrador = document.getElementById('cedula_administrador');
 
@@ -17,7 +16,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     if (passwordInput) passwordInput.addEventListener('input', togglePasswordIcon);
-    if (confirmPasswordInput) confirmPasswordInput.addEventListener('input', togglePasswordIcon);
 
     if (cedula_administrador) {
         cedula_administrador.addEventListener('input', function () {
@@ -26,31 +24,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
 
     window.togglePassword = togglePassword;
-
-    const correoInput = document.getElementById('correo_hwi_administrador');
-    const submitBtn = document.getElementById("btningresar");
-
-    const errorMsg = document.createElement('div');
-    errorMsg.style.color = 'red';
-    errorMsg.style.fontSize = '0.9em';
-    errorMsg.style.marginTop = '5px';
-    errorMsg.style.textAlign = "left";
-    errorMsg.style.marginLeft = "23px";
-    errorMsg.textContent = 'Correo inválido';
-    errorMsg.style.display = 'none';
-    correoInput.parentNode.appendChild(errorMsg);
-
-    correoInput.addEventListener('input', function () {
-        const correoValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correoInput.value);
-        
-        if (correoInput.value !== '' && !correoValido) {
-            errorMsg.style.display = 'block';
-            submitBtn.disabled = true;
-        } else {
-            errorMsg.style.display = 'none';
-            submitBtn.disabled = !correoValido;
-        }
-    });
 
     const form = document.getElementById('formRegistro');
 
@@ -61,27 +34,31 @@ document.addEventListener('DOMContentLoaded', async function () {
         const formData = new FormData(form);
 
         try {
-            const response = await fetch('../../../public/router/router.php?action=register', {
+            const response = await fetch('../../Handler/auth/registerHandler.php', {
                 method: 'POST',
                 body: formData
             });
 
-            const resultado = await response.json();
+            if (!response) {
+                throw new Error('Error en la solicitud: ' + response.statusText);
+            }
+
+            const result = await response.json();
 
             ocultarCarga();
 
-            if (resultado.estado === 'ok') {
+            if (result.success) {
                 notification('alert', 'Registro exitoso, debes esperar la aprobación.', 3000);
                 setTimeout(() => window.location.href = 'login.php', 4000);
-            } else if (resultado.estado === 'existe') {
-                notification('error', 'Ya se encontraba registrado, inicia sesión.', 3000);
+            } else if (result.status) {
+                notification('error', 'Este correo ya se encuentra registrado, inicie sesión.', 3000);
                 setTimeout(() => window.location.href = 'login.php', 4000);
             } else {
-                notification('error', 'Ocurrió un error en el registro, intenta nuevamente.', 3000);
+                notification('error', result.message, 3000);
             }
         } catch (error) {
             ocultarCarga();
-            notification('error', 'Error de red o del servidor.', 3000);
+            notification('error', error, 3000);
             console.error('Error:', error);
         }
     });

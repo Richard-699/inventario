@@ -31,7 +31,7 @@
                     <form id="formValidateEmail">
                         <div class="row mt-4">
                             <div class="col-12 form-group">
-                                <input type="text" class="custom-input" id="inputEmail" placeholder=" " name="email">
+                                <input type="text" class="custom-input" id="inputEmail" placeholder=" " name="correo_hwi_administrador">
                                 <label for="inputUsername" class="floating-label">Correo Corporativo: *</label>
                             </div>
                             <span id="errorEmail" style="color: red; margin-top:-30px; margin-left: 60px"></span>

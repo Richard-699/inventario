@@ -1,8 +1,8 @@
 <?php
-session_start();
-$email = $_SESSION['administrador']['correo_hwi_administrador'];
+require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
-include('../../../public/utils/spinner.php');
+session_start();
+$email = $_SESSION['administrador']->correo_hwi_administrador;
 ?>
 
 <!DOCTYPE html>
@@ -13,13 +13,17 @@ include('../../../public/utils/spinner.php');
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cambiar Contraseña HWI</title>
-    <link rel="shortcut icon" href="../../../public/img/LogoBlanco.png" type="image/x-icon">
+    <link rel="shortcut icon" href="../../../../../public/img/LogoBlanco.png" type="image/x-icon">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.6/dist/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="../../../public/css/auth/estilos_reset_password.css">
+    <link rel="stylesheet" href="../../../../../public/css/auth/estilos_reset_password.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
+    <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
+    <?php
+        include('../../../Shared/Util/spinner.php');
+    ?>
 </head>
 
 <body>
@@ -35,7 +39,7 @@ include('../../../public/utils/spinner.php');
                     <div class="card-body">
                         <form id="formResetPassword">
                             <div class="row g-3 mt-4">
-                                <input type="hidden" value="<?php echo $email; ?>" name="email">
+                                <input type="hidden" value="<?php echo $email; ?>" name="correo_hwi_administrador">
                                 <div class="col-12 form-group">
                                     <input type="password" class="custom-input" id="inputPassword" placeholder=" ">
                                     <label for="inputUsername" class="floating-label">Nueva Contraseña</label>
@@ -44,7 +48,7 @@ include('../../../public/utils/spinner.php');
                                     </button>
                                 </div>
                                 <div class="col-12 form-group">
-                                    <input type="password" class="custom-input" id="confirmPassword" placeholder=" " name="new_password">
+                                    <input type="password" class="custom-input" id="confirmPassword" placeholder=" " name="password_administrador">
                                     <label for="inputUsername" class="floating-label">Confirmar Contraseña</label>
                                     <button class="password-toggle" id="confirmPasswordToggle" type="button" onclick="togglePassword('confirmPassword')">
                                         <i class="material-icons" id="confirmPasswordIcon">visibility</i>
@@ -62,10 +66,10 @@ include('../../../public/utils/spinner.php');
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../../public/js/auth/reset_password.js"></script>
+    <script src="../../../../../public/js/auth/reset_password.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <script src="../../../public/js/utils/notifications.js"></script>
-    <script src="../../../public/js/utils/spinner.js"></script>
+    <script src="../../../../../public/js/utils/notifications.js"></script>
+    <script src="../../../../../public/js/utils/spinner.js"></script>
 </body>
 
 </html>

@@ -40,14 +40,14 @@
                     <label for="correo_hwi_administrador" class="floating-label">Correo Corporativo: *</label>
                 </div>
                 <div class="col-12 form-group mt-3">
-                    <input type="password" class="custom-input" name="password" id="inputPassword" placeholder=" ">
+                    <input type="password" class="custom-input" name="password_administrador" id="inputPassword" placeholder=" ">
                     <label for="inputPassword" class="floating-label">Crear contraseña: *</label>
                     <button class="password-toggle" id="passwordToggle" type="button" onclick="togglePassword('inputPassword')">
                         <i class="material-icons" id="passwordIcon">visibility</i>
                     </button>
                 </div>
                 <div class="d-grid mb-4 justify-content-center">
-                    <button type="submit" value="Ingresar" name="btningresar" class="btn btn-success align-items-center w-100 mx-auto" id="btningresar" disabled>
+                    <button type="submit" value="Ingresar" name="btningresar" class="btn btn-success align-items-center w-100 mx-auto" id="btningresar">
                         <span class="align-middle">Registrarse</span>
                     </button>
                 </div>

@@ -1,10 +1,10 @@
 <?php
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
-require '../../app/services/Exception.php';
-require '../../app/services/PHPMailer.php';
-require '../../app/services/SMTP.php';
+namespace App\Shared\Util;
+
+use App\Shared\Util\PHPMailer;
+use App\Shared\Util\Exception;
+use App\Shared\Util\SMTP;
 
 class Utilidades {
     public static function generarGUID() {

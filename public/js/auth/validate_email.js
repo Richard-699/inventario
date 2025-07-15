@@ -27,7 +27,7 @@ window.addEventListener('load', function () {
 
         async function validateEmail(){
             try {
-                const response = await fetch('../../../public/router/router.php?action=validate_email', {
+                const response = await fetch('../../Handler/auth/validateEmailHandler.php', {
                     method: 'POST',
                     body: formData
                 });

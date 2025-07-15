@@ -1,6 +1,6 @@
 <?php
-require_once '../../controllers/ValidacionSesion.php';
-include('../../../public/utils/spinner.php');
+/* require_once '../../controllers/ValidacionSesion.php'; */
+include('../../../Shared/Util/spinner.php');
 
 $fechaInicio = $_SESSION['fechas_corte']['fecha_inicio'];
 $fechaFin = $_SESSION['fechas_corte']['fecha_fin'];

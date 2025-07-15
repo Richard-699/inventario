@@ -1,4 +1,4 @@
-const passwordInput = document.getElementById('inputPassword');
+const passwordInput = document.getElementById('password_administrador');
 const passwordToggle = document.getElementById('passwordToggle');
 const passwordIcon = document.getElementById('passwordIcon');
 
@@ -28,7 +28,7 @@ $('#formLogin').on('submit', function (e) {
 
     async function login(){
         try {
-            const response = await fetch('../../Presenter/auth/loginPresenter.php', {
+            const response = await fetch('../../Handler/auth/loginHandler.php', {
                 method: 'POST',
                 body: formData
             });
@@ -37,8 +37,6 @@ $('#formLogin').on('submit', function (e) {
             }
 
             const result = await response.json();
-
-            debugger;
 
             if (result.success && result.is_temporal) {
                 window.location.href = 'reset_password.php';

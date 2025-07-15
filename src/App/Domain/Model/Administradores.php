@@ -27,6 +27,19 @@ class Administradores {
         );
     }
 
+    public function toArray(): array
+    {
+        return [
+            'id_administrador' => $this->id_administrador,
+            'cedula_administrador' => $this->cedula_administrador,
+            'nombre_administrador' => $this->nombre_administrador,
+            'apellidos_administrador' => $this->apellidos_administrador,
+            'correo_hwi_administrador' => $this->correo_hwi_administrador,
+            'password_administrador' => $this->password_administrador,
+            'password_is_temporal' => $this->password_is_temporal,
+            'estado_administrador' => $this->estado_administrador
+        ];
+    }
 }
 
 ?>

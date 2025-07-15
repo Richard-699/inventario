@@ -30,13 +30,13 @@
                 <h2 class="fw-bold text-center py-4">Iniciar Sesión</h2>
                 <form id="formLogin">
                     <div class="mb-4 form-group mt-5">
-                        <input autocomplete="off" type="text" class="custom-input" id="email" name="email" placeholder=" " required>
+                        <input autocomplete="off" type="text" class="custom-input" id="correo_hwi_administrador" name="correo_hwi_administrador" placeholder=" ">
                         <label for="email" class="floating-label">Correo Corporativo</label>
                     </div>
                     <div class="mb-2 form-group">
-                        <input autocomplete="off" type="password" class="custom-input" id="inputPassword" name="password" placeholder=" " required>
+                        <input autocomplete="off" type="password" class="custom-input" id="password_administrador" name="password_administrador" placeholder=" ">
                         <label for="password" class="floating-label">Contraseña</label>
-                        <button class="password-toggle" id="passwordToggle" type="button" onclick="togglePassword('inputPassword')">
+                        <button class="password-toggle" id="passwordToggle" type="button" onclick="togglePassword('password_administrador')">
                             <i class="material-icons" id="passwordIcon">visibility</i>
                         </button>
                     </div>
