@@ -3,14 +3,9 @@ function Inicio() {
     window.location.href = "index.php";
 }
 
-function MostrarHorasExtras() {
+function Almacen() {
     mostrarCarga();
-    window.location.href = "horasExtra.php";
-}
-
-function MostrarAusentismos() {
-    mostrarCarga();
-    window.location.href = "ausentismos.php";
+    window.location.href = "almacenes.php";
 }
 
 function GestionarAdministradores() {

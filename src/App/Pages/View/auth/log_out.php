@@ -1,3 +1,7 @@
 <?php
-    header("location: ../../../public/router/router.php?action=logout");
+    session_start();
+    session_unset();
+    session_destroy();
+    header("Location: login.php");
+    exit;
 ?>

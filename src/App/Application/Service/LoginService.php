@@ -4,9 +4,9 @@ namespace App\Application\Service;
 
 use App\Application\Interface\Service\ILoginService;
 use App\Domain\DTO\AdministradoresDTO;
-use App\Domain\Model\Administradores;
 use App\Infrastructure\Repository\PermisosAdministradoresRepository;
 use App\Infrastructure\Repository\AdministradoresRepository;
+use App\Infrastructure\Repository\PermisosRepository;
 use Exception;
 use App\Shared\Mapper\Mapper;
 
@@ -14,7 +14,8 @@ class LoginService implements ILoginService {
 
     public function __construct(
         private AdministradoresRepository $administradoresRepository,
-        private PermisosAdministradoresRepository $permisosAdministradoresRepository
+        private PermisosAdministradoresRepository $permisosAdministradoresRepository,
+        private PermisosRepository $permisosRepository
     ) {}
 
     public function login(AdministradoresDTO $administradoresDTO): AdministradoresDTO {
@@ -28,10 +29,12 @@ class LoginService implements ILoginService {
         
         $id_administrador = $administradoresDTO->id_administrador;
         $permisosAdministradores = $this->permisosAdministradoresRepository->onGet_By__Id_Administrador($id_administrador);
+
+        $permisos = $this->permisosRepository->onGet();
+        $administradoresDTO->permisosDTO = array_map([Mapper::class, 'modelToPermisosDTO'], $permisos);
         
         if($permisosAdministradores){
-            $permisosAdministradoresDTO = Mapper::modelToPermisosAdministradoresDTO($permisosAdministradores);
-            $administradoresDTO->permisosAdministradoresDTO = [$permisosAdministradoresDTO];
+            $administradoresDTO->permisosAdministradoresDTO = array_map([Mapper::class, 'modelToPermisosAdministradoresDTO'], $permisosAdministradores);
         }
 
         return $administradoresDTO;

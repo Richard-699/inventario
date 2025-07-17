@@ -6,6 +6,7 @@ use App\Application\Service\LoginService;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Infrastructure\Repository\AdministradoresRepository;
 use App\Infrastructure\Repository\PermisosAdministradoresRepository;
+use App\Infrastructure\Repository\PermisosRepository;
 use App\Shared\Validation\Validator;
 
 header('Content-Type: application/json');
@@ -31,7 +32,8 @@ try {
 
     $loginService = new LoginService(
         new AdministradoresRepository(),
-        new PermisosAdministradoresRepository()
+        new PermisosAdministradoresRepository(),
+        new PermisosRepository()
     );
     
     $administradorLogin = $loginService->login($administradoresDTO);
