@@ -3,8 +3,8 @@
 
 </div> <!-- content -->
 
-<script src="../../../public/js/partials/header.js"></script>
-<script src="../../../public/js/utils/spinner.js"></script>
+<script src="../../../../../public/js/shared/header.js"></script>
+<script src="../../../../../public/js/utils/spinner.js"></script>
 <script>
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');

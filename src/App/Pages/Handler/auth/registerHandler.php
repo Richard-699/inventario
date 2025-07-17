@@ -6,6 +6,7 @@ use App\Application\Service\LoginService;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Infrastructure\Repository\AdministradoresRepository;
 use App\Infrastructure\Repository\PermisosAdministradoresRepository;
+use App\Infrastructure\Repository\PermisosRepository;
 use App\Shared\Validation\Validator;
 use App\Shared\Util\Utilidades;
 
@@ -36,7 +37,8 @@ try {
 
     $loginService = new LoginService(
         new AdministradoresRepository(),
-        new PermisosAdministradoresRepository()
+        new PermisosAdministradoresRepository(),
+        new PermisosRepository()
     );
     
     $validar_email_registrado = $loginService->validar_email_registrado($administradorDTO->correo_hwi_administrador);
