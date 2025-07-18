@@ -24,7 +24,7 @@ $(document).ready(function () {
                     return `${row.nombre_administrador} ${row.apellidos_administrador}`;
                 }
             },
-            { "data": "correo_hwi_administrador", "className": "dt-center" },  
+            { "data": "correo_hwi_administrador", "className": "dt-center" },
             {
                 "data": "id_administrador",
                 "className": "dt-center",
@@ -46,7 +46,7 @@ $(document).ready(function () {
                         `;
                     }
                 }
-            }        
+            }
         ],
         "responsive": true,
         "ordering": true,
@@ -68,7 +68,7 @@ async function update(btn, id, action) {
 
         var url = `permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
 
-        if(action == 'update'){
+        if (action == 'update') {
             const responsePermisosSelected = await fetch(`../../../public/router/router.php?action=obtener_permisosAdministrador&id=${id}`, {
                 method: 'GET'
             });
@@ -85,30 +85,54 @@ async function update(btn, id, action) {
 
         setTimeout(() => {
             ocultarCarga();
-            $('.select2').select2({
-                dropdownParent: document.querySelector('.fancybox__container')
-            });
 
-            $(document).on('mousedown mouseup click', '.select2-selection__choice__remove', function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            });
+            const permisosSelect = document.getElementById('permisos_administradores');
+            if (permisosSelect && !permisosSelect.classList.contains('choices-initialized')) {
+                const choicesInstance = new Choices(permisosSelect, {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    placeholder: true,
+                    placeholderValue: 'Selecciona uno o más permisos',
+                    searchPlaceholderValue: 'Buscar permisos...',
+                    shouldSort: false
+                });
 
-            $(document).on('mousedown mouseup click', '.select2-container', function (e) {
-                e.stopPropagation();
-            });
+                // Delegación de eventos: escucha clics desde el contenedor padre
+                document.addEventListener('click', function (e) {
+                    const opcion = e.target.closest('.choices__item--selectable');
+                    const contenedor = e.target.closest('.choices__list--dropdown');
 
-            $(document).on('mousedown mouseup click', '.select2-dropdown', function (e) {
-                e.stopPropagation();
-            });
+                    // Asegúrate que esté dentro del dropdown de Choices
+                    if (opcion && contenedor) {
+                        e.preventDefault();
+                        e.stopPropagation();
 
+                        const value = opcion.getAttribute('data-value');
+                        if (!value) return;
+
+                        const selectedValues = choicesInstance.getValue(true);
+                        const isSelected = selectedValues.includes(value);
+
+                        if (isSelected) {
+                            choicesInstance.removeActiveItemsByValue(value);
+                        } else {
+                            choicesInstance.setChoiceByValue(value);
+                        }
+                    }
+                });
+
+                permisosSelect.classList.add('choices-initialized');
+            }
+
+            // Evitar que el modal se cierre por clic externo
             Fancybox.getInstance().options = {
                 ...Fancybox.getInstance().options,
-                click: false
+                click: false,
+                trapFocus: false,
+                placeFocusBack: false
             };
         }, 100);
+
     } catch (error) {
         console.error('Error al cargar la modal:', error);
     } finally {
