@@ -25,6 +25,14 @@ class PermisosAdministradoresRepository implements IPermisosAdministradoresRepos
 
         return array_map([PermisosAdministradores::class, 'fromArray'], $rows);
     }
+
+    public function delete($id)
+    {
+        $stmt = $this->db->prepare("DELETE FROM inventario_hwi_permisos_administradores WHERE id_administrador_permisos = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
 }
 
 ?>

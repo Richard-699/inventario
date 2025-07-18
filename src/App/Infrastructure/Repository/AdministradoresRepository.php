@@ -5,12 +5,21 @@ namespace App\Infrastructure\Repository;
 use App\Domain\Model\Administradores;
 use App\Application\Interface\Repository\IAdministradoresRepository;
 use App\Infrastructure\Database\Connection;
+use PDO;
 
 class AdministradoresRepository implements IAdministradoresRepository{
     private $db;
 
     public function __construct() {
         $this->db = (new Connection())->dbInventarioHwi;
+    }
+
+    public function onGet(): array {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_administradores");
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([Administradores::class, 'fromArray'], $rows);
     }
 
     public function onGet_By__Email(string $correo_hwi_administrador): ?Administradores {
@@ -37,7 +46,7 @@ class AdministradoresRepository implements IAdministradoresRepository{
         return $stmt->execute();
     }
 
-    public function update_Password(Administradores $administradores): bool{
+    public function update_password(Administradores $administradores): bool{
         $query = "UPDATE inventario_hwi_administradores 
                     SET password_administrador = :password, password_is_temporal = :istemporal 
                     WHERE id_administrador = :id";
@@ -48,6 +57,13 @@ class AdministradoresRepository implements IAdministradoresRepository{
         $stmt->bindParam(':id', $administradores->id_administrador);
 
         return $stmt->execute();
+    }
+
+    public function delete(string $id){
+        $stmt = $this->db->prepare("DELETE FROM inventario_hwi_administradores WHERE id_administrador = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->rowCount();
     }
 }
 
