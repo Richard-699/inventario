@@ -1,5 +1,4 @@
 <?php
-$celulas = json_decode($_GET['celulas'], true);
 $permisos = json_decode($_GET['permisos'], true);
 $action = $_GET['action'] ?? '';
 $id_administrador = $_GET['id_administrador'] ?? null;
@@ -17,23 +16,6 @@ if ($action == 'update') {
             }
         }
     }
-
-    $celulasSelected = [];
-    $idsCelulasSeleccionados = [];
-    $tieneCelulas = false;
-
-    if (isset($_GET['celulasSelected'])) {
-        $celulasSelected = json_decode($_GET['celulasSelected'], true);
-
-        if (count($celulasSelected) > 0) {
-            $tieneCelulas = true;
-            foreach ($celulasSelected as $celula) {
-                if (isset($celula['id_celulas_areas_administradores'])) {
-                    $idsCelulasSeleccionados[] = $celula['id_celulas_areas_administradores'];
-                }
-            }
-        }
-    }
 }
 ?>
 <!DOCTYPE html>
@@ -43,13 +25,12 @@ if ($action == 'update') {
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/x-icon" href="../../img/LogoBlanco.png">
-    <link href="../../../public/css/partials/administradorCelulasPermisos.css" rel="stylesheet">
+    <link href="../../../../../public/css/inventory/permisos_administrador.css" rel="stylesheet">
     <link rel="shortcut icon" href="../../../public/img/LogoBlanco.png" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    
+    <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
+    
+    <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
 </head>
 
 <body class="p-4">
@@ -83,29 +64,6 @@ if ($action == 'update') {
 
                 <?php } ?>
             </div>
-            <div id="contenedorCelulas" class="col-md-12 mt-3">
-                <p>Seleccione las células que gestionará este administrador: *</p>
-
-                <?php if ($action == 'approve') { ?>
-
-                    <select id="celulas_administradores" class="select2" multiple style="width: 100%" name="celulas_administradores[]">
-                        <?php foreach ($celulas as $c): ?>
-                            <option value="<?= $c['id_celulas_areas'] ?>"><?= $c['nombre_celula'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-
-                <?php } else { ?>
-
-                    <select id="celulas_administradores" class="select2" multiple style="width: 100%" name="celulas_administradores[]">
-                        <?php foreach ($celulas as $c): ?>
-                            <option value="<?= $c['id_celulas_areas'] ?>" <?= in_array($c['id_celulas_areas'], $idsCelulasSeleccionados) ? 'selected' : '' ?>>
-                                <?= $c['nombre_celula'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-
-                <?php } ?>
-            </div>
             <div class="d-flex justify-content-end mb-4">
                 <button type="submit" class="btn btn-success" id="btn-aprobar-editar">
                     <?= ($action == 'update') ? 'Actualizar' : 'Aprobar' ?>
@@ -113,10 +71,18 @@ if ($action == 'update') {
             </div>
         </form>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <script src="../../../public/js/utils/notifications.js"></script>
-    <script src="../../../public/js/partials/administradorCelulasPermisos.js"></script>
+    <?php '../shared/footer.php'; ?>
+    <!-- Scripts en orden -->
+    <script src="../../../../../public/js/utils/libs/jquery.js"></script>
+    <script src="../../../../../public/js/utils/libs/bootstrap.js"></script>
+    <script src="../../../../../public/js/utils/libs/fancybox.js"></script>
+    <script src="../../../../../public/js/utils/libs/notification.js"></script>
+
+    <!-- Scripts funcionalidades -->
+     <script src="../../../../../public/js/utils/libs/select2.js"></script>
+    <script src="../../../../../public/js/utils/spinner.js"></script>
+    <script src="../../../../../public/js/utils/notifications.js"></script>
+    <script src="../../../../../public/js/inventory/permisos_administrador.js"></script>
 </body>
 
 </html>

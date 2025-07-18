@@ -12,7 +12,7 @@ $(document).ready(function () {
         pageLength: 10,
 
         "ajax": {
-            "url": '../../Handler/inventory/administradoresHandler.php',
+            "url": '../../Handler/inventory/administradoresHandler.php?action=onGet_administradores',
             "dataSrc": ""
         },
         "columns": [
@@ -66,7 +66,7 @@ async function update(btn, id, action) {
         const permisos = await responsePermisos.json();
         const permisosEncoded = encodeURIComponent(JSON.stringify(permisos));
 
-        var url = `../partials/permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
+        var url = `permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
 
         if(action == 'update'){
             const responsePermisosSelected = await fetch(`../../../public/router/router.php?action=obtener_permisosAdministrador&id=${id}`, {
@@ -90,6 +90,7 @@ async function update(btn, id, action) {
             });
 
             $(document).on('mousedown mouseup click', '.select2-selection__choice__remove', function (e) {
+                e.preventDefault();
                 e.stopPropagation();
                 e.stopImmediatePropagation();
                 return false;

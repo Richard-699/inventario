@@ -3,7 +3,7 @@ session_start();
 if (!isset($_SESSION['sidebarinactive'])) {
     $_SESSION['sidebarinactive'] = true;
 }
-define('SESSION_TIMEOUT', 10);
+define('SESSION_TIMEOUT', 900);
 
 if (!isset($_SESSION['administrador'])) {
     header('Location: /inventario/src/App/Pages/Views/auth/login.php');
