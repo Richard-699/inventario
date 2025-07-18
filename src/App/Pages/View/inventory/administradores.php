@@ -35,7 +35,7 @@
     <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
 </head>
 <body>
-    <?php include __DIR__ . '/../partials/header.php'; ?>
+    <?php include '../shared/header.php' ?>
 
     <div class="container-fluid px-2 py-3">
         <div class="table-container table-responsive">
@@ -58,13 +58,13 @@
         </div>
     </div>
 
-    <?php include __DIR__ . '/../partials/footer.php'; ?>
-    <script src="../../../public/js/administrador/administradores.js"></script>
+    <?php '../shared/footer.php'; ?>
+    <script src="../../../../../public/js/inventory/administradores.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    <script src="../../../public/js/utils/spinner.js"></script>
+    <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/notyf@3/notyf.min.js"></script>
-    <script src="../../../public/js/utils/notifications.js"></script>
+    <script src="../../../../../public/js/utils/notifications.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
 </html>
