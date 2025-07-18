@@ -38,7 +38,7 @@
         </div>
     </div>
 
-    <?php '../shared/footer.php'; ?>
+    <?php include '../shared/footer.php'; ?>
     <!-- Scripts en orden -->
     <script src="../../../../../public/js/utils/libs/jquery.js"></script>
     <script src="../../../../../public/js/utils/libs/bootstrap.js"></script>
