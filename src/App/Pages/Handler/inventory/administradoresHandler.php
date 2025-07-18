@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\AdministradoresService;
 use App\Domain\DTO\AdministradoresDTO;
-use App\Domain\Model\PermisosAdministradores;
+use App\Domain\DTO\PermisosAdministradoresDTO;
 use App\Infrastructure\Repository\AdministradoresRepository;
 use App\Infrastructure\Repository\PermisosAdministradoresRepository;
 use App\Infrastructure\Repository\PermisosRepository;
@@ -42,6 +42,57 @@ function onPostEditarPermisosAdministradores(array $data): array {
     ];
 }
 
+function onPostAprobarAdministrador(array $data){
+    try {
+        $form = $data['form'] ?? [];
+        $idsPermisos = $form['permisos_administradores'] ?? [];
+        $listaPermisosDTO = [];
+        $estado_administrador = 1;
+
+        
+        if (!is_array($idsPermisos)) {
+            $idsPermisos = [$idsPermisos]; // lo convierte en array si es string
+        }
+
+        foreach ($idsPermisos as $idPermiso) {
+            $dto = new PermisosAdministradoresDTO(null, (int)$idPermiso);
+            $listaPermisosDTO[] = $dto;
+        }
+
+        Validator::validateListaPermisos($listaPermisosDTO);
+
+        $administradoresService = new AdministradoresService();
+
+        $administradoresDTO = new AdministradoresDTO(
+            id_administrador: $form['id_administrador'],
+            cedula_administrador: null,
+            nombre_administrador: null,
+            apellidos_administrador: null,
+            correo_hwi_administrador: null,
+            password_administrador: null,
+            password_is_temporal: null,
+            estado_administrador: $estado_administrador,
+            permisosAdministradoresDTO: $listaPermisosDTO,
+            type: null
+        );
+
+        $aprobar_administrador = $administradoresService->aprobarAdministrador($administradoresDTO);
+
+        if (!$aprobar_administrador) {
+            throw new Exception("No se pudo aprobar el administrador.");
+        }
+
+        return [
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 function onPostDeleteAdministrador(array $data){
     try {
         $id_administrador = $data['id'] ?? null;
@@ -50,11 +101,7 @@ function onPostDeleteAdministrador(array $data){
             throw new Exception("Error al procesar el Id del administrador.");
         }
 
-        $administradoresService = new AdministradoresService(
-            new AdministradoresRepository(),
-            new PermisosAdministradoresRepository(),
-            new PermisosRepository()
-        );
+        $administradoresService = new AdministradoresService();
 
         $delete_administrador = $administradoresService->deleteAdministrador($id_administrador);
 
@@ -75,11 +122,7 @@ function onPostDeleteAdministrador(array $data){
 
 function onGetAdministradores() {
     try {
-        $administradoresService = new AdministradoresService(
-            new AdministradoresRepository(),
-            new PermisosAdministradoresRepository(),
-            new PermisosRepository()
-        );
+        $administradoresService = new AdministradoresService();
 
         $administradores = $administradoresService->onGetAdministradores();
 
@@ -98,11 +141,7 @@ function onGetAdministradores() {
 
 function onGetPermisos() {
     try {
-        $administradoresService = new AdministradoresService(
-            new AdministradoresRepository(),
-            new PermisosAdministradoresRepository(),
-            new PermisosRepository()
-        );
+        $administradoresService = new AdministradoresService();
 
         $permisos = $administradoresService->onGetPermisos();
 
@@ -135,6 +174,9 @@ try {
         switch ($action) {
             case 'edit_administrador':
                 $response = onPostEditarPermisosAdministradores($data);
+                break;
+            case 'approve':
+                $response = onPostAprobarAdministrador($data);
                 break;
             case 'delete_administrador':
                 $response = onPostDeleteAdministrador($data);

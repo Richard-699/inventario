@@ -39,4 +39,11 @@ class Validator
             }
         }
     }
+
+    public static function validateListaPermisos(array $listaPermisosDTO): void
+    {
+        if (empty($listaPermisosDTO)) {
+            throw new Exception('Debes seleccionar al menos un permiso.');
+        }
+    }
 }

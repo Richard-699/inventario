@@ -172,6 +172,7 @@ async function rechazar(btn, id) {
                 window.location.reload();
             }, 2000);
         } else {
+            btn.disabled = false;
             notification('error', 'Falló al rechazar el administrador, intenta nuevamente.', 2000);
         }
     } catch (error) {

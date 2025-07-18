@@ -4,14 +4,13 @@ namespace App\Infrastructure\Repository;
 
 use App\Domain\Model\Administradores;
 use App\Application\Interface\Repository\IAdministradoresRepository;
-use App\Infrastructure\Database\Connection;
 use PDO;
 
 class AdministradoresRepository implements IAdministradoresRepository{
     private $db;
 
-    public function __construct() {
-        $this->db = (new Connection())->dbInventarioHwi;
+    public function __construct(PDO $db) {
+        $this->db = $db;
     }
 
     public function onGet(): array {
@@ -59,8 +58,21 @@ class AdministradoresRepository implements IAdministradoresRepository{
         return $stmt->execute();
     }
 
+    public function updateStatusAdministrador($id, $id_estado): bool
+    {
+        $query = "UPDATE inventario_hwi_administradores 
+                    SET estado_administrador = :estado_administrador
+                    WHERE id_administrador = :id";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':estado_administrador', $id_estado);
+        $stmt->bindParam(':id_administrador', $id);
+
+        return $stmt->execute();
+    }
+
     public function delete(string $id){
-        $stmt = $this->db->prepare("DELETE FROM inventario_hwi_administradores WHERE id_administrador = :id");
+        $stmt = $this->db->prepare("DELETE FROM ainventario_hwi_administradores WHERE id_administrador = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->rowCount();

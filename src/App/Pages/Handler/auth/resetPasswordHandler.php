@@ -19,11 +19,7 @@ try {
     $correo_hwi_administrador = $_POST['correo_hwi_administrador'] ?? '';
     $password_administrador = $_POST['password_administrador'] ?? '';
 
-    $loginService = new LoginService(
-        new AdministradoresRepository(),
-        new PermisosAdministradoresRepository(),
-        new PermisosRepository()
-    );
+    $loginService = new LoginService();
 
     $passwordHash = password_hash($password_administrador, PASSWORD_DEFAULT);
     $istemporal = 0;

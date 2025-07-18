@@ -30,11 +30,7 @@ try {
 
     Validator::validateDTO($administradoresDTO);
 
-    $loginService = new LoginService(
-        new AdministradoresRepository(),
-        new PermisosAdministradoresRepository(),
-        new PermisosRepository()
-    );
+    $loginService = new LoginService();
     
     $administradorLogin = $loginService->login($administradoresDTO);
 

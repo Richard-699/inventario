@@ -35,11 +35,7 @@ try {
 
     Validator::validateDTO($administradorDTO);
 
-    $loginService = new LoginService(
-        new AdministradoresRepository(),
-        new PermisosAdministradoresRepository(),
-        new PermisosRepository()
-    );
+    $loginService = new LoginService();
     
     $validar_email_registrado = $loginService->validar_email_registrado($administradorDTO->correo_hwi_administrador);
 
