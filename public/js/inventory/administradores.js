@@ -69,13 +69,13 @@ async function update(btn, id, action) {
         var url = `permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
 
         if (action == 'update') {
-            const responsePermisosSelected = await fetch(`../../../public/router/router.php?action=obtener_permisosAdministrador&id=${id}`, {
+            const responsePermisosSelected = await fetch(`../../Handler/inventory/administradoresHandler.php?action=onGet_permisosAdministrador&id=${id}`, {
                 method: 'GET'
             });
             const permisosSelected = await responsePermisosSelected.json();
             const permisosSelectedEncoded = encodeURIComponent(JSON.stringify(permisosSelected));
 
-            url = `../partials/permisosAdministrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}&permisosSelected=${permisosSelectedEncoded}`;
+            url = `permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}&permisosSelected=${permisosSelectedEncoded}`;
         }
 
         Fancybox.show([{

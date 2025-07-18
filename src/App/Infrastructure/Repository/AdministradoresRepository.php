@@ -62,7 +62,7 @@ class AdministradoresRepository implements IAdministradoresRepository{
     {
         $query = "UPDATE inventario_hwi_administradores 
                     SET estado_administrador = :estado_administrador
-                    WHERE id_administrador = :id";
+                    WHERE id_administrador = :id_administrador";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':estado_administrador', $id_estado);

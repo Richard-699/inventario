@@ -90,6 +90,38 @@ class AdministradoresService implements IAdministradoresService {
             throw $e;
         }
     }
+
+    public function updatePermisosAdministrador(AdministradoresDTO $administradoresDTO): bool
+    {
+        try {
+            $this->db->beginTransaction();
+
+            $id = $administradoresDTO->id_administrador;
+            $this->permisosAdministradoresRepository->delete($id);
+
+            foreach ($administradoresDTO->permisosAdministradoresDTO as $permisoAdministradorDTO) {
+                $dto = new PermisosAdministradoresDTO();
+                $dto->id_permiso_permisos = $permisoAdministradorDTO->id_permiso_permisos;
+                $dto->id_administrador_permisos = $administradoresDTO->id_administrador;
+                
+                $permisos_administradores = Mapper::permisosAdministradoresDTOToModel($dto);
+                $this->permisosAdministradoresRepository->save($permisos_administradores);
+            }
+
+            $this->db->commit();
+
+            return true;
+        } catch (\Throwable $e) {
+            $this->db->rollBack();
+            throw $e;
+        }
+    }
+
+    public function onGetPermisosAdministrador($id): array
+    {
+        $permisosAdministrador = $this->permisosAdministradoresRepository->onGet_By__Id_Administrador($id);
+        return $permisosAdministrador;
+    }
 }
 
 

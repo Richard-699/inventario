@@ -36,24 +36,17 @@ class PermisosAdministradoresRepository implements IPermisosAdministradoresRepos
 
     public function save(PermisosAdministradores $permisosAdministradores): bool
     {
-        // TEMPORAL: forzar datos manuales válidos
-        $id_permiso = '1';
-        $id_admin = '20bf894a-0497-426c-9166-401210bb39eb';
+        $data = $permisosAdministradores->toArray();
+        $columnas = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
 
-        $query = "INSERT INTO inventario_hwi_permisos_administradores (id_permiso_permisos, id_administrador_permisos) VALUES (:id_permiso_permisos, :id_administrador_permisos)";
+        $query = "INSERT INTO inventario_hwi_permisos_administradores ($columnas) VALUES ($placeholders)";
         $stmt = $this->db->prepare($query);
-
-        $stmt->bindValue(":id_permiso_permisos", $id_permiso, PDO::PARAM_STR);
-        $stmt->bindValue(":id_administrador_permisos", $id_admin, PDO::PARAM_STR);    
-
-        if (!$stmt->execute()) {
-            var_dump($stmt->errorInfo());
-            return false;
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
         }
-
-        return true;
+        return $stmt->execute();
     }
-
 }
 
 ?>

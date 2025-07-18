@@ -9,6 +9,8 @@ interface IAdministradoresService {
     public function deleteAdministrador($id): bool;
     public function onGetPermisos(): array;
     public function aprobarAdministrador(AdministradoresDTO $administradoresDTO): bool;
+    public function onGetPermisosAdministrador($id): array;
+    public function updatePermisosAdministrador(AdministradoresDTO $administradoresDTO): bool;
 }
 
 ?>

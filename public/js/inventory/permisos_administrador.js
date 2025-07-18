@@ -34,7 +34,7 @@ $(document).ready(function() {
 
             ocultarCarga();
 
-            if (resultado.estado === 'ok') {
+            if (resultado.success) {
                 if(action == 'approve'){
                     notification('success', 'Se aprobó el administrador.', 2000);
                 }else{
