@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\AlmacenesService;
+use App\Application\Service\LocalizacionesService;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\AlmacenesDTO;
 
@@ -25,18 +26,38 @@ function onGetAlmacenes()
     }
 }
 
-
-function onGetLocalizaciones()
+function onGetAlmacen_Id($id)
 {
     try {
         $almacenesService = new AlmacenesService();
 
-        $almacenes = $almacenesService->onGetAlmacenes();
+        $almacenes = $almacenesService->onGetAlmacenes_By__Id($id);
 
         if ($almacenes) {
             return $almacenes;
         } else {
             throw new Exception("No se encontraron almacenes.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+
+function onGetLocalizaciones()
+{
+    try {
+        $localizacionesService = new LocalizacionesService();
+
+        $localizaciones = $localizacionesService->onGetLocalizaciones();
+
+        if ($localizaciones) {
+            return $localizaciones;
+        } else {
+            throw new Exception("No se encontraron localizaciones.");
         }
     } catch (Exception $e) {
         return [

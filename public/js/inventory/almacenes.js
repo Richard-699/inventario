@@ -56,13 +56,13 @@ async function updateAlmacen(btn, id) {
     btn.disabled = true;
 
     try {
-        const responsePermisos = await fetch('../../Handler/inventory/almacenesHandler.php?action=onGet_localizaciones', {
+        const responseLocalizaciones = await fetch('../../Handler/inventory/almacenesHandler.php?action=onGet_localizaciones', {
             method: 'GET'
         });
-        const permisos = await responsePermisos.json();
-        const permisosEncoded = encodeURIComponent(JSON.stringify(permisos));
+        const localizaciones = await responseLocalizaciones.json();
+        const localizacionesEnconded = encodeURIComponent(JSON.stringify(localizaciones));
 
-        var url = `permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
+        var url = `edit_almacenes.php?localizaciones=${localizacionesEnconded}&id_almacen=${id}`;
 
         Fancybox.show([{
             src: url,
@@ -72,14 +72,14 @@ async function updateAlmacen(btn, id) {
         setTimeout(() => {
             ocultarCarga();
 
-            const permisosSelect = document.getElementById('permisos_administradores');
-            if (permisosSelect && !permisosSelect.classList.contains('choices-initialized')) {
-                const choicesInstance = new Choices(permisosSelect, {
+            const localizacionesSelect = document.getElementById('localizaciones');
+            if (localizacionesSelect && !localizacionesSelect.classList.contains('choices-initialized')) {
+                const choicesInstance = new Choices(localizacionesSelect, {
                     removeItemButton: true,
                     searchEnabled: true,
                     placeholder: true,
-                    placeholderValue: 'Selecciona uno o más permisos',
-                    searchPlaceholderValue: 'Buscar permisos...',
+                    placeholderValue: 'Selecciona uno o localizaciones',
+                    searchPlaceholderValue: 'Buscar localizaciones...',
                     shouldSort: false
                 });
 
@@ -107,7 +107,7 @@ async function updateAlmacen(btn, id) {
                     }
                 });
 
-                permisosSelect.classList.add('choices-initialized');
+                localizacionesSelect.classList.add('choices-initialized');
             }
 
             // Evitar que el modal se cierre por clic externo

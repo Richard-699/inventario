@@ -4,6 +4,7 @@ namespace App\Application\Service;
 
 use App\Application\Interface\Service\IAlmacenesService;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\Model\Almacenes;
 use App\Infrastructure\Repository\AlmacenesRepository;
 use Exception;
 use App\Shared\Mapper\Mapper;
@@ -28,6 +29,13 @@ class AlmacenesService implements IAlmacenesService
         return $almacenes;
     }
 
+    public function onGetAlmacenes_By__Id($id): ?AlmacenesDTO
+    {
+        $almacenes = $this->almacenesRepository->onGet_By__Id($id);
+        $almacenesDTO = Mapper::modelToAlmacenesDTO($almacenes);
+        return $almacenesDTO;
+    }
+
     public function saveAlmacen(AlmacenesDTO $almacenesDTO): bool
     {
         $almacenes = Mapper::AlmacenesDTOToModel($almacenesDTO);
@@ -45,9 +53,8 @@ class AlmacenesService implements IAlmacenesService
         $delete_almacen = $this->almacenesRepository->delete($id);
         if ($delete_almacen === 0) {
             return false;
-        }else{
+        } else {
             return true;
         }
-
     }
 }
