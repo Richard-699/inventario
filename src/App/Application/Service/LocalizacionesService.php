@@ -2,9 +2,9 @@
 
 namespace App\Application\Service;
 
+var_dump(class_exists(\App\Infrastructure\Repository\TipoLocalizacionesRepository::class));
+
 use App\Application\Interface\Service\ILocalizacionesService;
-use App\Domain\DTO\LocalizacionesDTO;
-use App\Domain\Model\TipoLocalizaciones;
 use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\TipoLocalizacionesRepository;
 use Exception;
@@ -29,9 +29,9 @@ class LocalizacionesService implements ILocalizacionesService
     public function onGetLocalizaciones(): array
     {
         $localizaciones = $this->localizacionesRepository->onGet();
-        $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet();
+        /* $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet(); */
 
-        // Agregar los tipos a cada localización
+        /* // Agregar los tipos a cada localización
         foreach ($localizaciones as $localizacion) {
             $id = $localizacion->id_tipo_localizacion_localizaciones ?? null;
             foreach ($tiposLocalizaciones as $tipo) {
@@ -39,30 +39,7 @@ class LocalizacionesService implements ILocalizacionesService
                     $localizacion->tipo_localizacion = $tipo->descripcion_tipo_localizacion;
                 }
             }
-        }
+        } */
         return $localizaciones;
     }
 }
-
-    /*     public function saveAlmacen(AlmacenesDTO $almacenesDTO): bool
-    {
-        $almacenes = Mapper::AlmacenesDTOToModel($almacenesDTO);
-        $guardarAlmacen = $this->almacenesRepository->save($almacenes);
-
-        if (!$guardarAlmacen) {
-            return false;
-        } else {
-            return true;
-        }
-    } */
-
-    /*     public function deleteAlmacen($id): bool
-    {
-        $delete_almacen = $this->almacenesRepository->delete($id);
-        if ($delete_almacen === 0) {
-            return false;
-        }else{
-            return true;
-        }
-
-    } */
