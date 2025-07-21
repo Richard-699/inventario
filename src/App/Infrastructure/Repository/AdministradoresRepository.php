@@ -72,7 +72,7 @@ class AdministradoresRepository implements IAdministradoresRepository{
     }
 
     public function delete(string $id){
-        $stmt = $this->db->prepare("DELETE FROM ainventario_hwi_administradores WHERE id_administrador = :id");
+        $stmt = $this->db->prepare("DELETE FROM inventario_hwi_administradores WHERE id_administrador = :id");
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->rowCount();

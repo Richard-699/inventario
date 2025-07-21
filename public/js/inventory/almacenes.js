@@ -12,87 +12,57 @@ $(document).ready(function () {
         pageLength: 10,
 
         "ajax": {
-            "url": '../../Handler/auth/almacenesHandler.php',
+            "url": '../../Handler/inventory/almacenesHandler.php?action=onGet_almacenes',
             "dataSrc": ""
         },
         "columns": [
-            { "data": "cedula_administrador", "className": "dt-center" },
+            { "data": "id_almacen", "className": "dt-center" },
+            { "data": "codigo_sap", "className": "dt-center" },
+            { "data": "descripcion_almacen", "className": "dt-center" },
             {
-                data: null,
-                className: "dt-center",
-                render: function (data, type, row) {
-                    return `${row.nombre_administrador} ${row.apellidos_administrador}`;
-                }
-            },
-            { "data": "correo_hwi_administrador", "className": "dt-center" },  
-            {
-                "data": "id_administrador",
+                "data": "id_almacen",
                 "className": "dt-center",
                 "render": function (data, type, row) {
-                    if (row.estado_administrador == 1) {
-                        return `
-                            <button class="btn btn-primary btn-sm" onclick="update(this, '${data}', 'update')">
+                    return `
+                            <button class="btn btn-primary btn-sm" onclick="updateAlmacen(this, '${data}')">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-                        `;
-                    } else {
-                        return `
-                            <button class="btn btn-success btn-sm me-1" onclick="update(this, '${data}', 'approve')">
-                                <i class="bi bi-check-lg"></i>
-                            </button>
-                            <button class="btn btn-danger btn-sm" onclick="rechazar(this, '${data}')">
-                                <i class="bi bi-x-lg"></i>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAlmacen(this, '${data}')">
+                                <i class="fa-solid fa-trash-can"></i>
                             </button>
                         `;
-                    }
                 }
-            }        
+            }
         ],
         "responsive": true,
         "ordering": true,
         "info": true,
         "searching": true
     });
+
+
+    document.getElementById('btnAgregarAlmacen').addEventListener('click', function () {
+        const url = 'agregar_almacenes.php';
+        Fancybox.show([{
+            src: url,
+            type: 'ajax'
+        }]);
+    });
+
 });
 
-async function update(btn, id, action) {
+async function updateAlmacen(btn, id) {
     mostrarCarga();
     btn.disabled = true;
 
     try {
-        const responseCelulas = await fetch('../../../public/router/router.php?action=obtener_celulas', {
-            method: 'GET'
-        });        
-        const celulas = await responseCelulas.json();
-        const celulasEncoded = encodeURIComponent(JSON.stringify(celulas));
-
-        const responsePermisos = await fetch('../../../public/router/router.php?action=obtener_permisos', {
+        const responsePermisos = await fetch('../../Handler/inventory/almacenesHandler.php?action=onGet_localizaciones', {
             method: 'GET'
         });
         const permisos = await responsePermisos.json();
         const permisosEncoded = encodeURIComponent(JSON.stringify(permisos));
 
-        let tieneCelulas = false;
-        var url = `../partials/administradorCelulasPermisos.php?celulas=${celulasEncoded}&permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
-
-        if(action == 'update'){
-            const responsePermisosSelected = await fetch(`../../../public/router/router.php?action=obtener_permisosAdministrador&id=${id}`, {
-                method: 'GET'
-            });
-            const permisosSelected = await responsePermisosSelected.json();
-            const permisosSelectedEncoded = encodeURIComponent(JSON.stringify(permisosSelected));
-
-            const responseCelulasSelected = await fetch(`../../../public/router/router.php?action=obtener_celulasAdministrador&id=${id}`, {
-                method: 'GET'
-            });
-            const celulasSelected = await responseCelulasSelected.json();
-            const celulasSelectedEncoded = encodeURIComponent(JSON.stringify(celulasSelected));
-            url = `../partials/administradorCelulasPermisos.php?celulas=${celulasEncoded}&permisos=${permisosEncoded}&action=${action}&id_administrador=${id}&celulasSelected=${celulasSelectedEncoded}&permisosSelected=${permisosSelectedEncoded}`;
-            
-            if (Array.isArray(celulasSelected) && celulasSelected.length > 0) {
-                tieneCelulas = celulasSelected.some(c => c.id_celulas_areas_administradores);
-            }
-        }
+        var url = `permisos_administrador.php?permisos=${permisosEncoded}&action=${action}&id_administrador=${id}`;
 
         Fancybox.show([{
             src: url,
@@ -101,35 +71,54 @@ async function update(btn, id, action) {
 
         setTimeout(() => {
             ocultarCarga();
-            $('.select2').select2({
-                dropdownParent: document.querySelector('.fancybox__container')
-            });
 
-            if (tieneCelulas) {
-                $('#contenedorCelulas').removeClass('d-none');
-            }else {
-                $('#contenedorCelulas').addClass('d-none');
+            const permisosSelect = document.getElementById('permisos_administradores');
+            if (permisosSelect && !permisosSelect.classList.contains('choices-initialized')) {
+                const choicesInstance = new Choices(permisosSelect, {
+                    removeItemButton: true,
+                    searchEnabled: true,
+                    placeholder: true,
+                    placeholderValue: 'Selecciona uno o más permisos',
+                    searchPlaceholderValue: 'Buscar permisos...',
+                    shouldSort: false
+                });
+
+                // Delegación de eventos: escucha clics desde el contenedor padre
+                document.addEventListener('click', function (e) {
+                    const opcion = e.target.closest('.choices__item--selectable');
+                    const contenedor = e.target.closest('.choices__list--dropdown');
+
+                    // Asegúrate que esté dentro del dropdown de Choices
+                    if (opcion && contenedor) {
+                        e.preventDefault();
+                        e.stopPropagation();
+
+                        const value = opcion.getAttribute('data-value');
+                        if (!value) return;
+
+                        const selectedValues = choicesInstance.getValue(true);
+                        const isSelected = selectedValues.includes(value);
+
+                        if (isSelected) {
+                            choicesInstance.removeActiveItemsByValue(value);
+                        } else {
+                            choicesInstance.setChoiceByValue(value);
+                        }
+                    }
+                });
+
+                permisosSelect.classList.add('choices-initialized');
             }
 
-            $(document).on('mousedown mouseup click', '.select2-selection__choice__remove', function (e) {
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                return false;
-            });
-
-            $(document).on('mousedown mouseup click', '.select2-container', function (e) {
-                e.stopPropagation();
-            });
-
-            $(document).on('mousedown mouseup click', '.select2-dropdown', function (e) {
-                e.stopPropagation();
-            });
-
+            // Evitar que el modal se cierre por clic externo
             Fancybox.getInstance().options = {
                 ...Fancybox.getInstance().options,
-                click: false
+                click: false,
+                trapFocus: false,
+                placeFocusBack: false
             };
         }, 100);
+
     } catch (error) {
         console.error('Error al cargar la modal:', error);
     } finally {
@@ -137,12 +126,12 @@ async function update(btn, id, action) {
     }
 }
 
-async function rechazar(btn, id) {
+async function deleteAlmacen(btn, id_almacen) {
     const confirmado = await mostrarConfirmacion({
-        titulo: '¿Deseas rechazar este administrador?',
-        texto: 'Una vez rechazado, no se podrá revertir.',
+        titulo: '¿Deseas eliminar este almacén?',
+        texto: 'Una vez eliminado, se eliminarán tambíen las ubicaciones asociadas',
         icono: 'warning',
-        textoConfirmar: 'Sí, rechazar',
+        textoConfirmar: 'Sí, eliminar',
         textoCancelar: 'Cancelar'
     });
 
@@ -151,21 +140,26 @@ async function rechazar(btn, id) {
     mostrarCarga();
     btn.disabled = true;
     try {
-        const response = await fetch('../../../public/router/router.php?action=delete_administrador', {
+        const response = await fetch('../../Handler/inventory/almacenesHandler.php', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({ 
-                id: id
-             })
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'delete_almacenes',
+                id: id_almacen
+            })
         });
 
         const data = await response.json();
         ocultarCarga();
 
         if (data.success) {
-            notification('success', 'Se rechazó el administrador.', 2000);
+            notification('success', 'Se eliminó el almacén.', 2000);
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         } else {
-            notification('error', 'Falló al rechazar el administrador, intenta nuevamente.', 2000);
+            btn.disabled = false;
+            notification('error', 'Falló al eliminar el almacen, intenta nuevamente.', 2000);
         }
     } catch (error) {
         ocultarCarga();
@@ -173,3 +167,4 @@ async function rechazar(btn, id) {
         btn.disabled = false;
     }
 }
+
