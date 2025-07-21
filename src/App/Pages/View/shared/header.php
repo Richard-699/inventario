@@ -38,7 +38,7 @@ if (isset($_SESSION['administrador'])) {
                     if($permiso->tipo_permiso == 'Gestión Interna Inventario'){
                         echo '<a class="hov" href="javascript:void(0);" onclick="Almacen();"><i class="fa-solid fa-warehouse"></i> Almacenes</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
-                        echo '<a class="hov" href="javascript:void(0);" onclick="Secciones();"><i class="fa-solid fa-location-dot"></i> Secciones</a>';
+                        echo '<a class="hov" href="javascript:void(0);" onclick="Localizaciones();"><i class="fa-solid fa-location-dot"></i> Localizaciones</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="PartNumbers();"><i class="fa-solid fa-dolly"></i> Part Numbers</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';

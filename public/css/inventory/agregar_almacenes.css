@@ -1,0 +1,12 @@
+.contenido-agregar-almacen {
+    max-width: 1000px;
+    width: 700px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .contenido-agregar-almacen {
+        padding: 0 10px;
+        width: 200px;
+    }
+}

@@ -4,9 +4,6 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 use App\Application\Service\AdministradoresService;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\PermisosAdministradoresDTO;
-use App\Infrastructure\Repository\AdministradoresRepository;
-use App\Infrastructure\Repository\PermisosAdministradoresRepository;
-use App\Infrastructure\Repository\PermisosRepository;
 use App\Shared\Validation\Validator;
 
 function onPostAprobarAdministrador(array $data){

@@ -8,6 +8,12 @@ function Almacen() {
     window.location.href = "almacenes.php";
 }
 
+function Localizaciones() {
+    mostrarCarga();
+    window.location.href = "localizaciones.php";
+}
+
+
 function GestionarAdministradores() {
     mostrarCarga();
     window.location.href = "administradores.php";

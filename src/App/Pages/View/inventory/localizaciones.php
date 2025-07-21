@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
     <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
     <link rel="stylesheet" href="../../../../../public/css/dataTable/dataTable.css">
-    <link rel="stylesheet" href="../../../../../public/css/inventory/almacenes.css">
+    <link rel="stylesheet" href="../../../../../public/css/inventory/localizaciones.css">
 
     <?php include('../../../Shared/Util/spinner.php'); ?>
 </head>
@@ -23,10 +23,10 @@
             <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
                 <div class="d-flex align-items-center">
                     <i class="fa-solid fa-warehouse me-2 fs-4"></i>
-                    <h5 class="m-0 fw-semibold text-dark">Almacenes</h5>
+                    <h5 class="m-0 fw-semibold text-dark">Localizaciones</h5>
                 </div>
-                <button class="btn btn-primary btn-sm" id="btnAgregarAlmacen">
-                    <i class="fa fa-plus me-1"></i> Agregar almacén
+                <button class="btn btn-primary btn-sm" id="btnAgregarLocalizacion">
+                    <i class="fa fa-plus me-1"></i> Agregar Localizaciones
                 </button>
             </div>
 
@@ -34,7 +34,7 @@
                 <thead class="table-light">
                     <tr>
                         <th style="width: 5%;">Id</th>
-                        <th style="width: 18%;">Código SAP</th>
+                        <th style="width: 18%;">Tipo</th>
                         <th style="width: 18%;">Descripción</th>
                         <th></th>
                     </tr>
@@ -56,6 +56,6 @@
     <!-- Scripts funcionalidades -->
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/utils/notifications.js"></script>
-    <script src="../../../../../public/js/inventory/almacenes.js"></script>
+    <script src="../../../../../public/js/inventory/localizaciones.js"></script>
 
 </html>

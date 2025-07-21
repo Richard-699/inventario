@@ -4,10 +4,12 @@ namespace App\Shared\Mapper;
 
 use App\Domain\Model\Administradores;
 use App\Domain\DTO\AdministradoresDTO;
+use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\Model\Permisos;
 use App\Domain\DTO\PermisosDTO;
 use App\Domain\Model\PermisosAdministradores;
 use App\Domain\DTO\PermisosAdministradoresDTO;
+use App\Domain\Model\Almacenes;
 
 class Mapper
 {
@@ -70,6 +72,25 @@ class Mapper
             $dto->id_permisos_administradores,
             $dto->id_permiso_permisos,
             $dto->id_administrador_permisos
+        );
+    }
+
+
+    public static function modelToAlmacenesDTO(Almacenes $model): AlmacenesDTO
+    {
+        return new AlmacenesDTO(
+            id_almacen: $model->id_almacen,
+            codigo_sap: $model->codigo_sap,
+            descripcion_almacen: $model->descripcion_almacen
+        );
+    }
+
+    public static function AlmacenesDTOToModel(AlmacenesDTO $dto): Almacenes
+    {
+        return new Almacenes(
+            $dto->id_almacen,
+            $dto->codigo_sap,
+            $dto->descripcion_almacen
         );
     }
 }
