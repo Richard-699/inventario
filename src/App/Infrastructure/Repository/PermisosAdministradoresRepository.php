@@ -8,10 +8,10 @@ use App\Infrastructure\Database\Connection;
 use PDO;
 
 class PermisosAdministradoresRepository implements IPermisosAdministradoresRepository{
-    private $db;
+    private PDO $db;
 
-    public function __construct() {
-        $this->db = (new Connection())->dbInventarioHwi;
+    public function __construct(PDO $db) {
+        $this->db = $db;
     }
 
     public function onGet_By__Id_Administrador(string $id_administrador): ?array {
@@ -32,6 +32,20 @@ class PermisosAdministradoresRepository implements IPermisosAdministradoresRepos
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->rowCount();
+    }
+
+    public function save(PermisosAdministradores $permisosAdministradores): bool
+    {
+        $data = $permisosAdministradores->toArray();
+        $columnas = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
+
+        $query = "INSERT INTO inventario_hwi_permisos_administradores ($columnas) VALUES ($placeholders)";
+        $stmt = $this->db->prepare($query);
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+        return $stmt->execute();
     }
 }
 

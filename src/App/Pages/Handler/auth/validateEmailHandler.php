@@ -19,11 +19,7 @@ try {
     $correo_hwi_administrador = $_POST['correo_hwi_administrador'] ?? '';
     $correo_hwi_administrador = $_POST['correo_hwi_administrador'] ?? '';
 
-    $loginService = new LoginService(
-        new AdministradoresRepository(),
-        new PermisosAdministradoresRepository(),
-        new PermisosRepository()
-    );
+    $loginService = new LoginService();
 
     $validar_email_registrado = $loginService->validar_email_registrado($correo_hwi_administrador);
 

@@ -3,43 +3,60 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\AdministradoresService;
 use App\Domain\DTO\AdministradoresDTO;
-use App\Domain\Model\PermisosAdministradores;
+use App\Domain\DTO\PermisosAdministradoresDTO;
 use App\Infrastructure\Repository\AdministradoresRepository;
 use App\Infrastructure\Repository\PermisosAdministradoresRepository;
 use App\Infrastructure\Repository\PermisosRepository;
 use App\Shared\Validation\Validator;
 
-function onPostEditarPermisosAdministradores(array $data): array {
-    $idUsuario = $data['id_usuario'] ?? null;
-    $nombre = $data['nombre'] ?? null;
-    $email = $data['email'] ?? null;
+function onPostAprobarAdministrador(array $data){
+    try {
+        $form = $data['form'] ?? [];
+        $idsPermisos = $form['permisos_administradores'] ?? [];
+        $listaPermisosDTO = [];
+        $estado_administrador = 1;
 
-    if (empty($idUsuario) || !is_numeric($idUsuario)) {
+        if (!is_array($idsPermisos)) {
+            $idsPermisos = [$idsPermisos];
+        }
+
+        foreach ($idsPermisos as $idPermiso) {
+            $dto = new PermisosAdministradoresDTO(null, (int)$idPermiso);
+            $listaPermisosDTO[] = $dto;
+        }
+
+        Validator::validateListaPermisos($listaPermisosDTO);
+
+        $administradoresService = new AdministradoresService();
+
+        $administradoresDTO = new AdministradoresDTO(
+            id_administrador: $form['id_administrador'],
+            cedula_administrador: null,
+            nombre_administrador: null,
+            apellidos_administrador: null,
+            correo_hwi_administrador: null,
+            password_administrador: null,
+            password_is_temporal: null,
+            estado_administrador: $estado_administrador,
+            permisosAdministradoresDTO: $listaPermisosDTO,
+            type: null
+        );
+
+        $aprobar_administrador = $administradoresService->aprobarAdministrador($administradoresDTO);
+
+        if (!$aprobar_administrador) {
+            throw new Exception("No se pudo aprobar el administrador.");
+        }
+
         return [
-            'status' => 'error',
-            'message' => 'ID de usuario válido es requerido para editar.'
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
         ];
     }
-
-    if (empty($nombre) && empty($email)) {
-        return [
-            'status' => 'error',
-            'message' => 'Se requiere al menos un campo (nombre o email) para editar.'
-        ];
-    }
-
-    if (!empty($email) && !filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        return [
-            'status' => 'error',
-            'message' => 'El email proporcionado no es válido.'
-        ];
-    }
-
-    return [
-        'status' => 'success',
-        'message' => "Usuario ID '{$idUsuario}' actualizado con éxito.",
-        'updated_fields' => array_filter(['nombre' => $nombre, 'email' => $email])
-    ];
 }
 
 function onPostDeleteAdministrador(array $data){
@@ -50,11 +67,7 @@ function onPostDeleteAdministrador(array $data){
             throw new Exception("Error al procesar el Id del administrador.");
         }
 
-        $administradoresService = new AdministradoresService(
-            new AdministradoresRepository(),
-            new PermisosAdministradoresRepository(),
-            new PermisosRepository()
-        );
+        $administradoresService = new AdministradoresService();
 
         $delete_administrador = $administradoresService->deleteAdministrador($id_administrador);
 
@@ -73,13 +86,58 @@ function onPostDeleteAdministrador(array $data){
     }
 }
 
+function onPostUpdatePermisosAdministrador(array $data){
+    try {
+        $form = $data['form'] ?? [];
+        $idsPermisos = $form['permisos_administradores'] ?? [];
+        $listaPermisosDTO = [];
+
+        if (!is_array($idsPermisos)) {
+            $idsPermisos = [$idsPermisos];
+        }
+
+        foreach ($idsPermisos as $idPermiso) {
+            $dto = new PermisosAdministradoresDTO(null, (int)$idPermiso);
+            $listaPermisosDTO[] = $dto;
+        }
+
+        Validator::validateListaPermisos($listaPermisosDTO);
+
+        $administradoresService = new AdministradoresService();
+
+        $administradoresDTO = new AdministradoresDTO(
+            id_administrador: $form['id_administrador'],
+            cedula_administrador: null,
+            nombre_administrador: null,
+            apellidos_administrador: null,
+            correo_hwi_administrador: null,
+            password_administrador: null,
+            password_is_temporal: null,
+            estado_administrador: null,
+            permisosAdministradoresDTO: $listaPermisosDTO,
+            type: null
+        );
+
+        $aprobar_administrador = $administradoresService->updatePermisosAdministrador($administradoresDTO);
+
+        if (!$aprobar_administrador) {
+            throw new Exception("No se pudo aprobar el administrador.");
+        }
+
+        return [
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 function onGetAdministradores() {
     try {
-        $administradoresService = new AdministradoresService(
-            new AdministradoresRepository(),
-            new PermisosAdministradoresRepository(),
-            new PermisosRepository()
-        );
+        $administradoresService = new AdministradoresService();
 
         $administradores = $administradoresService->onGetAdministradores();
 
@@ -96,13 +154,34 @@ function onGetAdministradores() {
     }
 }
 
+function onGetPermisosAdministrador(array $data): array {
+    try {
+        $id_administrador = $data['id'] ?? null;
+
+        if ($id_administrador === null) {
+            throw new Exception("Error al procesar el Id del administrador.");
+        }
+
+        $administradoresService = new AdministradoresService();
+
+        $permisos_administrador = $administradoresService->onGetPermisosAdministrador($id_administrador);
+
+        if ($permisos_administrador) {
+            return $permisos_administrador;
+        } else {
+            throw new Exception("No se encontraron permisos para este administrador.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 function onGetPermisos() {
     try {
-        $administradoresService = new AdministradoresService(
-            new AdministradoresRepository(),
-            new PermisosAdministradoresRepository(),
-            new PermisosRepository()
-        );
+        $administradoresService = new AdministradoresService();
 
         $permisos = $administradoresService->onGetPermisos();
 
@@ -133,8 +212,11 @@ try {
         $action = $data['action'] ?? null;
 
         switch ($action) {
-            case 'edit_administrador':
-                $response = onPostEditarPermisosAdministradores($data);
+            case 'approve':
+                $response = onPostAprobarAdministrador($data);
+                break;
+            case 'update':
+                $response = onPostUpdatePermisosAdministrador($data);
                 break;
             case 'delete_administrador':
                 $response = onPostDeleteAdministrador($data);
@@ -153,9 +235,9 @@ try {
             case 'onGet_permisos':
                 $response = onGetPermisos();
                 break;
-            /* case 'onGet_permisosAdministrador':
+            case 'onGet_permisosAdministrador':
                 $response = onGetPermisosAdministrador($_GET);
-                break; */
+                break;
             default:
                 throw new Exception("Acción no permitida.");
                 break;

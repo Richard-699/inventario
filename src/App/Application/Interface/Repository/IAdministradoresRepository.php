@@ -11,6 +11,7 @@ interface IAdministradoresRepository {
     public function save(Administradores $administradores): bool;
     public function update_password(Administradores $administradores): bool;
     public function delete(string $id);
+    public function updateStatusAdministrador($id, $id_estado): bool;
 }
 
 ?>

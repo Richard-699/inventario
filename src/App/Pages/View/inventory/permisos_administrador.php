@@ -39,7 +39,7 @@ if ($action == 'update') {
         <h5 class="mb-4"><i class="fas fa-users-gear"></i>
             <?= ($action == 'update') ? ' Editar Administrador' : ' Aprobar Administrador' ?>
         </h5>
-        <form id="formUpdateAdministrador" class="needs-validation" novalidate>
+        <form id="formUpdateAdministrador">
             <input type="hidden" name="action" id="action" value="<?= htmlspecialchars($action) ?>">
             <input type="hidden" name="id_administrador" id="id_administrador" value="<?= htmlspecialchars($id_administrador) ?>">
 
@@ -51,8 +51,8 @@ if ($action == 'update') {
                 <select id="permisos_administradores"
                     class="form-control shadow-sm rounded"
                     multiple
-                    name="permisos_administradores[]"
-                    required>
+                    name="permisos_administradores"
+                    multiple>
                     <?php foreach ($permisos as $p): ?>
                         <option value="<?= $p['id_permiso'] ?>"
                             <?= ($action !== 'approve' && in_array($p['id_permiso'], $idsPermisosSeleccionados)) ? 'selected' : '' ?>>

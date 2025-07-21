@@ -1,51 +1,40 @@
 $(document).ready(function() {
 
-    const permisosSelect = $('#permisos_administradores');
-
     document.getElementById('formUpdateAdministrador').addEventListener('submit', async function (e) {
         e.preventDefault();
         mostrarCarga();
-
-        const permisos = $('#permisos_administradores').val();
-        const celulas = $('#celulas_administradores').val();
-
-        if (!permisos || permisos.length === 0) {
-            notification('error', 'Debe seleccionar al menos un permiso', 2000);
-            setTimeout(() => {
-                ocultarCarga();
-            }, 2500); 
-            return;
-        }
-        if(validarCelulas){
-            if (!celulas || celulas.length === 0) {
-                notification('error', 'Debe seleccionar al menos una célula', 2000);
-                setTimeout(() => {
-                    ocultarCarga();
-                }, 2500); 
-                return;
-            }
-        }
     
         const form = document.getElementById('formUpdateAdministrador');
         const formData = new FormData(form);
 
-        if (celulas || celulas.length > 0) {
-            formData.append('tiene_celulas', true)
-        }
+        const formObj = {};
+        formData.forEach((value, key) => {
+            if (formObj[key] === undefined) {
+                formObj[key] = value; // Asignar valor directo
+            } else if (Array.isArray(formObj[key])) {
+                formObj[key].push(value);
+            } else {
+                formObj[key] = [formObj[key], value];
+            }
+        });
 
         const action = document.getElementById('action').value;
 
         try {
-            const response = await fetch('../../../public/router/router.php?action=updateAdministrador', {
+            const response = await fetch('../../Handler/inventory/administradoresHandler.php', {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    action: action,
+                    form: formObj
+                })
             });
 
             const resultado = await response.json();
 
             ocultarCarga();
 
-            if (resultado.estado === 'ok') {
+            if (resultado.success) {
                 if(action == 'approve'){
                     notification('success', 'Se aprobó el administrador.', 2000);
                 }else{
@@ -62,7 +51,7 @@ $(document).ready(function() {
                     location.reload();
                 }, 2000);
             } else {
-                notification('error', resultado.mensaje || 'Error en el servidor.', 4000);
+                notification('error', resultado.message, 4000);
             }
         } catch (error) {
             ocultarCarga();
