@@ -46,6 +46,26 @@ function onGetAlmacen_Id($id)
     }
 }
 
+function onGetLocalizacionesSelected(array $data)
+{
+    try {
+        $id_almacen = $data['id_almacen'] ?? null;
+        $almacenesService = new AlmacenesService();
+
+        $localizacionesSelected = $almacenesService->onGetAlmacenesLocalizaciones_By_id_almacen($id_almacen);
+
+        if ($localizacionesSelected) {
+            return $localizacionesSelected;
+        } else {
+            throw new Exception("No se encontraron localizaciones seleccionadas.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
 
 function onGetLocalizaciones()
 {
@@ -67,7 +87,8 @@ function onGetLocalizaciones()
     }
 }
 
-function onPostDeleteAlmacen(array $data){
+function onPostDeleteAlmacen(array $data)
+{
     try {
         $id_almacen = $data['id'] ?? null;
 
@@ -162,6 +183,9 @@ try {
                 break;
             case 'onGet_localizaciones':
                 $response = onGetLocalizaciones();
+                break;
+            case 'onGet_localizacionesSelected':
+                $response = onGetLocalizacionesSelected($data);
                 break;
             default:
                 throw new Exception("Acción no permitida.");

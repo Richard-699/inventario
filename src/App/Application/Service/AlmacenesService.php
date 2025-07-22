@@ -36,6 +36,13 @@ class AlmacenesService implements IAlmacenesService
         return $almacenesDTO;
     }
 
+    public function onGetAlmacenesLocalizaciones_By_id_almacen($id): array
+    {
+        $localizacionesSelected = $this->almacenesRepository->onGet();
+        return $localizacionesSelected;
+    }
+
+
     public function saveAlmacen(AlmacenesDTO $almacenesDTO): bool
     {
         $almacenes = Mapper::AlmacenesDTOToModel($almacenesDTO);

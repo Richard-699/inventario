@@ -62,7 +62,13 @@ async function updateAlmacen(btn, id) {
         const localizaciones = await responseLocalizaciones.json();
         const localizacionesEnconded = encodeURIComponent(JSON.stringify(localizaciones));
 
-        var url = `edit_almacenes.php?localizaciones=${localizacionesEnconded}&id_almacen=${id}`;
+        const responseLocalizacionesSelected = await fetch(`../../Handler/inventory/almacenesHandler.php?action=onGet_localizacionesSelected&id_almacen=${id}`, {
+            method: 'GET'
+        });
+        const localizacionesSelected = await responseLocalizacionesSelected.json();
+        const localizacionesSelectedEnconded = encodeURIComponent(JSON.stringify(localizacionesSelected));
+
+        var url = `edit_almacenes.php?localizaciones=${localizacionesEnconded}&localizacionesSelected=${localizacionesSelectedEnconded}&id_almacen=${id}`;
 
         Fancybox.show([{
             src: url,
