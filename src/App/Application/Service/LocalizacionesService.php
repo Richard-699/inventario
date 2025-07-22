@@ -2,8 +2,6 @@
 
 namespace App\Application\Service;
 
-var_dump(class_exists(\App\Infrastructure\Repository\TipoLocalizacionesRepository::class));
-
 use App\Application\Interface\Service\ILocalizacionesService;
 use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\TipoLocalizacionesRepository;
@@ -29,9 +27,9 @@ class LocalizacionesService implements ILocalizacionesService
     public function onGetLocalizaciones(): array
     {
         $localizaciones = $this->localizacionesRepository->onGet();
-        /* $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet(); */
+        $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet();
 
-        /* // Agregar los tipos a cada localización
+        // Agregar los tipos a cada localización
         foreach ($localizaciones as $localizacion) {
             $id = $localizacion->id_tipo_localizacion_localizaciones ?? null;
             foreach ($tiposLocalizaciones as $tipo) {
@@ -39,7 +37,8 @@ class LocalizacionesService implements ILocalizacionesService
                     $localizacion->tipo_localizacion = $tipo->descripcion_tipo_localizacion;
                 }
             }
-        } */
+        }
+        
         return $localizaciones;
     }
 }
