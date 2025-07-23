@@ -5,6 +5,7 @@ namespace App\Shared\Validation;
 use Exception;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\DTO\LocalizacionesDTO;
 
 class Validator
 {
@@ -16,6 +17,9 @@ class Validator
                 break;
             case $dto instanceof AlmacenesDTO:
                 self::validateAlmacenesDTO($dto);
+                break;
+            case $dto instanceof LocalizacionesDTO:
+                self::validateLocalizacionesDTO($dto);
                 break;
             default:
                 throw new Exception('No hay reglas de validación definidas para este DTO.');
@@ -62,6 +66,16 @@ class Validator
             throw new Exception('El código SAP es obligatorio.');
         }
         if (empty($dto->descripcion_almacen)) {
+            throw new Exception('La descripcion es obligatoria.');
+        }
+    }
+
+    public static function validateLocalizacionesDTO(LocalizacionesDTO $dto): void
+    {
+        if (empty($dto->id_tipo_localizacion_localizaciones)) {
+            throw new Exception('El tipo es obligatorio.');
+        }
+        if (empty($dto->descripcion_localizacion)) {
             throw new Exception('La descripcion es obligatoria.');
         }
     }
