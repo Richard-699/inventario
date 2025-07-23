@@ -13,6 +13,10 @@ function Localizaciones() {
     window.location.href = "localizaciones.php";
 }
 
+function Grupos() {
+    mostrarCarga();
+    window.location.href = "grupos.php";
+  
 function PartNumbers() {
     mostrarCarga();
     window.location.href = "partnumbers.php";

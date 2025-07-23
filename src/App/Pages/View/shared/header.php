@@ -40,6 +40,8 @@ if (isset($_SESSION['administrador'])) {
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="Localizaciones();"><i class="fa-solid fa-location-dot"></i> Localizaciones</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
+                         echo '<a class="hov" href="javascript:void(0);" onclick="Grupos();"><i class="fa-solid fa-layer-group"></i> Grupos</a>';
+                        echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="PartNumbers();"><i class="fa-solid fa-dolly"></i> Part Numbers</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="Cronograma();"><i class="fa-solid fa-calendar-check"></i> Cronograma</a>';
