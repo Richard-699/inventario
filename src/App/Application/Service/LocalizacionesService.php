@@ -46,7 +46,6 @@ class LocalizacionesService implements ILocalizacionesService
         return $localizaciones;
     }
 
-
     public function onGetTipoLocalizaciones(): array
     {
         $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet();
