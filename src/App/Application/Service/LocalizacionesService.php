@@ -4,6 +4,7 @@ namespace App\Application\Service;
 
 use App\Application\Interface\Service\ILocalizacionesService;
 use App\Infrastructure\Repository\LocalizacionesRepository;
+use App\Infrastructure\Repository\AlmacenesLocalizacionesRepository;
 use App\Infrastructure\Repository\TipoLocalizacionesRepository;
 use Exception;
 use App\Shared\Mapper\Mapper;
@@ -15,6 +16,7 @@ class LocalizacionesService implements ILocalizacionesService
     private $db;
     private $localizacionesRepository;
     private $tipoLocalizacionesRepository;
+    private $AlmacenesLocalizacionesRepository;
 
     public function __construct()
     {
@@ -22,13 +24,13 @@ class LocalizacionesService implements ILocalizacionesService
 
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
         $this->tipoLocalizacionesRepository = new TipoLocalizacionesRepository($this->db);
+        $this->AlmacenesLocalizacionesRepository = new AlmacenesLocalizacionesRepository($this->db);
     }
 
     public function onGetLocalizaciones(): array
     {
         $localizaciones = $this->localizacionesRepository->onGet();
         $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet();
-
         // Agregar los tipos a cada localización
         foreach ($localizaciones as $localizacion) {
             $id = $localizacion->id_tipo_localizacion_localizaciones ?? null;
@@ -38,7 +40,14 @@ class LocalizacionesService implements ILocalizacionesService
                 }
             }
         }
-        
+
         return $localizaciones;
+    }
+
+
+    public function onGetAlmacenesLocalizaciones(): array
+    {
+        $AlmacenesLocalizaciones = $this->AlmacenesLocalizacionesRepository->onGet();
+        return $AlmacenesLocalizaciones;
     }
 }

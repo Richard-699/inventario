@@ -20,11 +20,11 @@
             <h5 class="mb-4"><i class="fa-solid fa-warehouse me-2 fs-4"></i>Nuevo Almacén</h5>
             <form id="formAgregarAlmacen">
                 <div class="mb-3">
-                    <label for="codigo_sap" class="form-label">Código SAP</label>
+                    <label for="codigo_sap" class="form-label">Código SAP: *</label>
                     <input type="text" class="form-control" id="codigo_sap" name="codigo_sap">
                 </div>
                 <div class="mb-3">
-                    <label for="descripcion" class="form-label">Descripción</label>
+                    <label for="descripcion" class="form-label">Descripción: *</label>
                     <input type="text" class="form-control" id="descripcion_almacen" name="descripcion_almacen">
                 </div>
 

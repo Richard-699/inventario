@@ -10,6 +10,8 @@ use App\Domain\DTO\PermisosDTO;
 use App\Domain\Model\PermisosAdministradores;
 use App\Domain\DTO\PermisosAdministradoresDTO;
 use App\Domain\Model\Almacenes;
+use App\Domain\Model\AlmacenesLocalizaciones;
+use App\Domain\DTO\AlmacenesLocalizacionesDTO;
 
 class Mapper
 {
@@ -91,6 +93,24 @@ class Mapper
             $dto->id_almacen,
             $dto->codigo_sap,
             $dto->descripcion_almacen
+        );
+    }
+
+     public static function modelToAlmacenesLocalizacionesDTO(AlmacenesLocalizaciones $model): AlmacenesLocalizacionesDTO
+    {
+        return new AlmacenesLocalizacionesDTO(
+            id_localizaciones_almacenes: $model->id_localizaciones_almacenes,
+            id_almacen: $model->id_almacen,
+            id_localizacion_localizaciones: $model->id_localizacion_localizaciones
+        );
+    }
+
+    public static function AlmacenesLocalizacionesDTOToModel(AlmacenesLocalizacionesDTO $dto): AlmacenesLocalizaciones
+    {
+        return new AlmacenesLocalizaciones(
+            $dto->id_localizaciones_almacenes,
+            $dto->id_almacen,
+            $dto->id_localizacion_localizaciones
         );
     }
 }
