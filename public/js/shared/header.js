@@ -13,6 +13,10 @@ function Localizaciones() {
     window.location.href = "localizaciones.php";
 }
 
+function PartNumbers() {
+    mostrarCarga();
+    window.location.href = "partnumbers.php";
+}
 
 function GestionarAdministradores() {
     mostrarCarga();
