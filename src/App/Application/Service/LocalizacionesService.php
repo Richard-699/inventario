@@ -28,7 +28,8 @@ class LocalizacionesService implements ILocalizacionesService
         $this->AlmacenesLocalizacionesRepository = new AlmacenesLocalizacionesRepository($this->db);
     }
 
-    public function onGetLocalizaciones(): array{
+    public function onGetLocalizaciones(): array
+    {
         $localizaciones = $this->localizacionesRepository->onGet();
         $tiposLocalizaciones = $this->onGetTipoLocalizaciones();
 
@@ -59,7 +60,8 @@ class LocalizacionesService implements ILocalizacionesService
         return $localizacionDTO;
     }
 
-    public function deleteLocalizacion($id): bool{
+    public function deleteLocalizacion($id): bool
+    {
         $delete_localizacion = $this->localizacionesRepository->delete($id);
         if ($delete_localizacion === 0) {
             return false;
@@ -92,8 +94,6 @@ class LocalizacionesService implements ILocalizacionesService
             return true;
         }
     }
-}
-
 
     public function onGetAlmacenesLocalizaciones(): array
     {
@@ -101,4 +101,3 @@ class LocalizacionesService implements ILocalizacionesService
         return $AlmacenesLocalizaciones;
     }
 }
-
