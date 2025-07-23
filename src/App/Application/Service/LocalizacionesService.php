@@ -5,6 +5,7 @@ namespace App\Application\Service;
 use App\Application\Interface\Service\ILocalizacionesService;
 use App\Domain\DTO\LocalizacionesDTO;
 use App\Infrastructure\Repository\LocalizacionesRepository;
+use App\Infrastructure\Repository\AlmacenesLocalizacionesRepository;
 use App\Infrastructure\Repository\TipoLocalizacionesRepository;
 use Exception;
 use App\Shared\Mapper\Mapper;
@@ -16,6 +17,7 @@ class LocalizacionesService implements ILocalizacionesService
     private $db;
     private $localizacionesRepository;
     private $tipoLocalizacionesRepository;
+    private $AlmacenesLocalizacionesRepository;
 
     public function __construct()
     {
@@ -23,6 +25,7 @@ class LocalizacionesService implements ILocalizacionesService
 
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
         $this->tipoLocalizacionesRepository = new TipoLocalizacionesRepository($this->db);
+        $this->AlmacenesLocalizacionesRepository = new AlmacenesLocalizacionesRepository($this->db);
     }
 
     public function onGetLocalizaciones(): array{
@@ -38,9 +41,10 @@ class LocalizacionesService implements ILocalizacionesService
                 }
             }
         }
-        
+
         return $localizaciones;
     }
+
 
     public function onGetTipoLocalizaciones(): array
     {
@@ -89,3 +93,12 @@ class LocalizacionesService implements ILocalizacionesService
         }
     }
 }
+
+
+    public function onGetAlmacenesLocalizaciones(): array
+    {
+        $AlmacenesLocalizaciones = $this->AlmacenesLocalizacionesRepository->onGet();
+        return $AlmacenesLocalizaciones;
+    }
+}
+

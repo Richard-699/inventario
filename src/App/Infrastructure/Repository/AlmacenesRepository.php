@@ -24,7 +24,7 @@ class AlmacenesRepository implements IAlmacenesRepository
         return array_map([Almacenes::class, 'fromArray'], $rows);
     }
 
-        public function onGet_By__Id($id): ?Almacenes
+    public function onGet_By__Id($id): ?Almacenes
     {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_almacenes WHERE id_almacen = ?");
         $stmt->execute([$id]);
@@ -55,5 +55,33 @@ class AlmacenesRepository implements IAlmacenesRepository
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         return $stmt->rowCount();
+    }
+
+    public function update(Almacenes $almacenModel): bool
+    {
+        $dataToUpdate = $almacenModel->toArray();
+        $idAlmacen = $dataToUpdate['id_almacen'] ?? null;
+
+        $setClauses = [];
+        foreach ($dataToUpdate as $column => $value) {
+            $setClauses[] = "$column = :$column";
+        }
+        $setSql = implode(', ', $setClauses);
+        $query = "UPDATE inventario_hwi_almacenes
+                  SET " . $setSql . "
+                  WHERE id_almacen = :id_almacen";
+
+        // 4. Preparar la sentencia
+        $stmt = $this->db->prepare($query);
+
+        // 5. Vincular los parámetros usando foreach y bindValue
+        foreach ($dataToUpdate as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+        // Vincular el parámetro para la cláusula WHERE
+        $stmt->bindValue(':id_almacen', $idAlmacen);
+
+        // 6. Ejecutar la sentencia
+        return $stmt->execute();
     }
 }

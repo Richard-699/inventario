@@ -56,19 +56,55 @@ async function updateAlmacen(btn, id) {
     btn.disabled = true;
 
     try {
+        // 1. Obtener todas las localizaciones
         const responseLocalizaciones = await fetch('../../Handler/inventory/almacenesHandler.php?action=onGet_localizaciones', {
             method: 'GET'
         });
         const localizaciones = await responseLocalizaciones.json();
-        const localizacionesEnconded = encodeURIComponent(JSON.stringify(localizaciones));
 
+        // 2. Obtener todas las localizaciones ya asignadas a almacenes
+        const responseAlmacenesLocalizaciones = await fetch(`../../Handler/inventory/almacenesHandler.php?action=onGet_AlmacenesLocalizaciones`, {
+            method: 'GET'
+        });
+        let AlmacenesLocalizaciones = await responseAlmacenesLocalizaciones.json();
+
+        // 3. Validar que sea un array, si no lo es, lo inicializamos como vacío
+        if (!Array.isArray(AlmacenesLocalizaciones)) {
+            AlmacenesLocalizaciones = [];
+        }
+
+        // 4. Obtener los IDs de localizaciones ocupadas en otros almacenes (≠ almacén actual)
+        let idsOcupados = new Set();
+        if (AlmacenesLocalizaciones.length > 0) {
+            idsOcupados = new Set(
+                AlmacenesLocalizaciones
+                    .filter(item => String(item.id_almacen) !== String(id)) // solo otros almacenes
+                    .map(item => item.id_localizacion_localizaciones)
+            );
+        }
+
+        // 5. Filtrar localizaciones disponibles (las que no están en otros almacenes)
+        const localizacionesFiltradas = localizaciones.filter(
+            loc => !idsOcupados.has(loc.id_localizacion)
+        );
+
+        const localizacionesEnconded = encodeURIComponent(JSON.stringify(localizacionesFiltradas));
+
+        // 6. Obtener las localizaciones ya asignadas al almacén actual
         const responseLocalizacionesSelected = await fetch(`../../Handler/inventory/almacenesHandler.php?action=onGet_localizacionesSelected&id_almacen=${id}`, {
             method: 'GET'
         });
         const localizacionesSelected = await responseLocalizacionesSelected.json();
         const localizacionesSelectedEnconded = encodeURIComponent(JSON.stringify(localizacionesSelected));
 
-        var url = `edit_almacenes.php?localizaciones=${localizacionesEnconded}&localizacionesSelected=${localizacionesSelectedEnconded}&id_almacen=${id}`;
+        // 7. Obtener datos del almacén actual
+        const responseAlmacen = await fetch(`../../Handler/inventory/almacenesHandler.php?action=onGet_almacenes_By_Id&id_almacen=${id}`, {
+            method: 'GET'
+        });
+        const Almacen = await responseAlmacen.json();
+        const AlmacenEnconded = encodeURIComponent(JSON.stringify(Almacen));
+
+        var url = `edit_almacenes.php?localizaciones=${localizacionesEnconded}&localizacionesSelected=${localizacionesSelectedEnconded}&Almacen=${AlmacenEnconded}&id_almacen=${id}`;
 
         Fancybox.show([{
             src: url,
@@ -84,7 +120,7 @@ async function updateAlmacen(btn, id) {
                     removeItemButton: true,
                     searchEnabled: true,
                     placeholder: true,
-                    placeholderValue: 'Selecciona uno o localizaciones',
+                    placeholderValue: 'Selecciona una o más localizaciones',
                     searchPlaceholderValue: 'Buscar localizaciones...',
                     shouldSort: false
                 });

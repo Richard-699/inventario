@@ -5,6 +5,8 @@ use App\Application\Service\AlmacenesService;
 use App\Application\Service\LocalizacionesService;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\DTO\AlmacenesLocalizacionesDTO;
+use App\Domain\DTO\LocalizacionesDTO;
 
 function onGetAlmacenes()
 {
@@ -26,7 +28,7 @@ function onGetAlmacenes()
     }
 }
 
-function onGetAlmacen_Id($id)
+function onGetAlmacenes_By_Id($id)
 {
     try {
         $almacenesService = new AlmacenesService();
@@ -36,7 +38,7 @@ function onGetAlmacen_Id($id)
         if ($almacenes) {
             return $almacenes;
         } else {
-            throw new Exception("No se encontraron almacenes.");
+            throw new Exception("No se encontró el almacén.");
         }
     } catch (Exception $e) {
         return [
@@ -46,13 +48,13 @@ function onGetAlmacen_Id($id)
     }
 }
 
-function onGetLocalizacionesSelected(array $data)
+function onGetLocalizacionesSelected($id)
 {
     try {
-        $id_almacen = $data['id_almacen'] ?? null;
+        /* $id_almacen = $data['id_almacen'] ?? null; */
         $almacenesService = new AlmacenesService();
 
-        $localizacionesSelected = $almacenesService->onGetAlmacenesLocalizaciones_By_id_almacen($id_almacen);
+        $localizacionesSelected = $almacenesService->onGetAlmacenesLocalizaciones_By_id_almacen($id);
 
         if ($localizacionesSelected) {
             return $localizacionesSelected;
@@ -78,6 +80,26 @@ function onGetLocalizaciones()
             return $localizaciones;
         } else {
             throw new Exception("No se encontraron localizaciones.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+function onGetAlmacenesLocalizaciones()
+{
+    try {
+        $localizacionesService = new LocalizacionesService();
+
+        $Almaceneslocalizaciones = $localizacionesService->onGetAlmacenesLocalizaciones();
+
+        if ($Almaceneslocalizaciones) {
+            return $Almaceneslocalizaciones;
+        } else {
+            throw new Exception("No se encontraron resultados entre localizaciones y almacenes.");
         }
     } catch (Exception $e) {
         return [
@@ -150,6 +172,60 @@ function onPostSaveAlmacenes(array $data)
 }
 
 
+function onPostUpdateAlmacen(array $data)
+{
+    try {
+        $form = $data['form'] ?? [];
+        $idsLocalizaciones = $form['localizaciones'] ?? [];
+        $listaLocalizacionesDTO = [];
+        $idAlmacen = $form['id_almacen'] ?? null;
+
+        if (!is_array($idsLocalizaciones)) {
+            $idsLocalizaciones = [$idsLocalizaciones];
+        }
+
+        foreach ($idsLocalizaciones as $idLocalizacion) {
+            $dto = new AlmacenesLocalizacionesDTO(
+                null,
+                (int)$idAlmacen,
+                (int)$idLocalizacion
+            );
+            $listaLocalizacionesDTO[] = $dto;
+        }
+
+        
+
+        $almacenesService = new AlmacenesService();
+
+        $codigo_sap = isset($form['codigo_sap']) ? strtoupper($form['codigo_sap']) : null;
+        $descripcion = isset($form['descripcion_almacen']) ? strtoupper($form['descripcion_almacen']) : null;
+        $almacenesDTO = new AlmacenesDTO(
+            id_almacen: $form['id_almacen'],
+            codigo_sap: $codigo_sap,
+            descripcion_almacen: $descripcion,
+            localizacionesAlmacenDTO: $listaLocalizacionesDTO,
+        );
+
+        Validator::validateAlmacenesDTO($almacenesDTO);
+
+        $aprobar_administrador = $almacenesService->updateLocalizacionesAlmacen($almacenesDTO);
+
+        if (!$aprobar_administrador) {
+            throw new Exception("No se pudo actualizar el almacén.");
+        }
+
+        return [
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 try {
@@ -170,22 +246,32 @@ try {
             case 'delete_almacenes':
                 $response = onPostDeleteAlmacen($data);
                 break;
+            case 'updateAlmacen':
+                $response = onPostUpdateAlmacen($data);
+                break;
             default:
                 throw new Exception("Acción no permitida.");
                 break;
         }
     } elseif ($requestMethod === 'GET') {
         $action = $_GET['action'] ?? null;
+        $id_almacen = $_GET['id_almacen'] ?? null;
 
         switch ($action) {
             case 'onGet_almacenes':
                 $response = onGetAlmacenes();
                 break;
+            case 'onGet_almacenes_By_Id':
+                $response = onGetAlmacenes_By_Id($id_almacen);
+                break;
             case 'onGet_localizaciones':
                 $response = onGetLocalizaciones();
                 break;
+            case 'onGet_AlmacenesLocalizaciones':
+                $response = onGetAlmacenesLocalizaciones();
+                break;
             case 'onGet_localizacionesSelected':
-                $response = onGetLocalizacionesSelected($data);
+                $response = onGetLocalizacionesSelected($id_almacen);
                 break;
             default:
                 throw new Exception("Acción no permitida.");

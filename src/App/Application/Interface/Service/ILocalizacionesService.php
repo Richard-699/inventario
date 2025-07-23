@@ -11,6 +11,7 @@ interface ILocalizacionesService {
     public function deleteLocalizacion($id): bool;
     public function saveLocalizacion(LocalizacionesDTO $localizacionesDTO): bool;
     public function updateLocalizacion(LocalizacionesDTO $localizacionesDTO): bool;
+    public function onGetAlmacenesLocalizaciones(): array;
 }
 
 ?>

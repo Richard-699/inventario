@@ -59,6 +59,7 @@ class Validator
         }
     }
 
+
     public static function validateAlmacenesDTO(AlmacenesDTO $dto): void
     {
         if (empty($dto->codigo_sap)) {
