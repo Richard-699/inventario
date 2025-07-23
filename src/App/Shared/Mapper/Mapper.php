@@ -113,7 +113,9 @@ class Mapper
             $dto->id_localizacion,
             $dto->id_tipo_localizacion_localizaciones,
             $dto->descripcion_localizacion
-
+        );
+    }
+    
      public static function modelToAlmacenesLocalizacionesDTO(AlmacenesLocalizaciones $model): AlmacenesLocalizacionesDTO
     {
         return new AlmacenesLocalizacionesDTO(
