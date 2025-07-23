@@ -70,7 +70,6 @@ $idsLocalizacionesSeleccionadas = [];
     <script src="../../../../../public/js/utils/libs/select2.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/utils/notifications.js"></script>
-    <script src="../../../../../public/js/inventory/permisos_administrador.js"></script>
 </body>
 
 </html>

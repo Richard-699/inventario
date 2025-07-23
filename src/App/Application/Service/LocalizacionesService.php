@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Interface\Service\ILocalizacionesService;
+use App\Domain\DTO\LocalizacionesDTO;
 use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\TipoLocalizacionesRepository;
 use Exception;
@@ -24,10 +25,9 @@ class LocalizacionesService implements ILocalizacionesService
         $this->tipoLocalizacionesRepository = new TipoLocalizacionesRepository($this->db);
     }
 
-    public function onGetLocalizaciones(): array
-    {
+    public function onGetLocalizaciones(): array{
         $localizaciones = $this->localizacionesRepository->onGet();
-        $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet();
+        $tiposLocalizaciones = $this->onGetTipoLocalizaciones();
 
         // Agregar los tipos a cada localización
         foreach ($localizaciones as $localizacion) {
@@ -40,5 +40,52 @@ class LocalizacionesService implements ILocalizacionesService
         }
         
         return $localizaciones;
+    }
+
+    public function onGetTipoLocalizaciones(): array
+    {
+        $tiposLocalizaciones = $this->tipoLocalizacionesRepository->onGet();
+        return $tiposLocalizaciones;
+    }
+
+    public function onGetLocalizacion_By__Id($id): LocalizacionesDTO
+    {
+        $localizacion = $this->localizacionesRepository->onGet_By__Id($id);
+        $localizacionDTO = Mapper::modelToLocalizacionesDTO($localizacion);
+        return $localizacionDTO;
+    }
+
+    public function deleteLocalizacion($id): bool{
+        $delete_localizacion = $this->localizacionesRepository->delete($id);
+        if ($delete_localizacion === 0) {
+            return false;
+        } else {
+            return true;
+        }
+        return true;
+    }
+
+    public function saveLocalizacion(LocalizacionesDTO $localizacionesDTO): bool
+    {
+        $localizaciones = Mapper::LocalizacionesDTOToModel($localizacionesDTO);
+        $guardarLocalizacion = $this->localizacionesRepository->save($localizaciones);
+
+        if (!$guardarLocalizacion) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function updateLocalizacion(LocalizacionesDTO $localizacionesDTO): bool
+    {
+        $localizaciones = Mapper::LocalizacionesDTOToModel($localizacionesDTO);
+        $guardarLocalizacion = $this->localizacionesRepository->update($localizaciones);
+
+        if (!$guardarLocalizacion) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

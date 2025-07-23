@@ -5,11 +5,13 @@ namespace App\Shared\Mapper;
 use App\Domain\Model\Administradores;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\DTO\LocalizacionesDTO;
 use App\Domain\Model\Permisos;
 use App\Domain\DTO\PermisosDTO;
 use App\Domain\Model\PermisosAdministradores;
 use App\Domain\DTO\PermisosAdministradoresDTO;
 use App\Domain\Model\Almacenes;
+use App\Domain\Model\Localizaciones;
 
 class Mapper
 {
@@ -91,6 +93,24 @@ class Mapper
             $dto->id_almacen,
             $dto->codigo_sap,
             $dto->descripcion_almacen
+        );
+    }
+
+    public static function modelToLocalizacionesDTO(Localizaciones $model): LocalizacionesDTO
+    {
+        return new LocalizacionesDTO(
+            id_localizacion: $model->id_localizacion,
+            id_tipo_localizacion_localizaciones: $model->id_tipo_localizacion_localizaciones,
+            descripcion_localizacion: $model->descripcion_localizacion
+        );
+    }
+
+    public static function LocalizacionesDTOToModel(LocalizacionesDTO $dto): Localizaciones
+    {
+        return new Localizaciones(
+            $dto->id_localizacion,
+            $dto->id_tipo_localizacion_localizaciones,
+            $dto->descripcion_localizacion
         );
     }
 }

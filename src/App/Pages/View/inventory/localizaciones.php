@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Almacenes</title>
+    <title>Localizaciones</title>
     <link rel="shortcut icon" href="../../../../../public/img/LogoBlanco.png" type="image/x-icon">
 
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
@@ -22,7 +22,7 @@
         <div class="table-container table-responsive">
             <div class="d-flex align-items-center justify-content-between mb-4 border-bottom pb-2">
                 <div class="d-flex align-items-center">
-                    <i class="fa-solid fa-warehouse me-2 fs-4"></i>
+                    <i class="fa-solid fa-location-dot me-2 fs-4"></i>
                     <h5 class="m-0 fw-semibold text-dark">Localizaciones</h5>
                 </div>
                 <button class="btn btn-primary btn-sm" id="btnAgregarLocalizacion">
