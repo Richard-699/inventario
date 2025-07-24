@@ -7,6 +7,7 @@ use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\LocalizacionesDTO;
+use App\Domain\DTO\PartNumbersDTO;
 
 class Validator
 {
@@ -22,6 +23,9 @@ class Validator
             case $dto instanceof LocalizacionesDTO:
                 self::validateLocalizacionesDTO($dto);
                 break;
+            case $dto instanceof PartNumbersDTO:
+                self::validatePartnumberDTO($dto);
+            break;
             default:
                 throw new Exception('No hay reglas de validación definidas para este DTO.');
         }
@@ -85,6 +89,25 @@ class Validator
         }
         if (empty($dto->descripcion_localizacion)) {
             throw new Exception('La descripcion es obligatoria.');
+        }
+    }
+
+    public static function validatePartnumberDTO(PartNumbersDTO $dto): void
+    {
+        if (empty($dto->partnumber)) {
+            throw new Exception('El partnumber es obligatorio.');
+        }
+        if (empty($dto->descripcion_breve)) {
+            throw new Exception('El Texto breve de material SAP es obligatorio.');
+        }
+        if (empty($dto->id_umb_partnumber)) {
+            throw new Exception('La UMB es obligatoria.');
+        }
+        if (empty($dto->nombre_interno)) {
+            throw new Exception('El nombre interno es obligatorio.');
+        }
+        if (empty($dto->id_plataforma_partnumber)) {
+            throw new Exception('La plataforma es obligatoria.');
         }
     }
 }

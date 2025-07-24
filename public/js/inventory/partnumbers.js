@@ -28,10 +28,10 @@ $(document).ready(function () {
                 "className": "dt-center",
                 "render": function (data, type, row) {
                     return `
-                            <button class="btn btn-primary btn-sm" onclick="updateLocalizacion(this, '${data}')">
+                            <button class="btn btn-primary btn-sm" onclick="updatePartNumber(this, '${data}')">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteLocalizacion(this, '${data}')">
+                            <button class="btn btn-danger btn-sm" onclick="deletePartNumber(this, '${data}')">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         `;
@@ -89,10 +89,10 @@ $(document).ready(function () {
     });
 });
 
-async function deleteLocalizacion(btn, id) {
+async function deletePartNumber(btn, id) {
     const confirmado = await mostrarConfirmacion({
-        titulo: '¿Deseas eliminar esta localización?',
-        texto: 'Una vez eliminada, no se podrá revertir',
+        titulo: '¿Deseas eliminar este partnumber?',
+        texto: 'Una vez eliminado, no se podrá revertir',
         icono: 'warning',
         textoConfirmar: 'Sí, eliminar',
         textoCancelar: 'Cancelar'
@@ -103,11 +103,11 @@ async function deleteLocalizacion(btn, id) {
     mostrarCarga();
     btn.disabled = true;
     try {
-        const response = await fetch('../../Handler/inventory/localizacionesHandler.php', {
+        const response = await fetch('../../Handler/inventory/partnumbersHandler.php', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                action: 'delete_localizacion',
+                action: 'delete_partnumber',
                 id: id
             })
         });
@@ -116,13 +116,13 @@ async function deleteLocalizacion(btn, id) {
         ocultarCarga();
 
         if (data.success) {
-            notification('success', 'Se eliminó la localización.', 2000);
+            notification('success', 'Se eliminó el partnumber.', 2000);
             setTimeout(() => {
                 window.location.reload();
             }, 2000);
         } else {
             btn.disabled = false;
-            notification('error', 'Falló al eliminar la localización, intenta nuevamente.', 2000);
+            notification('error', 'Falló al eliminar el partnumber, intenta nuevamente.', 2000);
         }
     } catch (error) {
         ocultarCarga();
@@ -131,24 +131,30 @@ async function deleteLocalizacion(btn, id) {
     }
 }
 
-async function updateLocalizacion(btn, id) {
+async function updatePartNumber(btn, id) {
     mostrarCarga();
     btn.disabled = true;
 
     try {
-        const responseTipo_Localizaciones = await fetch('../../Handler/inventory/localizacionesHandler.php?action=onGet_tipoLocalizaciones', {
+        const responseUMBS = await fetch('../../Handler/inventory/partnumbersHandler.php?action=onGet_UMBS', {
+                method: 'GET'
+            });
+        const umbs = await responseUMBS.json();
+        const umbsEncoded = encodeURIComponent(JSON.stringify(umbs));
+
+        const responsePlataformas = await fetch('../../Handler/inventory/partnumbersHandler.php?action=onGet_Plataformas', {
             method: 'GET'
         });
-        const tipo_Localizaciones = await responseTipo_Localizaciones.json();
-        const tipoLocalizacionesEncoded = encodeURIComponent(JSON.stringify(tipo_Localizaciones));
+        const plataformas = await responsePlataformas.json();
+        const plataformasEncoded = encodeURIComponent(JSON.stringify(plataformas));
 
-        const responseLocalizacionSelected = await fetch(`../../Handler/inventory/localizacionesHandler.php?action=onGet_localizacionSelected&id=${id}`, {
+        const responsePartnumberSelected = await fetch(`../../Handler/inventory/partnumbersHandler.php?action=onGet_partnumberSelected&id=${id}`, {
             method: 'GET'
         });
-        const localizacionSelected = await responseLocalizacionSelected.json();
-        const localizacionSelectedEnconded = encodeURIComponent(JSON.stringify(localizacionSelected));
+        const partnumberSelected = await responsePartnumberSelected.json();
+        const partnumberSelectedEnconded = encodeURIComponent(JSON.stringify(partnumberSelected));
 
-        var url = `edit_localizaciones.php?tipo_localizaciones=${tipoLocalizacionesEncoded}&localizacionSelected=${localizacionSelectedEnconded}&id=${id}`;
+        var url = `edit_partnumbers.php?umbs=${umbsEncoded}&plataformas=${plataformasEncoded}&partnumberSelected=${partnumberSelectedEnconded}&id=${id}`;
 
         Fancybox.show([{
             src: url,
