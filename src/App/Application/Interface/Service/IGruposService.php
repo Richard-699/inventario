@@ -7,6 +7,7 @@ use App\Domain\Model\Grupos;
 
 interface IGruposService {
     public function onGetGrupos(): array;
+    public function saveGrupo(gruposDTO $gruposDTO): bool;
+    public function deleteGrupo($id): bool;
 }
-
 ?>

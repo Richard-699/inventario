@@ -4,6 +4,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 use App\Application\Service\GruposService;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\DTO\GruposDTO;
 
 function onGetGrupos()
 {
@@ -25,6 +26,65 @@ function onGetGrupos()
     }
 }
 
+function onPostSaveGrupo(array $data)
+{
+    try {
+        $form = $data['form'] ?? [];
+        // Normalizar valores a MAYÚSCULA (sin tildes ni cambios de idioma)
+        $descripcion = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
+
+        $gruposDTO = new GruposDTO(
+            id_grupo: null,
+            descripcion_grupo: $descripcion ?? null
+        );
+        Validator::validateGruposDTO($gruposDTO);
+
+        $gruposService = new GruposService();
+
+        $guardarGrupo = $gruposService->saveGrupo($gruposDTO);
+
+        if (!$guardarGrupo) {
+            throw new Exception("No se pudo guardar el grupo");
+        }
+
+        return [
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+function onPostDeleteGrupo(array $data)
+{
+    try {
+        $id_grupo = $data['id'] ?? null;
+
+        if ($id_grupo === null) {
+            throw new Exception("Error al procesar el Id del grupo.");
+        }
+
+        $gruposService = new GruposService();
+
+        $delete_grupos = $gruposService->deleteGrupo($id_grupo);
+
+        if (!$delete_grupos) {
+            throw new Exception("No se pudo eliminar el grupo.");
+        }
+
+        return [
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
 
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
@@ -40,8 +100,11 @@ try {
         $action = $data['action'] ?? null;
 
         switch ($action) {
-            case 'guardar_almacen':
-                $response = onPostSaveAlmacenes($data);
+            case 'guardar_grupo':
+                $response = onPostSaveGrupo($data);
+                break;
+            case 'delete_grupo':
+                $response = onPostDeleteGrupo($data);
                 break;
             default:
                 throw new Exception("Acción no permitida.");

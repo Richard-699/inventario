@@ -24,7 +24,29 @@ class GruposService implements IGruposService
 
     public function onGetGrupos(): array
     {
-        $almacenes = $this->gruposRepository->onGet();
-        return $almacenes;
+        $grupos = $this->gruposRepository->onGet();
+        return $grupos;
+    }
+
+    public function saveGrupo(gruposDTO $gruposDTO): bool
+    {
+        $grupos = Mapper::GruposDTOToModel($gruposDTO);
+        $guardarGrupo = $this->gruposRepository->save($grupos);
+
+        if (!$guardarGrupo) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public function deleteGrupo($id): bool
+    {
+        $delete_grupo = $this->gruposRepository->delete($id);
+        if ($delete_grupo === 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

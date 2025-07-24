@@ -23,10 +23,10 @@ $(document).ready(function () {
                 "className": "dt-center",
                 "render": function (data, type, row) {
                     return `
-                            <button class="btn btn-primary btn-sm" onclick="updateAlmacen(this, '${data}')">
+                            <button class="btn btn-primary btn-sm" onclick="updateGrupo(this, '${data}')">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteAlmacen(this, '${data}')">
+                            <button class="btn btn-danger btn-sm" onclick="deleteGrupo(this, '${data}')">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         `;
@@ -48,6 +48,48 @@ $(document).ready(function () {
         }]);
     });
 });
+
+async function deleteGrupo(btn, id_grupo) {
+    const confirmado = await mostrarConfirmacion({
+        titulo: '¿Deseas eliminar este grupo?',
+        texto: 'Una vez eliminado, los Part Numbers asociados quedarán sin asignación',
+        icono: 'warning',
+        textoConfirmar: 'Sí, eliminar',
+        textoCancelar: 'Cancelar'
+    });
+
+    if (!confirmado) return;
+
+    mostrarCarga();
+    btn.disabled = true;
+    try {
+        const response = await fetch('../../Handler/inventory/gruposHandler.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                action: 'delete_grupo',
+                id: id_grupo
+            })
+        });
+
+        const data = await response.json();
+        ocultarCarga();
+
+        if (data.success) {
+            notification('success', 'Se eliminó el grupo.', 2000);
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        } else {
+            btn.disabled = false;
+            notification('error', 'Falló al eliminar el grupo, intenta nuevamente.', 2000);
+        }
+    } catch (error) {
+        ocultarCarga();
+        console.error('Error al eliminar:', error);
+        btn.disabled = false;
+    }
+}
 
 
 

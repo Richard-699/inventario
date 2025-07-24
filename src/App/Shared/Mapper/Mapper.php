@@ -14,6 +14,8 @@ use App\Domain\Model\Almacenes;
 use App\Domain\Model\Localizaciones;
 use App\Domain\Model\AlmacenesLocalizaciones;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
+use App\Domain\DTO\GruposDTO;
+use App\Domain\Model\Grupos;
 
 class Mapper
 {
@@ -115,8 +117,8 @@ class Mapper
             $dto->descripcion_localizacion
         );
     }
-    
-     public static function modelToAlmacenesLocalizacionesDTO(AlmacenesLocalizaciones $model): AlmacenesLocalizacionesDTO
+
+    public static function modelToAlmacenesLocalizacionesDTO(AlmacenesLocalizaciones $model): AlmacenesLocalizacionesDTO
     {
         return new AlmacenesLocalizacionesDTO(
             id_localizaciones_almacenes: $model->id_localizaciones_almacenes,
@@ -131,6 +133,22 @@ class Mapper
             $dto->id_localizaciones_almacenes,
             $dto->id_almacen,
             $dto->id_localizacion_localizaciones
+        );
+    }
+
+    public static function modelToGruposDTO(Grupos $model): GruposDTO
+    {
+        return new GruposDTO(
+            id_grupo: $model->id_grupo,
+            descripcion_grupo: $model->descripcion_grupo
+        );
+    }
+
+    public static function GruposDTOToModel(GruposDTO $dto): Grupos
+    {
+        return new Grupos(
+            $dto->id_grupo,
+            $dto->descripcion_grupo
         );
     }
 }
