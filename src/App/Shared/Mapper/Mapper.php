@@ -14,6 +14,8 @@ use App\Domain\Model\Almacenes;
 use App\Domain\Model\Localizaciones;
 use App\Domain\Model\AlmacenesLocalizaciones;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
+use App\Domain\DTO\PartNumbersDTO;
+use App\Domain\Model\PartNumbers;
 
 class Mapper
 {
@@ -131,6 +133,32 @@ class Mapper
             $dto->id_localizaciones_almacenes,
             $dto->id_almacen,
             $dto->id_localizacion_localizaciones
+        );
+    }
+
+    public static function modelToPartNumbersDTO(PartNumbers $model): PartNumbersDTO
+    {
+        return new PartNumbersDTO(
+            id_partnumber: $model->id_partnumber,
+            partnumber: $model->partnumber,
+            descripcion_breve: $model->descripcion_breve,
+            id_umb_partnumber: $model->id_umb_partnumber,
+            nombre_interno: $model->nombre_interno,
+            id_grupo_partnumber: $model->id_grupo_partnumber,
+            id_plataforma_partnumber: $model->id_plataforma_partnumber
+        );
+    }
+
+    public static function partnumbersDTOToModel(PartNumbersDTO $dto): PartNumbers
+    {
+        return new PartNumbers(
+            $dto->id_partnumber,
+            $dto->partnumber,
+            $dto->descripcion_breve,
+            $dto->id_umb_partnumber,
+            $dto->nombre_interno,
+            $dto->id_grupo_partnumber,
+            $dto->id_plataforma_partnumber
         );
     }
 }
