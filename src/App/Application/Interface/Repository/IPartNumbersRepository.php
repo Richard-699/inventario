@@ -11,6 +11,7 @@ interface IPartNumbersRepository {
     public function save(PartNumbers $partnumbers): bool;
     public function update(PartNumbers $partnumbers): bool;
     public function delete($id): bool;
+    public function update_By__id_grupo($id): bool;
 }
 
 ?>

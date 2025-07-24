@@ -5,6 +5,7 @@ namespace App\Shared\Validation;
 use Exception;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\LocalizacionesDTO;
 use App\Domain\DTO\PartNumbersDTO;
 
@@ -71,6 +72,13 @@ class Validator
         }
         if (empty($dto->descripcion_almacen)) {
             throw new Exception('La descripcion es obligatoria.');
+        }
+    }
+
+    public static function validateGruposDTO(GruposDTO $dto): void
+    {
+        if (empty($dto->descripcion_grupo)) {
+            throw new Exception('La descripción es obligatoria');
         }
     }
 

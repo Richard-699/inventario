@@ -205,7 +205,7 @@ async function deleteAlmacen(btn, id_almacen) {
         }
     } catch (error) {
         ocultarCarga();
-        console.error('Error al rechazar:', error);
+        console.error('Error al eliminar:', error);
         btn.disabled = false;
     }
 }
