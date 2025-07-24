@@ -131,28 +131,16 @@ function onPostUpdateGrupo(array $data)
 {
     try {
         $form = $data['form'] ?? [];
-        $idGrupo = $form['id_grupo'] ?? null;
+        $idGrupo = isset($form['id_grupo']) ? (int)$form['id_grupo'] : null;
         $part_numbers_select = $form['part_numbers_select'] ?? [];
-        $partnumberGruposDTO = [];
 
         if (!is_array($part_numbers_select)) {
             $part_numbers_select = [$part_numbers_select];
         }
 
-        foreach ($part_numbers_select as $part_number) {
-            $dto = new PartNumbersDTO(
-                (int)$part_numbers_select,
-                null,
-                null,
-                null,
-                null,
-                null,
-                (int)$idGrupo,
-                null,
-                null,
-                null
-            );
-            $partnumberGruposDTO[] = $dto;
+        $selectedPartNumberIds = [];
+        foreach ($part_numbers_select as $part_number_id) {
+            $selectedPartNumberIds[] = (int)$part_number_id;
         }
         $gruposService = new GruposService();
 
@@ -160,7 +148,7 @@ function onPostUpdateGrupo(array $data)
         $gruposDTO = new GruposDTO(
             id_grupo: $idGrupo,
             descripcion_grupo: $nombreGrupo,
-            partnumberGruposDTO: $partnumberGruposDTO,
+            partnumberGruposDTO: $selectedPartNumberIds,
         );
 
         Validator::validateGruposDTO($gruposDTO);

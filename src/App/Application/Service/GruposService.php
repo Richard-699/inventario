@@ -38,17 +38,61 @@ class GruposService implements IGruposService
         return $grupoDTO;
     }
 
-
-    public function saveGrupo(gruposDTO $gruposDTO): bool
+    public function saveGrupo(GruposDTO $gruposDTO): bool
     {
-        $grupos = Mapper::GruposDTOToModel($gruposDTO);
-        $guardarGrupo = $this->gruposRepository->save($grupos);
+        try {
+            $grupoDescripcion = trim($gruposDTO->descripcion_grupo); // Limpiar espacios
 
-        if (!$guardarGrupo) {
-            return false;
-        } else {
+            // 1. Validar si el grupo ya existe
+            $existeGrupo = $this->onGetGrupo_By__Grupo($grupoDescripcion); // Usar la descripción limpia
+
+            // Si existe un grupo lanzar excepción
+            if ($existeGrupo !== null && !empty($existeGrupo->id_grupo)) {
+                throw new Exception("El grupo '{$grupoDescripcion}' ya se encuentra registrado.");
+            }
+
+            // 2. Mapear DTO a Modelo
+            $gruposModel = Mapper::GruposDTOToModel($gruposDTO);
+
+            // 3. Guardar el grupo en el repositorio
+            $guardarGrupoExitoso = $this->gruposRepository->save($gruposModel);
+
+            if (!$guardarGrupoExitoso) {
+                throw new Exception("Falló la operación de guardar el grupo en el repositorio.");
+            }
+
             return true;
+        } catch (\Throwable $e) {
+            throw $e;
         }
+    }
+
+    public function onGetGrupo_By__Grupo($grupo): ?GruposDTO
+    {
+        $grupo = $this->gruposRepository->onGet_By__Grupo($grupo);
+        if ($grupo === null) {
+            return null;
+        }
+
+        return Mapper::modelToGruposDTO($grupo);
+    }
+
+    public function onGet_By__GrupoAndExcludeId(string $grupoNombre, int $idGrupoAExcluir): ?Grupos
+    {
+        $query = "SELECT id_grupo, descripcion_grupo FROM inventario_hwi_grupos
+                  WHERE descripcion_grupo = :descripcion_grupo
+                  AND id_grupo != :id_grupo_excluir LIMIT 1";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':descripcion_grupo', $grupoNombre, \PDO::PARAM_STR);
+        $stmt->bindParam(':id_grupo_excluir', $idGrupoAExcluir, \PDO::PARAM_INT);
+        $stmt->execute();
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if ($data === false) {
+            return null;
+        }
+        return new Grupos($data['id_grupo'], $data['descripcion_grupo']);
     }
 
     public function deleteGrupo(int $id): bool
@@ -74,20 +118,34 @@ class GruposService implements IGruposService
         }
     }
 
-    public function updateGrupoPartNumbers(GruposDTO $GruposDTO): bool
+    public function updateGrupoPartNumbers(GruposDTO $gruposDTO): bool
     {
         try {
             $this->db->beginTransaction();
+            $idGrupo = $gruposDTO->id_grupo;
 
-            // 1. Actualizar la información general del grupo
-            $grupoModel = Mapper::GruposDTOToModel($GruposDTO);
+            // 1. Validar si el grupo ya existe
+            $grupoDescripcion = trim($gruposDTO->descripcion_grupo); // Limpiar espacios
+            $existeGrupo = $this->onGet_By__GrupoAndExcludeId($grupoDescripcion, $idGrupo); // Usar la descripción limpia
+
+            // Si existe un grupo lanzar excepción
+            if ($existeGrupo !== null && !empty($existeGrupo->id_grupo)) {
+                throw new Exception("El grupo '{$grupoDescripcion}' ya se encuentra registrado.");
+            }
+
+            // 2. Actualizar la información general del grupo
+            $grupoModel = Mapper::GruposDTOToModel($gruposDTO);
             $this->gruposRepository->update($grupoModel);
 
-            // 3. actualizar los partnumbers asociados
-/*             foreach ($GruposDTO->partnumberGruposDTO as $partnumberGrupoDTO) {
-                $grupoPartNumberModel = Mapper::almacenesLocalizacionesDTOToModel($localizacionAlmacenDTO);
-                $this->AlmacenesLocalizacionesRepository->save($almacenLocalizacionModel);
-            } */
+            // 3. Desasociar TODOS los partnumbers que actualmente pertenecen a este grupo
+            $this->partNumberRepository->update_By__id_grupo($idGrupo);
+
+            // 4. Asociar los partnumbers de la NUEVA lista al grupo
+            foreach ($gruposDTO->partnumberGruposDTO as $partNumberId) {
+                // Asume un método como assignGroupToPartnumber en PartNumberRepository
+                $this->partNumberRepository->assignGroupToPartnumber($partNumberId, $idGrupo);
+            }
+
 
             $this->db->commit();
 
