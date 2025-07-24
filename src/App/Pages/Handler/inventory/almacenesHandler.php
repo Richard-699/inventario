@@ -193,8 +193,6 @@ function onPostUpdateAlmacen(array $data)
             $listaLocalizacionesDTO[] = $dto;
         }
 
-        
-
         $almacenesService = new AlmacenesService();
 
         $codigo_sap = isset($form['codigo_sap']) ? strtoupper($form['codigo_sap']) : null;

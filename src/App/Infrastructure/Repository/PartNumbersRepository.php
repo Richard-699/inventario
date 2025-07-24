@@ -23,4 +23,11 @@ class PartNumbersRepository implements IPartNumbersRepository
 
         return array_map([PartNumbers::class, 'fromArray'], $rows);
     }
+
+    public function update_By__id_grupo($id): bool
+    {
+        $stmt = $this->db->prepare("UPDATE inventario_hwi_partnumbers SET id_grupo_partnumber = NULL WHERE id_grupo_partnumber = :id");
+        $stmt->bindParam(':id', $id);
+        return $stmt->execute();
+    }
 }
