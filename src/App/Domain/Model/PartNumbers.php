@@ -10,6 +10,7 @@ class PartNumbers{
         public ?int $id_umb_partnumber  = null,
         public ?string $nombre_interno,
         public ?int $id_grupo_partnumber,
+        public ?int $id_plataforma_partnumber
     ) {}
 
     public static function fromArray(array $data): self {
@@ -19,7 +20,8 @@ class PartNumbers{
             $data['descripcion_breve'] ?? null,
             $data['id_umb_partnumber'] ?? null,
             $data['nombre_interno'] ?? null,
-            $data['id_grupo_partnumber'] ?? null
+            $data['id_grupo_partnumber'] ?? null,
+            $data['id_plataforma_partnumber'] ?? null
         );
     }
 
@@ -31,7 +33,8 @@ class PartNumbers{
             'descripcion_breve' => $this->descripcion_breve,
             'id_umb_partnumber' => $this->id_umb_partnumber,
             'nombre_interno' => $this->nombre_interno,
-            'id_grupo_partnumber' => $this->id_grupo_partnumber
+            'id_grupo_partnumber' => $this->id_grupo_partnumber,
+            'id_plataforma_partnumber' => $this->id_plataforma_partnumber
         ];
     }
 }

@@ -24,6 +24,25 @@ function onGetPartNumbers()
     }
 }
 
+function onGetUMBS()
+{
+    try {
+        $partNumbersService = new PartNumbersService();
+        $umbs = $partNumbersService->onGetUMBS();
+
+        if ($umbs) {
+            return $umbs;
+        } else {
+            throw new Exception("No se encontraron UMBS.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 try {
@@ -51,6 +70,9 @@ try {
         switch ($action) {
             case 'onGet_partnumbers':
                 $response = onGetPartNumbers();
+                break;
+            case 'onGet_UMBS':
+                $response = onGetUMBS();
                 break;
             default:
                 throw new Exception("Acción GET no permitida.");
