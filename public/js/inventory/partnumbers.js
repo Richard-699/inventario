@@ -21,7 +21,7 @@ $(document).ready(function () {
             { "data": "descripcion_breve", "className": "dt-center" },
             { "data": "umb", "className": "dt-center" },
             { "data": "nombre_interno", "className": "dt-center" },
-            { "data": "id_grupo_partnumber", "className": "dt-center" },
+            { "data": "grupo", "className": "dt-center" },
             { "data": "plataforma", "className": "dt-center" },
             {
                 "data": "id_partnumber",
@@ -44,20 +44,26 @@ $(document).ready(function () {
         "searching": true
     });
 
-    /* document.getElementById('btnAgregarLocalizacion').addEventListener('click', async function () {
+    document.getElementById('btnAgregarPartNumbers').addEventListener('click', async function () {
         mostrarCarga();
 
         let btn = this;
         btn.disabled = true;
 
         try {
-            const responseTipo_Localizaciones = await fetch('../../Handler/inventory/localizacionesHandler.php?action=onGet_tipoLocalizaciones', {
+            const responseUMBS = await fetch('../../Handler/inventory/partnumbersHandler.php?action=onGet_UMBS', {
                 method: 'GET'
             });
-            const tipo_Localizaciones = await responseTipo_Localizaciones.json();
-            const tipoLocalizacionesEncoded = encodeURIComponent(JSON.stringify(tipo_Localizaciones));
+            const umbs = await responseUMBS.json();
+            const umbsEncoded = encodeURIComponent(JSON.stringify(umbs));
 
-            var url = `agregar_localizaciones.php?tipo_Localizaciones=${tipoLocalizacionesEncoded}`;
+            const responsePlataformas = await fetch('../../Handler/inventory/partnumbersHandler.php?action=onGet_Plataformas', {
+                method: 'GET'
+            });
+            const plataformas = await responsePlataformas.json();
+            const plataformasEncoded = encodeURIComponent(JSON.stringify(plataformas));
+
+            var url = `agregar_partnumbers.php?umbs=${umbsEncoded}&plataformas=${plataformasEncoded}`;
 
             Fancybox.show([{
                 src: url,
@@ -80,7 +86,7 @@ $(document).ready(function () {
             ocultarCarga();
             btn.disabled = false;
         }
-    }); */
+    });
 });
 
 async function deleteLocalizacion(btn, id) {
