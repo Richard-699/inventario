@@ -1,7 +1,7 @@
 <?php
 $partnumbersSeleccionados = json_decode($_GET['partnumbersSeleccionados'] ?? '[]', true);
 $partnumbersSinAsignacion = json_decode($_GET['partnumbersSinAsignacion'] ?? '[]', true);
-
+$id_grupo = $_GET['id_grupo'] ?? null;
 $allPartnumbersForSelect = array_merge($partnumbersSeleccionados, $partnumbersSinAsignacion);
 
 $idsPartnumbersSelected = [];
@@ -61,7 +61,7 @@ $descripcion_grupo = $grupoInfo['descripcion_grupo'] ?? '';
                         $id_partnumber = (int)$p['id_partnumber'];
                         $isSelected = in_array($id_partnumber, $idsPartnumbersSelected);
                     ?>
-                        <option value="<?= htmlspecialchars($partnumberId) ?>"
+                        <option value="<?= htmlspecialchars($id_partnumber) ?>"
                             <?= $isSelected ? 'selected' : '' ?>>
                             <?= htmlspecialchars($p['partnumber']) . " - " . htmlspecialchars($p['descripcion_breve']) ?>
                         </option>

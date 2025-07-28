@@ -35,6 +35,18 @@ class GruposRepository implements IGruposRepository
         return Grupos::fromArray($row);
     }
 
+    public function onGet_By__Grupo($grupo): ?Grupos
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_grupos WHERE descripcion_grupo = ?");
+        $stmt->execute([$grupo]);
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            return null;
+        }
+        return Grupos::fromArray($row);
+    }
+
 
     public function save(Grupos $grupos): bool
     {

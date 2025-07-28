@@ -161,6 +161,8 @@ class Mapper
             $dto->nombre_interno,
             $dto->id_grupo_partnumber,
             $dto->id_plataforma_partnumber
+        );
+    }
 
     public static function modelToGruposDTO(Grupos $model): GruposDTO
     {

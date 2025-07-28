@@ -24,7 +24,8 @@ class PartNumbersRepository implements IPartNumbersRepository
         return array_map([PartNumbers::class, 'fromArray'], $rows);
     }
 
-    public function onGet_By__Id($id): ?PartNumbers {
+    public function onGet_By__Id($id): ?PartNumbers
+    {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_partnumbers WHERE id_partnumber = ?");
         $stmt->execute([$id]);
         $row = $stmt->fetch();
@@ -35,7 +36,8 @@ class PartNumbersRepository implements IPartNumbersRepository
         return PartNumbers::fromArray($row);
     }
 
-    public function onGet_By__Codigo($codigo): ?PartNumbers {
+    public function onGet_By__Codigo($codigo): ?PartNumbers
+    {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_partnumbers WHERE partnumber = ?");
         $stmt->execute([$codigo]);
         $row = $stmt->fetch();
@@ -67,9 +69,9 @@ class PartNumbersRepository implements IPartNumbersRepository
         $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
 
         $query = "UPDATE inventario_hwi_partnumbers SET $set WHERE id_partnumber = :id_partnumber";
-        
+
         $stmt = $this->db->prepare($query);
-            foreach ($data as $campo => $valor) {
+        foreach ($data as $campo => $valor) {
             $stmt->bindValue(":$campo", $valor);
         }
 
@@ -85,7 +87,6 @@ class PartNumbersRepository implements IPartNumbersRepository
         $stmt->execute();
         return $stmt->rowCount();
     }
-}
 
     public function update_By__id_grupo($id): bool
     {
@@ -93,5 +94,17 @@ class PartNumbersRepository implements IPartNumbersRepository
         $stmt->bindParam(':id', $id);
         return $stmt->execute();
     }
-}
 
+
+    public function assignGroupToPartnumber(int $partNumberId, int $groupId): bool
+    {
+        $query = "UPDATE inventario_hwi_partnumbers
+              SET id_grupo_partnumber = :id_grupo_nuevo
+              WHERE id_partnumber = :id_partnumber"; // Asegúrate que la columna de ID del partnumber sea correcta
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':id_grupo_nuevo', $groupId, \PDO::PARAM_INT);
+        $stmt->bindParam(':id_partnumber', $partNumberId, \PDO::PARAM_INT);
+        return $stmt->execute();
+    }
+}
