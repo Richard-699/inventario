@@ -34,4 +34,18 @@ class CronogramaRepository implements ICronogramaRepository
 
         return array_map([Cronograma::class, 'fromArray'], $rows);
     }
+
+    public function save(Cronograma $cronograma): bool
+    {
+        $data = $cronograma->toArray();
+        $columnas = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
+
+        $query = "INSERT INTO inventario_hwi_cronograma ($columnas) VALUES ($placeholders)";
+        $stmt = $this->db->prepare($query);
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+        return $stmt->execute();
+    }
 }

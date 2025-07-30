@@ -9,7 +9,7 @@ class GruposDTO
      */
     public function __construct(
 
-        public ?int $id_grupo = null,
+        public ?string $id_grupo,
         public ?string $descripcion_grupo,
         public ?string $fecha_programacion_grupo,
         public ?array $partnumberGruposDTO = null

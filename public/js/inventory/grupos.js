@@ -16,7 +16,7 @@ $(document).ready(function () {
             "dataSrc": ""
         },
         "columns": [
-            { "data": "id_grupo", "className": "dt-center" },
+            { "data": "id_grupo", "className": "dt-center" , "visible": false  },
             { "data": "descripcion_grupo", "className": "dt-center" },
             {
                 "data": "id_grupo",

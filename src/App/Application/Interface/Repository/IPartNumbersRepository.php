@@ -12,7 +12,7 @@ interface IPartNumbersRepository {
     public function update(PartNumbers $partnumbers): bool;
     public function delete($id): bool;
     public function update_By__id_grupo($id): bool;
-    public function assignGroupToPartnumber(int $partNumberId, int $groupId): bool;
+    public function assignGroupToPartnumber(int $partNumberId, string $groupId): bool;
 }
 
 ?>

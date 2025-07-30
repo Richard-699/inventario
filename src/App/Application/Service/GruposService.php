@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Interface\Service\IGruposService;
+use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\Model\Grupos;
 use App\Infrastructure\Repository\GruposRepository;
@@ -10,18 +11,21 @@ use App\Infrastructure\Repository\PartNumbersRepository;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
+use App\Infrastructure\Repository\CronogramaRepository;
 
 class GruposService implements IGruposService
 {
 
     private $db;
     private $gruposRepository;
+    private $cronogramaRepository;
     private $partNumberRepository;
 
     public function __construct()
     {
         $this->db = (new Connection())->dbInventarioHwi;
         $this->gruposRepository = new GruposRepository($this->db);
+        $this->cronogramaRepository = new CronogramaRepository($this->db);
         $this->partNumberRepository = new PartNumbersRepository($this->db);
     }
 
@@ -38,9 +42,11 @@ class GruposService implements IGruposService
         return $grupoDTO;
     }
 
-    public function saveGrupo(GruposDTO $gruposDTO): bool
+    public function saveGrupo(GruposDTO $gruposDTO, CronogramaDTO $cronogramaDTO): bool
     {
         try {
+            $this->db->beginTransaction();
+
             $grupoDescripcion = trim($gruposDTO->descripcion_grupo); // Limpiar espacios
 
             // 1. Validar si el grupo ya existe
@@ -48,21 +54,33 @@ class GruposService implements IGruposService
 
             // Si existe un grupo lanzar excepción
             if ($existeGrupo !== null && !empty($existeGrupo->id_grupo)) {
-                throw new Exception("El grupo '{$grupoDescripcion}' ya se encuentra registrado.");
+                throw new \Exception("El grupo '{$grupoDescripcion}' ya se encuentra registrado.");
             }
 
-            // 2. Mapear DTO a Modelo
+            // 2. Mapear DTO a Modelo (Grupo)
             $gruposModel = Mapper::GruposDTOToModel($gruposDTO);
 
             // 3. Guardar el grupo en el repositorio
             $guardarGrupoExitoso = $this->gruposRepository->save($gruposModel);
 
             if (!$guardarGrupoExitoso) {
-                throw new Exception("Falló la operación de guardar el grupo en el repositorio.");
+                throw new \Exception("Falló la operación de guardar el grupo en el repositorio.");
             }
 
+            // 4. Mapear DTO a Modelo (Cronograma)
+            $cronogramaModel = Mapper::CronogramaDTOToModel($cronogramaDTO);
+
+            // 5. Guardar información del grupo en el cronograma
+            $guardarGrupoCronograma = $this->cronogramaRepository->save($cronogramaModel);
+
+            if (!$guardarGrupoCronograma) {
+                throw new \Exception("Falló la operación de guardar la información del grupo en cronograma.");
+            }
+            $this->db->commit();
+
             return true;
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
+            $this->db->rollBack();
             throw $e;
         }
     }
@@ -77,25 +95,25 @@ class GruposService implements IGruposService
         return Mapper::modelToGruposDTO($grupo);
     }
 
-    public function onGet_By__GrupoAndExcludeId(string $grupoNombre, int $idGrupoAExcluir): ?Grupos
+    public function onGet_By__GrupoAndExcludeId(string $grupoNombre, string $idGrupoAExcluir): ?Grupos
     {
-        $query = "SELECT id_grupo, descripcion_grupo FROM inventario_hwi_grupos
+        $query = "SELECT id_grupo, descripcion_grupo, fecha_programacion_grupo FROM inventario_hwi_grupos
                   WHERE descripcion_grupo = :descripcion_grupo
                   AND id_grupo != :id_grupo_excluir LIMIT 1";
 
         $stmt = $this->db->prepare($query);
         $stmt->bindParam(':descripcion_grupo', $grupoNombre, \PDO::PARAM_STR);
-        $stmt->bindParam(':id_grupo_excluir', $idGrupoAExcluir, \PDO::PARAM_INT);
+        $stmt->bindParam(':id_grupo_excluir', $idGrupoAExcluir, \PDO::PARAM_STR);
         $stmt->execute();
         $data = $stmt->fetch(\PDO::FETCH_ASSOC);
 
         if ($data === false) {
             return null;
         }
-        return new Grupos($data['id_grupo'], $data['descripcion_grupo'],$data['fecha_programacion_grupo']);
+        return new Grupos($data['id_grupo'], $data['descripcion_grupo'], $data['fecha_programacion_grupo']);
     }
 
-    public function deleteGrupo(int $id): bool
+    public function deleteGrupo(string $id): bool
     {
         try {
             $this->db->beginTransaction();

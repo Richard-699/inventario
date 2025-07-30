@@ -9,7 +9,7 @@ class PartNumbers{
         public ?string $descripcion_breve,
         public ?int $id_umb_partnumber  = null,
         public ?string $nombre_interno,
-        public ?int $id_grupo_partnumber,
+        public ?string $id_grupo_partnumber,
         public ?int $id_plataforma_partnumber
     ) {}
 

@@ -96,14 +96,14 @@ class PartNumbersRepository implements IPartNumbersRepository
     }
 
 
-    public function assignGroupToPartnumber(int $partNumberId, int $groupId): bool
+    public function assignGroupToPartnumber(int $partNumberId, string $groupId): bool
     {
         $query = "UPDATE inventario_hwi_partnumbers
               SET id_grupo_partnumber = :id_grupo_nuevo
               WHERE id_partnumber = :id_partnumber"; // Asegúrate que la columna de ID del partnumber sea correcta
 
         $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':id_grupo_nuevo', $groupId, \PDO::PARAM_INT);
+        $stmt->bindParam(':id_grupo_nuevo', $groupId, \PDO::PARAM_STR);
         $stmt->bindParam(':id_partnumber', $partNumberId, \PDO::PARAM_INT);
         return $stmt->execute();
     }
