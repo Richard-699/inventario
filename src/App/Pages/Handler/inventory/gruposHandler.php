@@ -73,10 +73,12 @@ function onPostSaveGrupo(array $data)
         $form = $data['form'] ?? [];
         // Normalizar valores a MAYÚSCULA (sin tildes ni cambios de idioma)
         $descripcion = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
+        $fecha_programacion_grupo = isset($form['fecha_programacion_grupo']) ? $form['fecha_programacion_grupo'] : null;
 
         $gruposDTO = new GruposDTO(
             id_grupo: null,
-            descripcion_grupo: $descripcion ?? null
+            descripcion_grupo: $descripcion ?? null,
+            fecha_programacion_grupo: $fecha_programacion_grupo
         );
         Validator::validateGruposDTO($gruposDTO);
 
@@ -145,9 +147,12 @@ function onPostUpdateGrupo(array $data)
         $gruposService = new GruposService();
 
         $nombreGrupo = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
+        $fecha_programacion_grupo = isset($form['fecha_programacion_grupo']) ? $form['fecha_programacion_grupo'] : null;
+
         $gruposDTO = new GruposDTO(
             id_grupo: $idGrupo,
             descripcion_grupo: $nombreGrupo,
+            fecha_programacion_grupo: $fecha_programacion_grupo,
             partnumberGruposDTO: $selectedPartNumberIds,
         );
 

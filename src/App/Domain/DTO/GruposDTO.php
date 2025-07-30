@@ -11,6 +11,7 @@ class GruposDTO
 
         public ?int $id_grupo = null,
         public ?string $descripcion_grupo,
+        public ?string $fecha_programacion_grupo,
         public ?array $partnumberGruposDTO = null
     ) {}
 }

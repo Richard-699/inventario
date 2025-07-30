@@ -16,6 +16,7 @@ if (isset($_GET['infoGrupo'])) {
     $grupoInfo = json_decode($_GET['infoGrupo'], true);
 }
 $descripcion_grupo = $grupoInfo['descripcion_grupo'] ?? '';
+$fecha_programacion_grupo = $grupoInfo['fecha_programacion_grupo'] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -46,6 +47,12 @@ $descripcion_grupo = $grupoInfo['descripcion_grupo'] ?? '';
                 <label for="descripcion_grupo" class="form-label">Descrición o nombre: *</label>
                 <input type="text" class="form-control" id="descripcion_grupo" name="descripcion_grupo" value="<?= htmlspecialchars($descripcion_grupo) ?>">
             </div>
+
+            <div class="mb-3">
+                <label for="fecha_programacion_grupo" class="form-label">Mes de conteo: *</label>
+                <input type="month" class="form-control" id="fecha_programacion_grupo" name="fecha_programacion_grupo" value="<?= htmlspecialchars($fecha_programacion_grupo) ?>">
+            </div>
+
             <div class="mb-4">
                 <label for="part_numbers_select" class="form-label">
                     Seleccione los part numbers para este grupo: *

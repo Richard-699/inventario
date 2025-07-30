@@ -47,7 +47,6 @@ class GruposRepository implements IGruposRepository
         return Grupos::fromArray($row);
     }
 
-
     public function save(Grupos $grupos): bool
     {
         $data = $grupos->toArray();
