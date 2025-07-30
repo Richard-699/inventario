@@ -3,8 +3,6 @@
 namespace App\Application\Interface\Service;
 
 use App\Domain\DTO\AlmacenesDTO;
-use App\Domain\DTO\AlmacenesLocalizacionesDTO;
-use App\Domain\Model\Almacenes;
 
 interface IAlmacenesService {
     public function onGetAlmacenes(): array;
