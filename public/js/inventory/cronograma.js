@@ -1,5 +1,6 @@
 $(document).ready(function () {
     debugger;
+    let primeraVez = true;
     let rangoInicio;
     let rangoFin;
 
@@ -16,7 +17,7 @@ $(document).ready(function () {
         "scrollCollapse": true,
         "paging": true,
         pageLength: 10,
-
+        
         "ajax": {
             "url": "../../Handler/inventory/cronogramaHandler.php?action=onGet_cronograma",
             "type": "GET",
@@ -28,10 +29,10 @@ $(document).ready(function () {
         },
         "columns": [
             { "data": "id_cronograma", "className": "dt-center" },
+            { "data": "grupo", "className": "dt-center" },
             { "data": "fecha_cronograma", "className": "dt-center" },
-            { "data": "id_grupo_cronograma", "className": "dt-center" },
-            { "data": "id_estado_cronograma", "className": "dt-center" },
-            { "data": "id_administrador_cronograma", "className": "dt-center" },
+            { "data": "administrador", "className": "dt-center" },
+            { "data": "estado", "className": "dt-center" },
             {
                 "data": "id_cronograma",
                 "className": "dt-center",
@@ -59,6 +60,8 @@ $(document).ready(function () {
 
         document.getElementById("btnProgramados").style.backgroundColor = "#17a2b8";
         document.getElementById("btnNoProgramados").style.backgroundColor = "#072B31";
+
+        tabla.ajax.reload();
     });
 
     document.getElementById("btnProgramados").addEventListener("click", function () {
@@ -74,6 +77,12 @@ $(document).ready(function () {
 
         document.getElementById("btnProgramados").style.backgroundColor = "#072B31";
         document.getElementById("btnNoProgramados").style.backgroundColor = "#17a2b8";
+
+        if (!primeraVez) {
+            tabla.ajax.reload();
+        } else {
+            primeraVez = false;
+        }
     });
 
     document.getElementById("btnProgramados").click();
