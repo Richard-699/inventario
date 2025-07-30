@@ -1,18 +1,5 @@
-.contenido-agregar-grupo{
-    max-width: 1000px;
-    width: 700px;
-    margin: 0 auto;
-}
-
-@media (max-width: 768px) {
-    .contenido-agregar-grupo {
-        padding: 0 10px;
-        width: 200px;
-    }
-}
-
-#btn-save {
-    background-color: #138496;
+#btnAgregarExcel, #btnProgramados, #btnNoProgramados {
+    background-color: #17a2b8;
     color: white;
     border: none;
     padding: 8px 16px;
@@ -21,11 +8,13 @@
     transition: background-color 0.3s ease, transform 0.2s ease;
     cursor: pointer;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    margin-top: 25px;
 }
 
-#btn-save:hover {
-    background-color: #138496;
+#btnProgramados:hover,
+#btnNoProgramados:hover,
+#btnAgregarExcel:hover {
+    background-color: #072B31;
     transform: translateY(-1px);
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
+

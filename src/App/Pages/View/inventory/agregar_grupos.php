@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="text-end">
-                    <button type="submit" class="btn btn-success">
+                    <button type="submit" id="btn-save">
                         <i class="fa fa-save me-1"></i> Guardar
                     </button>
                 </div>

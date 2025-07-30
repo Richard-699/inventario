@@ -28,6 +28,11 @@ function GestionarAdministradores() {
     window.location.href = "administradores.php";
 }
 
+function Cronograma() {
+    mostrarCarga();
+    window.location.href = "cronograma.php";
+}
+
 document.querySelectorAll('#BtnCerrarSesion, #BtnCerrarSesionMenu').forEach(btn => {
     btn.addEventListener('click', function (e) {
         debugger;
