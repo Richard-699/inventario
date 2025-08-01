@@ -167,7 +167,12 @@ function onPostUpdateGrupo(array $data)
 
         Validator::validateGruposDTO($gruposDTO);
 
-        $update_grupo = $gruposService->updateGrupoPartNumbers($gruposDTO);
+        $cronogramaDTO = new CronogramaDTO(
+            fecha_cronograma: $fecha_programacion_grupo,
+            id_grupo_cronograma: $idGrupo,
+        );
+
+        $update_grupo = $gruposService->updateGrupoPartNumbersCronograma($gruposDTO, $cronogramaDTO);
 
         if (!$update_grupo) {
             throw new Exception("No se pudo actualizar el grupo.");

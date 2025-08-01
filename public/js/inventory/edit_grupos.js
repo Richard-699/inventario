@@ -1,9 +1,9 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     document.getElementById('formUpdateGrupo').addEventListener('submit', async function (e) {
         e.preventDefault();
         mostrarCarga();
-    
+
         const form = document.getElementById('formUpdateGrupo');
         const formData = new FormData(form);
 
@@ -36,8 +36,6 @@ $(document).ready(function() {
 
             if (resultado.success) {
                 notification('success', 'Se actualizó la información del grupo.', 2000);
-
-
                 setTimeout(function () {
                     if (Fancybox.getInstance()) {
                         Fancybox.getInstance().close();

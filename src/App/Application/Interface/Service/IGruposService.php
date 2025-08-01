@@ -12,7 +12,7 @@ interface IGruposService {
     public function onGetGrupo_By__Grupo($grupo): ?GruposDTO;
     public function saveGrupo(GruposDTO $gruposDTO , CronogramaDTO $cronogramaDTO): bool;
     public function deleteGrupo(string $id): bool;
-    public function updateGrupoPartNumbers(GruposDTO $GruposDTO): bool;
+    public function updateGrupoPartNumbersCronograma(GruposDTO $gruposDTO, CronogramaDTO $cronograma_dto): bool;
     public function onGet_By__GrupoAndExcludeId(string $grupoNombre, string $idGrupoAExcluir): ?Grupos;
 }
 ?>

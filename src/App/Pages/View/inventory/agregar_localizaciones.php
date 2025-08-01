@@ -16,17 +16,29 @@
 <body class="p-4">
 
     <?php
-        if (isset($_GET['tipo_Localizaciones'])) {
-            $tipoLocalizacionesEncoded = $_GET['tipo_Localizaciones'];
-            $tipoLocalizacionesJson = urldecode($tipoLocalizacionesEncoded);
-            $tiposLocalizaciones = json_decode($tipoLocalizacionesJson);
+    if (isset($_GET['tipo_Localizaciones'])) {
+        $tipoLocalizacionesEncoded = $_GET['tipo_Localizaciones'];
+        $tipoLocalizacionesJson = urldecode($tipoLocalizacionesEncoded);
+        $tiposLocalizaciones = json_decode($tipoLocalizacionesJson);
 
-            if (json_last_error() !== JSON_ERROR_NONE) {
-                error_log('JSON Decode Error in agregar_localizaciones.php: ' . json_last_error_msg());
-            }
-        } else {
-            $tiposLocalizaciones = [];
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON Decode Error in agregar_localizaciones.php: ' . json_last_error_msg());
         }
+    } else {
+        $tiposLocalizaciones = [];
+    }
+
+    if (isset($_GET['tipo_almacenamiento'])) {
+        $tipo_almacenamientoEncoded = $_GET['tipo_almacenamiento'];
+        $tipo_almacenamientoJson = urldecode($tipo_almacenamientoEncoded);
+        $tipo_almacenamiento = json_decode($tipo_almacenamientoJson);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON Decode Error in agregar_localizaciones.php: ' . json_last_error_msg());
+        }
+    } else {
+        $tipo_almacenamiento = [];
+    }
     ?>
 
     <div class="contenido-agregar-localizacion">
@@ -34,9 +46,9 @@
             <h5 class="mb-4"><i class="fa-solid fa-location-dot me-2 fs-4"></i>Nueva Localización</h5>
             <form id="formAgregarLocalizacion">
                 <div class="mb-3">
-                    <label for="descripcion" class="form-label">Tipo Localización: *</label>
+                    <label for="id_tipo_localizacion_localizaciones" class="form-label">Tipo Localización: *</label>
                     <select class="form-select" id="id_tipo_localizacion_localizaciones" name="id_tipo_localizacion_localizaciones">
-                        <option value="">Seleccione un tipo</option>
+                        <option value="" selected disabled>Seleccione un tipo</option>
                         <?php
                         if (!empty($tiposLocalizaciones)) {
                             foreach ($tiposLocalizaciones as $tipo) {
@@ -51,6 +63,22 @@
                 <div class="mb-3">
                     <label for="descripcion" class="form-label">Descripción: *</label>
                     <input type="text" class="form-control" id="descripcion_localizacion" name="descripcion_localizacion">
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_tipo_almacenamiento" class="form-label">Tipo Almacenamiento: *</label>
+                    <select class="form-select" id="id_tipo_almacenamiento" name="id_tipo_almacenamiento">
+                        <option value="" selected disabled>Seleccione un tipo</option>
+                        <?php
+                        if (!empty($tipo_almacenamiento)) {
+                            foreach ($tipo_almacenamiento as $tipo) {
+                                $id = $tipo->id_tipo_almacenamiento ?? '';
+                                $descripcion = $tipo->descripcion_tipo_almacenamiento ?? 'N/A';
+                                echo "<option value='{$id}'>{$descripcion}</option>";
+                            }
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="text-end">

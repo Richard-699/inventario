@@ -6,6 +6,8 @@ use App\Application\Interface\Service\IAlmacenesService;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
 use App\Domain\Model\Almacenes;
+use App\Domain\Model\ClasificacionAlmacenes;
+use App\Infrastructure\Repository\ClasificacionAlmacenesRepository;
 use App\Infrastructure\Repository\AlmacenesRepository;
 use App\Infrastructure\Repository\AlmacenesLocalizacionesRepository;
 use Exception;
@@ -18,19 +20,26 @@ class AlmacenesService implements IAlmacenesService
     private $db;
     private $almacenesRepository;
     private $AlmacenesLocalizacionesRepository;
-
+    private $clasificacionesRepository;
     public function __construct()
     {
         $this->db = (new Connection())->dbInventarioHwi;
 
         $this->almacenesRepository = new AlmacenesRepository($this->db);
         $this->AlmacenesLocalizacionesRepository = new AlmacenesLocalizacionesRepository($this->db);
+        $this->clasificacionesRepository = new ClasificacionAlmacenesRepository($this->db);
     }
 
     public function onGetAlmacenes(): array
     {
         $almacenes = $this->almacenesRepository->onGet();
         return $almacenes;
+    }
+
+    public function onGetClasificacionesAlmacenes(): array
+    {
+        $clasificaciones = $this->clasificacionesRepository->onGet();
+        return $clasificaciones;
     }
 
     public function onGetAlmacenes_By__Id($id): ?AlmacenesDTO

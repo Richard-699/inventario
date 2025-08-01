@@ -94,6 +94,9 @@ class Validator
         if (empty($dto->descripcion_localizacion)) {
             throw new Exception('La descripcion es obligatoria.');
         }
+        if (empty($dto->id_tipo_almacenamientos_localizaciones)) {
+            throw new Exception('El tipo de almacenamiento es obligatorio.');
+        }
     }
 
     public static function validatePartnumberDTO(PartNumbersDTO $dto): void

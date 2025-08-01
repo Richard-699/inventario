@@ -95,7 +95,6 @@ $fecha_programacion_grupo = $grupoInfo['fecha_programacion_grupo'] ?? '';
     <script src="../../../../../public/js/utils/libs/fancybox.js"></script>
     <script src="../../../../../public/js/utils/libs/notification.js"></script>
 
-
     <!-- Scripts funcionalidades -->
     <script src="../../../../../public/js/utils/libs/select2.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>

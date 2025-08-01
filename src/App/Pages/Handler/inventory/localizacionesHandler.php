@@ -68,22 +68,39 @@ function onGetTipoLocalizaciones()
     }
 }
 
+function onGetTipoAlmacenamiento()
+{
+    try {
+        $localizacionesService = new LocalizacionesService();
+        $tipoAlmacenamiento = $localizacionesService->onGetTipoAlmacenamiento();
+
+        if ($tipoAlmacenamiento) {
+            return $tipoAlmacenamiento;
+        } else {
+            throw new Exception("No se encontraron tipos de almacenamiento.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 function onPostSaveLocalizaciones(array $data)
 {
     try {
         $form = $data['form'] ?? [];
-        $descripcion = isset($form['descripcion_localizacion']) ? strtoupper($form['descripcion_localizacion']) : null;
-        $idTipoLocalizacionRaw = $form['id_tipo_localizacion_localizaciones'] ?? null;
-        $idTipoLocalizacion = null;
-        if ($idTipoLocalizacionRaw !== null && $idTipoLocalizacionRaw !== '') {
-            $idTipoLocalizacion = (int)$idTipoLocalizacionRaw;
-        }
+        $descripcion = strtoupper($form['descripcion_localizacion'] ?? null);
+        $idTipoLocalizacion = (int)($form['id_tipo_localizacion_localizaciones'] ?? null);
+        $idTipoAlmacenamiento = (int)($form['id_tipo_almacenamiento'] ?? null);
 
         $localizacionesDTO = new LocalizacionesDTO(
             id_localizacion: null,
             id_tipo_localizacion_localizaciones: $idTipoLocalizacion,
             tipo_localizacion: null,
-            descripcion_localizacion: $descripcion ?? null
+            descripcion_localizacion: $descripcion ?? null,
+            id_tipo_almacenamientos_localizaciones: $idTipoAlmacenamiento
         );
         Validator::validateLocalizacionesDTO($localizacionesDTO);
 
@@ -110,18 +127,16 @@ function onPostEditLocalizaciones(array $data)
 {
     try {
         $form = $data['form'] ?? [];
-        $descripcion = isset($form['descripcion_localizacion']) ? strtoupper($form['descripcion_localizacion']) : null;
-        $idTipoLocalizacionRaw = $form['id_tipo_localizacion_localizaciones'] ?? null;
-        $idTipoLocalizacion = null;
-        if ($idTipoLocalizacionRaw !== null && $idTipoLocalizacionRaw !== '') {
-            $idTipoLocalizacion = (int)$idTipoLocalizacionRaw;
-        }
+        $descripcion = strtoupper($form['descripcion_localizacion'] ?? null);
+        $idTipoLocalizacion = (int)($form['id_tipo_localizacion_localizaciones'] ?? null);
+        $idTipoAlmacenamiento = (int)($form['id_tipo_almacenamiento'] ?? null);
 
         $localizacionesDTO = new LocalizacionesDTO(
             id_localizacion: $form['id_localizacion'],
             id_tipo_localizacion_localizaciones: $idTipoLocalizacion,
             tipo_localizacion: null,
-            descripcion_localizacion: $descripcion ?? null
+            descripcion_localizacion: $descripcion ?? null,
+            id_tipo_almacenamientos_localizaciones : $idTipoAlmacenamiento
         );
         Validator::validateLocalizacionesDTO($localizacionesDTO);
 
@@ -207,6 +222,9 @@ try {
                 break;
             case 'onGet_tipoLocalizaciones':
                 $response = onGetTipoLocalizaciones();
+                break;
+            case 'onGet_tipoAlmacenamiento':
+                $response = onGetTipoAlmacenamiento();
                 break;
             case 'onGet_localizacionSelected':
                 $response = onGetLocalizacionSelected($_GET);

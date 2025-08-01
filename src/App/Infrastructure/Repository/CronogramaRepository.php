@@ -35,6 +35,16 @@ class CronogramaRepository implements ICronogramaRepository
         return array_map([Cronograma::class, 'fromArray'], $rows);
     }
 
+    public function onGet_by_Id_grupo($idGrupo): ?Cronograma
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_cronograma WHERE id_grupo_cronograma = :id_grupo LIMIT 1");
+        $stmt->bindParam(':id_grupo', $idGrupo);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return $row ? Cronograma::fromArray($row) : null;
+    }
+
     public function save(Cronograma $cronograma): bool
     {
         $data = $cronograma->toArray();
@@ -46,6 +56,34 @@ class CronogramaRepository implements ICronogramaRepository
         foreach ($data as $campo => $valor) {
             $stmt->bindValue(":$campo", $valor);
         }
+        return $stmt->execute();
+    }
+
+    public function update(Cronograma $cronograma): bool
+    {
+        $dataToUpdate = $cronograma->toArray();
+        $id_cronograma = $dataToUpdate['id_cronograma'] ?? null;
+
+        $setClauses = [];
+        foreach ($dataToUpdate as $column => $value) {
+            $setClauses[] = "$column = :$column";
+        }
+        $setSql = implode(', ', $setClauses);
+        $query = "UPDATE inventario_hwi_cronograma
+                  SET " . $setSql . "
+                  WHERE id_cronograma = :id_cronograma";
+
+        // 4. Preparar la sentencia
+        $stmt = $this->db->prepare($query);
+
+        // 5. Vincular los parámetros usando foreach y bindValue
+        foreach ($dataToUpdate as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+        // Vincular el parámetro para la cláusula WHERE
+        $stmt->bindValue(':id_cronograma', $id_cronograma);
+
+        // 6. Ejecutar la sentencia
         return $stmt->execute();
     }
 }

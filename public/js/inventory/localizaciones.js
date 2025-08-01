@@ -53,7 +53,13 @@ $(document).ready(function () {
             const tipo_Localizaciones = await responseTipo_Localizaciones.json();
             const tipoLocalizacionesEncoded = encodeURIComponent(JSON.stringify(tipo_Localizaciones));
 
-            var url = `agregar_localizaciones.php?tipo_Localizaciones=${tipoLocalizacionesEncoded}`;
+            const responseTipo_almacenamientos = await fetch('../../Handler/inventory/localizacionesHandler.php?action=onGet_tipoAlmacenamiento', {
+                method: 'GET'
+            });
+            const tipo_almacenamiento = await responseTipo_almacenamientos.json();
+            const tipoAlmacenamientoEncoded = encodeURIComponent(JSON.stringify(tipo_almacenamiento));
+
+            var url = `agregar_localizaciones.php?tipo_Localizaciones=${tipoLocalizacionesEncoded}&tipo_almacenamiento=${tipoAlmacenamientoEncoded}`;
 
             Fancybox.show([{
                 src: url,
@@ -138,7 +144,14 @@ async function updateLocalizacion(btn, id) {
         const localizacionSelected = await responseLocalizacionSelected.json();
         const localizacionSelectedEnconded = encodeURIComponent(JSON.stringify(localizacionSelected));
 
-        var url = `edit_localizaciones.php?tipo_localizaciones=${tipoLocalizacionesEncoded}&localizacionSelected=${localizacionSelectedEnconded}&id=${id}`;
+        const responseTipo_almacenamientos = await fetch('../../Handler/inventory/localizacionesHandler.php?action=onGet_tipoAlmacenamiento', {
+            method: 'GET'
+        });
+        const tipo_almacenamiento = await responseTipo_almacenamientos.json();
+        const tipoAlmacenamientoEncoded = encodeURIComponent(JSON.stringify(tipo_almacenamiento));
+
+
+        var url = `edit_localizaciones.php?tipo_localizaciones=${tipoLocalizacionesEncoded}&localizacionSelected=${localizacionSelectedEnconded}&tipo_almacenamiento=${tipoAlmacenamientoEncoded}&id=${id}`;
 
         Fancybox.show([{
             src: url,

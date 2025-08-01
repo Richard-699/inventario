@@ -109,7 +109,8 @@ class Mapper
         return new LocalizacionesDTO(
             id_localizacion: $model->id_localizacion,
             id_tipo_localizacion_localizaciones: $model->id_tipo_localizacion_localizaciones,
-            descripcion_localizacion: $model->descripcion_localizacion
+            descripcion_localizacion: $model->descripcion_localizacion,
+            id_tipo_almacenamientos_localizaciones: $model->id_tipo_almacenamientos_localizaciones
         );
     }
 
@@ -118,7 +119,8 @@ class Mapper
         return new Localizaciones(
             $dto->id_localizacion,
             $dto->id_tipo_localizacion_localizaciones,
-            $dto->descripcion_localizacion
+            $dto->descripcion_localizacion,
+            $dto->id_tipo_almacenamientos_localizaciones
         );
     }
 

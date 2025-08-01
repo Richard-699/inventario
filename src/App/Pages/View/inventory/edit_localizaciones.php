@@ -41,6 +41,20 @@
         }
     }
 
+    $tipoAlmacenamiento = [];
+
+    if (isset($_GET['tipo_almacenamiento'])) {
+        $tipoAlmacenamientoJson = $_GET['tipo_almacenamiento'];
+        $tipoAlmacenamientoDecoded = json_decode($tipoAlmacenamientoJson);
+
+        if (json_last_error() === JSON_ERROR_NONE && is_array($tipoAlmacenamientoDecoded)) {
+            $tipoAlmacenamiento = $tipoAlmacenamientoDecoded;
+        } else {
+            error_log('Error decodificando tipo_localizaciones');
+        }
+    }
+
+
     $id_localizacion = $_GET['id'] ?? null;
     ?>
     <div class="contenido_edit_localizaciones">
@@ -51,7 +65,7 @@
             <input type="hidden" name="id_localizacion" id="id_localizacion" value="<?= htmlspecialchars($id_localizacion) ?>">
 
             <div class="mb-3">
-                <label for="descripcion" class="form-label">Tipo Localización: *</label>
+                <label for="id_tipo_localizacion_localizaciones" class="form-label">Tipo Localización: *</label>
                 <select class="form-select" id="id_tipo_localizacion_localizaciones" name="id_tipo_localizacion_localizaciones">
                     <option value="">Seleccione un tipo</option>
                     <?php
@@ -74,6 +88,24 @@
                     value="<?= htmlspecialchars($localizacionSelected->descripcion_localizacion ?? '') ?>">
             </div>
 
+            <div class="mb-3">
+                <label for="id_tipo_almacenamiento" class="form-label">Tipo Almacenamiento: *</label>
+                <select class="form-select" id="id_tipo_almacenamiento" name="id_tipo_almacenamiento">
+                    <option value="">Seleccione un tipo</option>
+                    <?php
+                    if (!empty($tipoAlmacenamiento)) {
+                        $selectedId = $localizacionSelected->id_tipo_almacenamientos_localizaciones ?? '';
+
+                        foreach ($tipoAlmacenamiento as $tipo) {
+                            $id = $tipo->id_tipo_almacenamiento ?? '';
+                            $descripcion = $tipo->descripcion_tipo_almacenamiento ?? 'N/A';
+                            $selected = ($selectedId == $id) ? 'selected' : '';
+                            echo "<option value='{$id}' {$selected}>{$descripcion}</option>";
+                        }
+                    }
+                    ?>
+                </select>
+            </div>
             <div class="d-flex justify-content-end">
                 <button type="submit" id="btn-editar">
                     <i class="bi bi-check-circle me-1"></i>Actualizar

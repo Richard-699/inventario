@@ -5,6 +5,7 @@ namespace App\Application\Service;
 use App\Application\Interface\Service\IGruposService;
 use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\GruposDTO;
+use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Infrastructure\Repository\GruposRepository;
 use App\Infrastructure\Repository\PartNumbersRepository;
@@ -136,7 +137,7 @@ class GruposService implements IGruposService
         }
     }
 
-    public function updateGrupoPartNumbers(GruposDTO $gruposDTO): bool
+    public function updateGrupoPartNumbersCronograma(GruposDTO $gruposDTO, CronogramaDTO $cronograma_dto): bool
     {
         try {
             $this->db->beginTransaction();
@@ -164,6 +165,20 @@ class GruposService implements IGruposService
                 $this->partNumberRepository->assignGroupToPartnumber($partNumberId, $idGrupo);
             }
 
+            // 5. consultar el id del cronograma con el id del grupo para hacer el update::
+            $cronograma = $this->cronogramaRepository->onGet_by_Id_grupo($idGrupo);
+            if (!$cronograma) {
+                throw new Exception("No se encontró cronograma para el grupo");
+            }
+            $id_cronograma = $cronograma->id_cronograma;
+            $id_estado_actual = $cronograma->id_estado_cronograma;
+
+            //6. Hacer update de cronograma por ID CRONOGRAMA
+            $cronogramaModel = Mapper::CronogramaDTOToModel($cronograma_dto);
+            //Asignación del id_cronograma para el update y el id_estado actual ya que este no se actualiza acá
+            $cronogramaModel->id_cronograma = $id_cronograma;
+            $cronogramaModel->id_estado_cronograma = $id_estado_actual;
+            $this->cronogramaRepository->update($cronogramaModel);
 
             $this->db->commit();
 
