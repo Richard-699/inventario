@@ -24,6 +24,14 @@ class PartNumbersRepository implements IPartNumbersRepository
         return array_map([PartNumbers::class, 'fromArray'], $rows);
     }
 
+    public function onGet_By__Id_Grupo($id): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_partnumbers WHERE id_grupo_partnumber = ?");
+        $stmt->execute([$id]);
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([PartNumbers::class, 'fromArray'], $rows);
+    }
+
     public function onGet_By__Id($id): ?PartNumbers
     {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_partnumbers WHERE id_partnumber = ?");

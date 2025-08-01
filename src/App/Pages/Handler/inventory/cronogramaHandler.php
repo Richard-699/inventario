@@ -2,7 +2,6 @@
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\CronogramaService;
-use App\Shared\Validation\Validator;
 
 function onGetCronograma(array $data)
 {
@@ -28,31 +27,7 @@ function onGetCronograma(array $data)
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 try {
-    if ($requestMethod === 'POST') {
-        $rawData = file_get_contents('php://input');
-        $data = json_decode($rawData, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
-            throw new Exception("Datos JSON inválidos o mal formados. Asegúrate de enviar un JSON válido.");
-        }
-
-        $action = $data['action'] ?? null;
-
-        switch ($action) {
-            /* case 'guardar_grupo':
-                $response = onPostSaveGrupo($data);
-                break;
-            case 'delete_grupo':
-                $response = onPostDeleteGrupo($data);
-                break;
-            case 'updateGrupo':
-                $response = onPostUpdateGrupo($data);
-                break;
-            default:
-                throw new Exception("Acción no permitida.");
-                break; */
-        }
-    } elseif ($requestMethod === 'GET') {
+    if ($requestMethod === 'GET') {
         $action = $_GET['action'] ?? null;
         $id_grupo = $_GET['id_grupo'] ?? null;
 
