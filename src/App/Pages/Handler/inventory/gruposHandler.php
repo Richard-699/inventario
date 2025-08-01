@@ -33,9 +33,9 @@ function onGetGrupos()
 function onGetPartnumbers()
 {
     try {
+        $id = null;
         $partnumbersService = new PartNumbersService();
-
-        $partnumbers = $partnumbersService->onGetPartNumbers();
+        $partnumbers = $partnumbersService->onGetPartNumbers($id);
 
         if ($partnumbers) {
             return $partnumbers;
