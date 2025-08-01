@@ -7,6 +7,7 @@ use App\Shared\Validation\Validator;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
 use App\Domain\DTO\LocalizacionesDTO;
+use App\Shared\Util\Utilidades;
 
 function onGetAlmacenes()
 {
@@ -89,6 +90,26 @@ function onGetLocalizaciones()
     }
 }
 
+function onGetClasificacionesAlmacenes()
+{
+    try {
+        $almacenesService = new AlmacenesService();
+
+        $clasificaciones = $almacenesService->onGetClasificacionesAlmacenes();
+
+        if ($clasificaciones) {
+            return $clasificaciones;
+        } else {
+            throw new Exception("No se encontraron localizaciones.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 function onGetAlmacenesLocalizaciones()
 {
     try {
@@ -144,6 +165,7 @@ function onPostSaveAlmacenes(array $data)
         // Normalizar valores a MAYÚSCULA (sin tildes ni cambios de idioma)
         $codigo_sap = isset($form['codigo_sap']) ? strtoupper($form['codigo_sap']) : null;
         $descripcion = isset($form['descripcion_almacen']) ? strtoupper($form['descripcion_almacen']) : null;
+        $id_almacen = Utilidades::generarGUID();
 
         $almacenesDTO = new AlmacenesDTO(
             id_almacen: null,
@@ -264,6 +286,9 @@ try {
                 break;
             case 'onGet_localizaciones':
                 $response = onGetLocalizaciones();
+                break;
+            case 'onGet_clasificacionesAlmacenes':
+                $response = onGetClasificacionesAlmacenes();
                 break;
             case 'onGet_AlmacenesLocalizaciones':
                 $response = onGetAlmacenesLocalizaciones();

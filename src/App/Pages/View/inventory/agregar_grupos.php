@@ -24,6 +24,11 @@
                     <input type="text" class="form-control" id="descripcion_grupo" name="descripcion_grupo">
                 </div>
 
+                <div class="mb-3">
+                    <label for="fecha_programacion_grupo" class="form-label">Mes de conteo: *</label>
+                    <input type="month" class="form-control" id="fecha_programacion_grupo" name="fecha_programacion_grupo">
+                </div>
+
                 <div class="text-end">
                     <button type="submit" id="btn-save">
                         <i class="fa fa-save me-1"></i> Guardar

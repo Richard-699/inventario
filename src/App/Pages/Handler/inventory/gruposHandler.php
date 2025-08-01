@@ -2,10 +2,13 @@
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\GruposService;
+use App\Application\Service\CronogramaService;
 use App\Application\Service\PartNumbersService;
+use App\Domain\DTO\CronogramaDTO;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\PartNumbersDTO;
+use App\Shared\Util\Utilidades;
 
 function onGetGrupos()
 {
@@ -71,18 +74,26 @@ function onPostSaveGrupo(array $data)
 {
     try {
         $form = $data['form'] ?? [];
-        // Normalizar valores a MAYÚSCULA (sin tildes ni cambios de idioma)
         $descripcion = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
-
+        $fecha_programacion_grupo = isset($form['fecha_programacion_grupo']) ? $form['fecha_programacion_grupo'] : null;
+        $id_grupo = Utilidades::generarGUID();
         $gruposDTO = new GruposDTO(
-            id_grupo: null,
-            descripcion_grupo: $descripcion ?? null
+            id_grupo: $id_grupo,
+            descripcion_grupo: $descripcion ?? null,
+            fecha_programacion_grupo: $fecha_programacion_grupo
         );
         Validator::validateGruposDTO($gruposDTO);
 
+        $estado_cronograma = 1;
+        $cronogramaDTO = new CronogramaDTO(
+            fecha_cronograma: $fecha_programacion_grupo,
+            id_grupo_cronograma: $id_grupo,
+            id_estado_cronograma: $estado_cronograma
+        );
+
         $gruposService = new GruposService();
 
-        $guardarGrupo = $gruposService->saveGrupo($gruposDTO);
+        $guardarGrupo = $gruposService->saveGrupo($gruposDTO, $cronogramaDTO);
 
         if (!$guardarGrupo) {
             throw new Exception("No se pudo guardar el grupo");
@@ -131,7 +142,7 @@ function onPostUpdateGrupo(array $data)
 {
     try {
         $form = $data['form'] ?? [];
-        $idGrupo = isset($form['id_grupo']) ? (int)$form['id_grupo'] : null;
+        $idGrupo = isset($form['id_grupo']) ? (string)$form['id_grupo'] : null;
         $part_numbers_select = $form['part_numbers_select'] ?? [];
 
         if (!is_array($part_numbers_select)) {
@@ -145,15 +156,23 @@ function onPostUpdateGrupo(array $data)
         $gruposService = new GruposService();
 
         $nombreGrupo = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
+        $fecha_programacion_grupo = isset($form['fecha_programacion_grupo']) ? $form['fecha_programacion_grupo'] : null;
+
         $gruposDTO = new GruposDTO(
             id_grupo: $idGrupo,
             descripcion_grupo: $nombreGrupo,
+            fecha_programacion_grupo: $fecha_programacion_grupo,
             partnumberGruposDTO: $selectedPartNumberIds,
         );
 
         Validator::validateGruposDTO($gruposDTO);
 
-        $update_grupo = $gruposService->updateGrupoPartNumbers($gruposDTO);
+        $cronogramaDTO = new CronogramaDTO(
+            fecha_cronograma: $fecha_programacion_grupo,
+            id_grupo_cronograma: $idGrupo,
+        );
+
+        $update_grupo = $gruposService->updateGrupoPartNumbersCronograma($gruposDTO, $cronogramaDTO);
 
         if (!$update_grupo) {
             throw new Exception("No se pudo actualizar el grupo.");

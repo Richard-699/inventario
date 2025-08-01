@@ -40,13 +40,43 @@ $(document).ready(function () {
         "searching": true
     });
 
+    document.getElementById('btnAgregarAlmacen').addEventListener('click', async function () {
 
-    document.getElementById('btnAgregarAlmacen').addEventListener('click', function () {
-        const url = 'agregar_almacenes.php';
-        Fancybox.show([{
-            src: url,
-            type: 'ajax'
-        }]);
+        mostrarCarga();
+
+        let btn = this;
+        btn.disabled = true;
+
+        try {
+            const response_clasificacion_almacenes = await fetch('../../Handler/inventory/almacenesHandler.php?action=onGet_clasificacionesAlmacenes', {
+                method: 'GET'
+            });
+            const clasificaciones_almacenes = await response_clasificacion_almacenes.json();
+            const clasificaciones_almacenesEncoded = encodeURIComponent(JSON.stringify(clasificaciones_almacenes));
+
+            var url = `agregar_almacenes.php?clasificaciones_almacenes=${clasificaciones_almacenesEncoded}`;
+
+            Fancybox.show([{
+                src: url,
+                type: 'ajax'
+            }]);
+
+            setTimeout(() => {
+                ocultarCarga();
+                Fancybox.getInstance().options = {
+                    ...Fancybox.getInstance().options,
+                    click: false,
+                    trapFocus: false,
+                    placeFocusBack: false
+                };
+            }, 100);
+
+        } catch (error) {
+            console.error('Error al cargar la modal:', error);
+        } finally {
+            ocultarCarga();
+            btn.disabled = false;
+        }
     });
 
 });

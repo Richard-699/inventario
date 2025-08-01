@@ -14,9 +14,11 @@ use App\Domain\Model\Almacenes;
 use App\Domain\Model\Localizaciones;
 use App\Domain\Model\AlmacenesLocalizaciones;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
+use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
+use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 
 class Mapper
@@ -107,7 +109,8 @@ class Mapper
         return new LocalizacionesDTO(
             id_localizacion: $model->id_localizacion,
             id_tipo_localizacion_localizaciones: $model->id_tipo_localizacion_localizaciones,
-            descripcion_localizacion: $model->descripcion_localizacion
+            descripcion_localizacion: $model->descripcion_localizacion,
+            id_tipo_almacenamientos_localizaciones: $model->id_tipo_almacenamientos_localizaciones
         );
     }
 
@@ -116,7 +119,8 @@ class Mapper
         return new Localizaciones(
             $dto->id_localizacion,
             $dto->id_tipo_localizacion_localizaciones,
-            $dto->descripcion_localizacion
+            $dto->descripcion_localizacion,
+            $dto->id_tipo_almacenamientos_localizaciones
         );
     }
 
@@ -168,7 +172,8 @@ class Mapper
     {
         return new GruposDTO(
             id_grupo: $model->id_grupo,
-            descripcion_grupo: $model->descripcion_grupo
+            descripcion_grupo: $model->descripcion_grupo,
+            fecha_programacion_grupo: $model->fecha_programacion_grupo
         );
     }
 
@@ -176,7 +181,31 @@ class Mapper
     {
         return new Grupos(
             $dto->id_grupo,
-            $dto->descripcion_grupo
+            $dto->descripcion_grupo,
+            $dto->fecha_programacion_grupo
+        );
+    }
+
+
+    public static function modelToCronogramaDTO(Cronograma $model): CronogramaDTO
+    {
+        return new CronogramaDTO(
+            id_cronograma: $model->id_cronograma,
+            fecha_cronograma: $model->fecha_cronograma,
+            id_grupo_cronograma: $model->id_grupo_cronograma,
+            id_estado_cronograma: $model->id_estado_cronograma,
+            id_administrador_cronograma: $model->id_administrador_cronograma
+        );
+    }
+
+    public static function CronogramaDTOToModel(CronogramaDTO $dto): Cronograma
+    {
+        return new Cronograma(
+            $dto->id_cronograma,
+            $dto->fecha_cronograma,
+            $dto->id_grupo_cronograma,
+            $dto->id_estado_cronograma,
+            $dto->id_administrador_cronograma
         );
     }
 }

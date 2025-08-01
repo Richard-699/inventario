@@ -34,8 +34,8 @@
             <table id="tabla-grupos" class="table table-striped table-bordered table-sm dt-responsive nowrap" style="width:100%">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 5%;">Id</th>
-                        <th style="width: 18%;">Descripcion</th>
+                        <th hidden>Id</th>
+                        <th style="width: 95%;">Descripción</th>
                         <th></th>
                     </tr>
                 </thead>

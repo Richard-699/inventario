@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Interface\Service\ICronogramaService;
+use App\Domain\DTO\CronogramaDTO;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
@@ -76,4 +77,5 @@ class CronogramaService implements ICronogramaService
 
         return $cronogramas;
     }
+
 }

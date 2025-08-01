@@ -25,7 +25,7 @@ class Validator
                 break;
             case $dto instanceof PartNumbersDTO:
                 self::validatePartnumberDTO($dto);
-            break;
+                break;
             default:
                 throw new Exception('No hay reglas de validación definidas para este DTO.');
         }
@@ -80,6 +80,10 @@ class Validator
         if (empty($dto->descripcion_grupo)) {
             throw new Exception('La descripción es obligatoria');
         }
+
+        if (empty($dto->fecha_programacion_grupo)) {
+            throw new Exception('La fecha de conteo es obligatoria');
+        }
     }
 
     public static function validateLocalizacionesDTO(LocalizacionesDTO $dto): void
@@ -89,6 +93,9 @@ class Validator
         }
         if (empty($dto->descripcion_localizacion)) {
             throw new Exception('La descripcion es obligatoria.');
+        }
+        if (empty($dto->id_tipo_almacenamientos_localizaciones)) {
+            throw new Exception('El tipo de almacenamiento es obligatorio.');
         }
     }
 

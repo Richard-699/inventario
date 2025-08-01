@@ -15,6 +15,20 @@
 
 <body class="p-4">
 
+    <?php
+    if (isset($_GET['clasificaciones_almacenes'])) {
+        $clasificacionesEncoded = $_GET['clasificaciones_almacenes'];
+        $clasificacionesJson = urldecode($clasificacionesEncoded);
+        $clasificaciones = json_decode($clasificacionesJson);
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            error_log('JSON Decode Error in agregar_localizaciones.php: ' . json_last_error_msg());
+        }
+    } else {
+        $clasificaciones = [];
+    }
+    ?>
+
     <div class="contenido-agregar-almacen">
         <div class="p-3">
             <h5 class="mb-4"><i class="fa-solid fa-warehouse me-2 fs-4"></i>Nuevo Almacén</h5>
@@ -26,6 +40,22 @@
                 <div class="mb-3">
                     <label for="descripcion_almacen" class="form-label">Descripción: *</label>
                     <input type="text" class="form-control" id="descripcion_almacen" name="descripcion_almacen">
+                </div>
+
+                <div class="mb-3">
+                    <label for="id_clasificacion_almacen" class="form-label">Clasificación Almacén: *</label>
+                    <select class="form-select" id="id_clasificacion_almacen" name="id_clasificacion_almacen">
+                        <option value="" selected disabled>Seleccione un tipo</option>
+                        <?php
+                        if (!empty($clasificaciones)) {
+                            foreach ($clasificaciones as $tipo) {
+                                $id = $tipo->id_clasificacion_almacenes ?? '';
+                                $descripcion = $tipo->descripcion_clasificacion_almacenes ?? 'N/A';
+                                echo "<option value='{$id}'>{$descripcion}</option>";
+                            }
+                        }
+                        ?>
+                    </select>
                 </div>
 
                 <div class="text-end">

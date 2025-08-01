@@ -18,7 +18,7 @@ $(document).ready(function () {
         });
 
         const action = 'guardar_grupo';
-
+        debugger;
         try {
             const response = await fetch('../../Handler/inventory/gruposHandler.php', {
                 method: 'POST',
