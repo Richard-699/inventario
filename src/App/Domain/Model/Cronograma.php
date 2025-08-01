@@ -7,7 +7,7 @@ class Cronograma
     public function __construct(
         public ?int $id_cronograma,
         public ?string $fecha_cronograma,
-        public ?int $id_grupo_cronograma,
+        public ?string $id_grupo_cronograma,
         public ?int $id_estado_cronograma,
         public ?string $id_administrador_cronograma
     ) {}

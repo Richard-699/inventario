@@ -8,8 +8,9 @@ use App\Domain\DTO\PartNumbersDTO;
 function onGetPartNumbers()
 {
     try {
+        $id = null;
         $partNumbersService = new PartNumbersService();
-        $partNumbers = $partNumbersService->onGetPartNumbers();
+        $partNumbers = $partNumbersService->onGetPartNumbers($id);
 
         if ($partNumbers) {
             return $partNumbers;

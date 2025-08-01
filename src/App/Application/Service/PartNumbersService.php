@@ -31,9 +31,14 @@ class PartNumbersService implements IPartNumbersService
         $this->gruposRepository = new GruposRepository($this->db);
     }
 
-    public function onGetPartNumbers(): array
+    public function onGetPartNumbers($id): array
     {
-        $partnumbers = $this->partnumbersRepository->onGet();
+        if($id == null){
+            $partnumbers = $this->partnumbersRepository->onGet();
+        }else{
+            $partnumbers = $this->partnumbersRepository->onGet_By__Id_Grupo($id);
+        }
+        
         $umbs = $this->onGetUMBS();
 
         foreach ($partnumbers as $partnumber) {

@@ -4,7 +4,7 @@ namespace App\Domain\Model;
 
 class Grupos {
     public function __construct(
-        public ?int $id_grupo,
+        public ?string $id_grupo,
         public ?string $descripcion_grupo,
     ) {}
 
