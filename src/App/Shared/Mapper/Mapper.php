@@ -232,10 +232,10 @@ class Mapper
             $dto->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
         );
     }
-
-    public static function modelToInformacion_sap_mb52DTO(InformacionSapMb52 $model): InformacionSapMb52DTO
+  
+      public static function modelToInformacionSapMB52DTO(InformacionSapMB52 $model): InformacionSapMB52DTO
     {
-        return new InformacionSapMb52DTO(
+        return new InformacionSapMB52DTO(
             id_informacion_sap_mb52: $model->id_informacion_sap_mb52,
             fecha_registro_informacion_sap_mb52: $model->fecha_registro_informacion_sap_mb52,
             id_part_number_informacion_sap_mb52: $model->id_part_number_informacion_sap_mb52,
@@ -245,9 +245,9 @@ class Mapper
         );
     }
 
-    public static function Informacion_sap_mb52DTOToModel(InformacionSapMb52DTO $dto): InformacionSapMb52
+    public static function InformacionSapMB52DTOToModel(InformacionSapMB52DTO $dto): InformacionSapMB52
     {
-        return new InformacionSapMb52(
+        return new InformacionSapMB52(
             $dto->id_informacion_sap_mb52,
             $dto->fecha_registro_informacion_sap_mb52,
             $dto->id_part_number_informacion_sap_mb52,

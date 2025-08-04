@@ -4,13 +4,13 @@ namespace App\Application\Service;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Application\Interface\Service\IBasesDatosSapService;
-use App\Domain\DTO\InformacionSapMb52DTO;
+use App\Domain\DTO\InformacionSapMB52DTO;
 use App\Domain\Model\Almacenes;
-use App\Domain\Model\InformacionSapMb52;
+use App\Domain\Model\InformacionSapMB52;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
-use App\Infrastructure\Repository\InformacionSapMb52Repository;
+use App\Infrastructure\Repository\InformacionSapMB52Repository;
 use App\Infrastructure\Repository\PartNumbersRepository;
 use App\Infrastructure\Repository\AlmacenesRepository;
 use App\Shared\Util\Utilidades;
@@ -21,16 +21,19 @@ class BasesDatosSapService implements IBasesDatosSapService
     private $db;
     private $partNumberRepository;
     private $almacenRepository;
+    private $informacionSapMB52Repository;
+
     public function __construct()
     {
         $this->db = (new Connection())->dbInventarioHwi;
         $this->partNumberRepository = new PartNumbersRepository($this->db);
         $this->almacenRepository = new AlmacenesRepository($this->db);
+        $this->informacionSapMB52Repository = new InformacionSapMB52Repository($this->db);
     }
 
     public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File): void
     {
-        $this->procesarArchivo($mb52File, new InformacionSapMb52Repository($this->db), 'mb52');
+        $this->procesarArchivo($mb52File, $this->informacionSapMB52Repository, 'mb52');
         /*  $this->procesarArchivo($wmFile, new WMRepository(), 'wm');
         $this->procesarArchivo($cero016File, new Cero016Repository(), 'cero016'); */
     }
@@ -131,5 +134,10 @@ class BasesDatosSapService implements IBasesDatosSapService
                 throw new Exception("Error - " . $e->getMessage());
             }
         }
+    }
+
+    public function onGetMB52($id_partnumber): ?array
+    {
+        return null;
     }
 }

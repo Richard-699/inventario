@@ -2,9 +2,8 @@
 
 namespace App\Application\Interface\Service;
 
-
-interface IBasesDatosSapService
-{
+interface IBasesDatosSapService {
+    public function onGetMB52($id_partnumber): ?array;
     public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File): void;
     public function procesarArchivo(array $archivo, object $repositorio, string $tipo): void;
 }

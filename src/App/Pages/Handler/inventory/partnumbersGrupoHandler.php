@@ -1,6 +1,7 @@
 <?php
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
+use App\Application\Service\BasesDatosSapService;
 use App\Application\Service\PartNumbersService;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\PartNumbersDTO;
@@ -16,6 +17,26 @@ function onGetPartNumbers($data)
             return $partNumbers;
         } else {
             throw new Exception("No se encontraron PartNumbers.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+function onGetMB52($data)
+{
+    try {
+        $id_partnumber = $data['id_partnumber'];
+        $basesDatosSapService = new BasesDatosSapService();
+        $mb52 = $basesDatosSapService->onGetMB52($id_partnumber);
+
+        if ($mb52) {
+            return $mb52;
+        } else {
+            throw new Exception("No se encontraron datos en mb52.");
         }
     } catch (Exception $e) {
         return [
@@ -59,14 +80,8 @@ try {
             case 'onGet_partnumbers':
                 $response = onGetPartNumbers($_GET);
                 break;
-            case 'onGet_UMBS':
-                $response = onGetUMBS();
-                break;
-            case 'onGet_Plataformas':
-                $response = onGetPlataformas();
-                break;
-            case 'onGet_partnumberSelected':
-                $response = onGetPartnumberSelected($_GET);
+            case 'onGet_MB52':
+                $response = onGetMB52($_GET);
                 break;
             default:
                 throw new Exception("Acción GET no permitida.");

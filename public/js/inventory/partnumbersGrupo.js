@@ -40,7 +40,7 @@ $(document).ready(function () {
                 "className": "dt-center",
                 "render": function (data, type, row) {
                     return `
-                            <button class="btn btn-primary btn-sm" onclick="updatePartNumber(this, '${data}')">
+                            <button class="btn btn-primary btn-sm" onclick="continuarAlmacen(this, '${data}')">
                                 <i class="fa-solid fa-warehouse"></i>
                             </button>
                         `;
@@ -87,4 +87,40 @@ $(document).ready(function () {
 function obtenerParametroURL(nombre) {
     const params = new URLSearchParams(window.location.search);
     return params.get(nombre);
+}
+
+async function continuarAlmacen(btn, id) {
+    mostrarCarga();
+    btn.disabled = true;
+
+    try {
+        const responseMB52 = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_MB52&id_partnumber=${encodeURIComponent(id)}`, {
+            method: 'GET'
+        });
+        const MB52 = await responseMB52.json();
+        const MB52Encoded = encodeURIComponent(JSON.stringify(MB52));
+
+        var url = `edit_partnumbers.php?mb52=${MB52Encoded}`;
+
+        Fancybox.show([{
+            src: url,
+            type: 'ajax'
+        }]);
+
+        setTimeout(() => {
+            ocultarCarga();
+
+            Fancybox.getInstance().options = {
+                ...Fancybox.getInstance().options,
+                click: false,
+                trapFocus: false,
+                placeFocusBack: false
+            };
+        }, 100);
+
+    } catch (error) {
+        console.error('Error al cargar la modal:', error);
+    } finally {
+        btn.disabled = false;
+    }
 }
