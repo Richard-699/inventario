@@ -77,5 +77,4 @@ class CronogramaService implements ICronogramaService
 
         return $cronogramas;
     }
-
 }

@@ -10,10 +10,15 @@ body {
   width: 200px;
   background-color: #072B31;
   color: white;
-  transition: all 0.3s ease;
-  position: relative; /* Añadido */
-  padding-bottom: 60px; /* Añadido para asegurarse de que haya espacio en la parte inferior */
+  transition: transform 0.3s ease;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 2000;
+  overflow-y: auto;
 }
+
 .sidebar a {
   color: white;
   text-decoration: none;
@@ -50,9 +55,44 @@ body {
   transition: all 0.3s ease;
 }
 
-.sidebar.collapsed {
-  margin-left: -200px;
+.sidebar.collapsed~.content {
+  margin-left: 0 !important;
+  width: 100% !important;
 }
+
+/* Mostrar normalmente en pantallas grandes */
+.sidebar.collapsed {
+  transform: translateX(-100%);
+}
+
+/* Cuando el sidebar no está colapsado (en pantallas grandes) */
+.sidebar:not(.collapsed) ~ .navbar {
+  margin-left: 200px; /* mismo ancho que el sidebar */
+}
+
+/* Cuando el sidebar está colapsado */
+.sidebar.collapsed ~ .navbar {
+  margin-left: 0;
+}
+
+@media (min-width: 993px) {
+  .sidebar {
+    transform: translateX(0);
+  }
+
+  .sidebar:not(.collapsed)~.content {
+    margin-left: 200px;
+  }
+}
+
+/* Adaptar contenido al 100% cuando sidebar está colapsado */
+@media (max-width: 992px) {
+  .content {
+    margin-left: 0 !important;
+    width: 100% !important;
+  }
+}
+
 
 .content.expanded {
   margin-left: 0;
@@ -63,6 +103,11 @@ body {
   background-color: #E0E0E0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   color: black;
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  padding: 10px 20px;
+  transition: margin-left 0.3s ease;
 }
 
 .navbar-brand {
@@ -71,12 +116,13 @@ body {
 }
 
 .menu-toggle {
-  border: none;
+  margin-right: 20px;
   background: none;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  font-size: 1.3rem;
-  margin-right: 10px;
+  border: none;
+  font-size: 1.5rem;
   color: black;
+  cursor: pointer;
+  transition: margin-left 0.3s ease;
 }
 
 .menu-toggle:hover {
@@ -135,12 +181,16 @@ body {
 }
 
 #BtnCerrarSesion {
-  position: absolute; /* Fija el botón en la parte inferior */
-  bottom: 2px; /* Alinea el botón a 20px del fondo */
+  position: absolute;
+  /* Fija el botón en la parte inferior */
+  bottom: 2px;
+  /* Alinea el botón a 20px del fondo */
   left: 0;
-  width: 100%; /* Asegura que ocupe todo el ancho del menú */
+  width: 100%;
+  /* Asegura que ocupe todo el ancho del menú */
   padding: 10px 15px;
-  text-align: center; /* Centra el contenido del botón */
+  text-align: center;
+  /* Centra el contenido del botón */
   background-color: #072B31;
   color: white;
   text-decoration: none;
@@ -194,70 +244,3 @@ body {
   font-size: 0.8rem;
   /* Tamaño menor para la flechita */
 }
-
-/* sub menu excel: */
-
-.submenu-container {
-  position: relative;
-}
-
-.submenu-toggle {
-  display: block;
-  padding: 10px 15px;
-  color: white;
-  text-decoration: none;
-}
-
-.submenu {
-  display: none;
-  position: absolute;
-  left: 100%;
-  top: 0;
-  background-color: #072B31;
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 1000;
-  white-space: nowrap;
-  min-width: 180px;
-}
-
-.submenu-container:hover > .submenu {
-  display: block;
-}
-
-.submenu-auditorias-container {
-  position: relative;
-}
-
-.submenu-auditorias {
-  display: none;
-  position: absolute;
-  left: 100%;
-  top: 0;
-  background-color: #072B31;
-  padding: 10px;
-  border-radius: 5px;
-  z-index: 1001;
-  white-space: nowrap;
-  min-width: 180px;
-}
-
-.submenu-auditorias-container:hover > .submenu-auditorias {
-  display: block;
-}
-
-.submenu a,
-.submenu-auditorias a {
-  cursor: pointer;
-  display: block;
-  color: white;
-  padding: 5px 10px;
-  text-decoration: none;
-}
-
-.submenu a:hover,
-.submenu-auditorias a:hover {
-  background-color: #495057;
-  border-radius: 4px;
-}
-/* FIN SUB MENU EXCEL */

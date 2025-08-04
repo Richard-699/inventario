@@ -19,25 +19,25 @@
         <h5 class="mb-4"><i class="fa-solid fa-file-excel me-2 fs-4"></i>
             Adjuntar Bases de Datos SAP
         </h5>
-        <form id="formUpdateGrupo">
+        <form id="formBdsSap" enctype="multipart/form-data">
 
             <div class="mb-4">
                 <label for="" class="form-label">MB-52: *</label>
-                <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="">
+                <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="mb52">
             </div>
 
             <div class="mb-4">
                 <label for="" class="form-label">WM: *</label>
-                <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="">
+                <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="wm">
             </div>
 
             <div class="mb-4">
                 <label for="" class="form-label">0016: *</label>
-                <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="">
+                <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="0016">
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-aprobar-editar">
+                <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-">
                     <i class="bi bi-check-circle me-1"></i>Cargar
                 </button>
             </div>
@@ -56,7 +56,7 @@
     <script src="../../../../../public/js/utils/libs/select2.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/utils/notifications.js"></script>
-    <script src="../../../../../public/js/inventory/edit_grupos.js"></script>
+    <script src="../../../../../public/js/inventory/bases_datos_sap.js"></script>
 </body>
 
 </html>

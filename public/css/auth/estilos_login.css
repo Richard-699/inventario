@@ -90,3 +90,39 @@ body {
 .text-Ingresar{
     margin-top: -10px;
 }
+
+
+@media (max-width: 767.98px) {
+    .bg {
+        display: none !important; /* Oculta imagen en pantallas pequeñas */
+    }
+
+    .rounded-start {
+        border-radius: 0 !important;
+    }
+
+    .rounded-end {
+        border-radius: 0 !important;
+    }
+
+    .container {
+        padding: 3rem;
+    }
+
+    .form-group {
+        margin-bottom: 2rem;
+    }
+
+    .custom-input {
+        font-size: 1rem;
+    }
+
+    .floating-label {
+        font-size: 0.9rem;
+    }
+
+    #btningresar {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}

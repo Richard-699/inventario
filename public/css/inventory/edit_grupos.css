@@ -6,10 +6,19 @@
 
 @media (max-width: 768px) {
     .contenido_edit_grupos {
-        padding: 0 10px;
-        width: 200px;
+        width: 90%;
+        max-width: 100%;
+        padding: 0 15px;
     }
 }
+
+@media (max-width: 480px) {
+    .contenido_edit_grupos {
+        width: 95%;
+        padding: 0 10px;
+    }
+}
+
 .select2-container--default .select2-results__option {
     color: #000;              /* color del texto */
     background-color: #fff;   /* fondo blanco */
