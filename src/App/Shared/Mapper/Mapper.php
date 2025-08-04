@@ -19,12 +19,12 @@ use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
-use App\Domain\DTO\Informacion_sap_mb52DTO;
+use App\Domain\DTO\InformacionSapMb52DTO;
 use App\Domain\Model\ClasificacionAlmacenes;
 use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
-use App\Domain\Model\Informacion_sap_mb52;
+use App\Domain\Model\InformacionSapMb52;
 
 class Mapper
 {
@@ -233,9 +233,9 @@ class Mapper
         );
     }
 
-    public static function modelToInformacion_sap_mb52DTO(Informacion_sap_mb52 $model): Informacion_sap_mb52DTO
+    public static function modelToInformacion_sap_mb52DTO(InformacionSapMb52 $model): InformacionSapMb52DTO
     {
-        return new Informacion_sap_mb52DTO(
+        return new InformacionSapMb52DTO(
             id_informacion_sap_mb52: $model->id_informacion_sap_mb52,
             fecha_registro_informacion_sap_mb52: $model->fecha_registro_informacion_sap_mb52,
             id_part_number_informacion_sap_mb52: $model->id_part_number_informacion_sap_mb52,
@@ -245,9 +245,9 @@ class Mapper
         );
     }
 
-    public static function Informacion_sap_mb52DTOToModel(Informacion_sap_mb52DTO $dto): Informacion_sap_mb52
+    public static function Informacion_sap_mb52DTOToModel(InformacionSapMb52DTO $dto): InformacionSapMb52
     {
-        return new Informacion_sap_mb52(
+        return new InformacionSapMb52(
             $dto->id_informacion_sap_mb52,
             $dto->fecha_registro_informacion_sap_mb52,
             $dto->id_part_number_informacion_sap_mb52,

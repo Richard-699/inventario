@@ -4,13 +4,13 @@ namespace App\Application\Service;
 
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Application\Interface\Service\IBasesDatosSapService;
-use App\Domain\DTO\Informacion_sap_mb52DTO;
+use App\Domain\DTO\InformacionSapMb52DTO;
 use App\Domain\Model\Almacenes;
-use App\Domain\Model\Informacion_sap_mb52;
+use App\Domain\Model\InformacionSapMb52;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
-use App\Infrastructure\Repository\Informacion_sap_mb52Repository;
+use App\Infrastructure\Repository\InformacionSapMb52Repository;
 use App\Infrastructure\Repository\PartNumbersRepository;
 use App\Infrastructure\Repository\AlmacenesRepository;
 use App\Shared\Util\Utilidades;
@@ -30,12 +30,12 @@ class BasesDatosSapService implements IBasesDatosSapService
 
     public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File): void
     {
-        $this->procesarArchivo($mb52File, new Informacion_sap_mb52Repository($this->db), 'mb52');
+        $this->procesarArchivo($mb52File, new InformacionSapMb52Repository($this->db), 'mb52');
         /*  $this->procesarArchivo($wmFile, new WMRepository(), 'wm');
         $this->procesarArchivo($cero016File, new Cero016Repository(), 'cero016'); */
     }
 
-    private function procesarArchivo(array $archivo, object $repositorio, string $tipo): void
+    public function procesarArchivo(array $archivo, object $repositorio, string $tipo): void
     {
         $spreadsheet = IOFactory::load($archivo['tmp_name']);
 
@@ -73,38 +73,40 @@ class BasesDatosSapService implements IBasesDatosSapService
 
         // 2. Iterar sobre las filas filtradas
         foreach ($filasFiltradas as $fila) {
-            switch ($tipo) {
-                case 'mb52':
-                    $codigoPartNumber = trim($fila[0] ?? '');
-                    $nombreAlmacen = trim($fila[3] ?? '');
-                    // Obtener ID del part number y su grupo
-                    $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
-                    if (!$partNumber) {
-                        throw new Exception("No se encontró el part number: '" . $codigoPartNumber . "' en la fila $fila.");
-                    }
-                    $idPartNumber = $partNumber->id_partnumber;
-                    $idGrupo = $partNumber->id_grupo_partnumber ?? null;
-                    // Obtener ID del almacén por nombre
-                    $almacen = $this->almacenRepository->onGet_By__descripcion($nombreAlmacen);
-                    if (!$almacen) {
-                        throw new Exception("No se encontró el almacén: $nombreAlmacen");
-                    }
-                    $idAlmacen = $almacen->id_almacen;
+            try {
+                switch ($tipo) {
+                    case 'mb52':
+                        $codigoPartNumber = trim($fila[0] ?? '');
+                        $nombreAlmacen = trim($fila[3] ?? '');
+                        // Obtener ID del part number y su grupo
+                        $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
+                        if (!$partNumber) {
+                            $filaPreview = implode(' | ', array_slice($fila, 0, 2)); // máximo 5 columnas visibles
+                            throw new Exception("No se encontró el Part Number '{$codigoPartNumber}' en la fila con datos: [{$filaPreview}]");
+                        }
+                        $idPartNumber = $partNumber->id_partnumber;
+                        $idGrupo = $partNumber->id_grupo_partnumber ?? null;
+                        // Obtener ID del almacén por nombre
+                        $almacen = $this->almacenRepository->onGet_By__descripcion($nombreAlmacen);
+                        if (!$almacen) {
+                            throw new Exception("Almacén no encontrado: '{$nombreAlmacen}' en fila $fila.");
+                        }
+                        $idAlmacen = $almacen->id_almacen;
 
 
-                    $dto = new Informacion_sap_mb52DTO(
-                        id_informacion_sap_mb52: Utilidades::generarGUID(),
-                        fecha_registro_informacion_sap_mb52: date('Y-m-d'),
-                        id_part_number_informacion_sap_mb52: $idPartNumber,
-                        cantidad_informacion_sap_mb52: (int)($fila[7] ?? 0),
-                        id_almacen_informacion_sap_mb52: $idAlmacen,
-                        id_grupo_informacion_sap_mb52: $idGrupo
-                    );
-                    $mb52Model = Mapper::Informacion_sap_mb52DTOToModel($dto);
-                    $repositorio->save($mb52Model);
-                    break;
+                        $dto = new InformacionSapMb52DTO(
+                            id_informacion_sap_mb52: Utilidades::generarGUID(),
+                            fecha_registro_informacion_sap_mb52: date('Y-m-d'),
+                            id_part_number_informacion_sap_mb52: $idPartNumber,
+                            cantidad_informacion_sap_mb52: (int)($fila[7] ?? 0),
+                            id_almacen_informacion_sap_mb52: $idAlmacen,
+                            id_grupo_informacion_sap_mb52: $idGrupo
+                        );
+                        $mb52Model = Mapper::Informacion_sap_mb52DTOToModel($dto);
+                        $repositorio->save($mb52Model);
+                        break;
 
-                /*  case 'wm':
+                    /*  case 'wm':
                     $dto = new WMDTO(
                         codigo: $fila[0] ?? '',
                         ubicacion: $fila[1] ?? '',
@@ -122,8 +124,11 @@ class BasesDatosSapService implements IBasesDatosSapService
                     $repositorio->guardar($dto);
                     break; */
 
-                default:
-                    throw new Exception("Tipo de archivo no reconocido.");
+                    default:
+                        throw new Exception("Tipo de archivo no reconocido.");
+                }
+            } catch (Exception $e) {
+                throw new Exception("Error - " . $e->getMessage());
             }
         }
     }

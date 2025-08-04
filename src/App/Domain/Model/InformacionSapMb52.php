@@ -2,7 +2,7 @@
 
 namespace App\Domain\Model;
 
-class Informacion_sap_mb52 {
+class InformacionSapMb52 {
     public function __construct(
         public ?string $id_informacion_sap_mb52 ,
         public ?string $fecha_registro_informacion_sap_mb52,
