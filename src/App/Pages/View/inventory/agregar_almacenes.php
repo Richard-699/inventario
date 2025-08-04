@@ -42,20 +42,29 @@
                     <input type="text" class="form-control" id="descripcion_almacen" name="descripcion_almacen">
                 </div>
 
-                <div class="mb-3">
-                    <label for="id_clasificacion_almacen" class="form-label">Clasificación Almacén: *</label>
-                    <select class="form-select" id="id_clasificacion_almacen" name="id_clasificacion_almacen">
-                        <option value="" selected disabled>Seleccione un tipo</option>
+                <div class="mb-4">
+                    <label for="clasificacion_almacen_select" class="form-label">
+                        Clasificación Almacén: *
+                    </label>
+
+                    <select id="clasificacion_almacen_select"
+                        class="form-control shadow-sm rounded"
+                        multiple
+                        name="clasificacion_almacen_select"
+                        multiple>
                         <?php
-                        if (!empty($clasificaciones)) {
-                            foreach ($clasificaciones as $tipo) {
-                                $id = $tipo->id_clasificacion_almacenes ?? '';
-                                $descripcion = $tipo->descripcion_clasificacion_almacenes ?? 'N/A';
-                                echo "<option value='{$id}'>{$descripcion}</option>";
-                            }
-                        }
+                        foreach ($clasificaciones as $p):
+                            $id_clasificacion = (int)$p->id_clasificacion_almacenes;
+                        ?>
+                            <option value="<?= htmlspecialchars($id_clasificacion) ?>">
+                                <?= htmlspecialchars($p->descripcion_clasificacion_almacenes) ?>
+                            </option>
+                        <?php endforeach;
                         ?>
                     </select>
+                    <div class="form-text mt-1">
+                        Puedes buscar y seleccionar múltiples opciones.
+                    </div>
                 </div>
 
                 <div class="text-end">

@@ -6,7 +6,9 @@ use App\Application\Service\LocalizacionesService;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
+use App\Domain\DTO\AlmacenesClasificacionesAlmacenesDTO;
 use App\Domain\DTO\LocalizacionesDTO;
+use App\Domain\Model\ClasificacionAlmacenes;
 use App\Shared\Util\Utilidades;
 
 function onGetAlmacenes()
@@ -56,6 +58,26 @@ function onGetLocalizacionesSelected($id)
         $almacenesService = new AlmacenesService();
 
         $localizacionesSelected = $almacenesService->onGetAlmacenesLocalizaciones_By_id_almacen($id);
+
+        if ($localizacionesSelected) {
+            return $localizacionesSelected;
+        } else {
+            throw new Exception("No se encontraron localizaciones seleccionadas.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+function onGetClasificacionesSelected($id)
+{
+    try {
+        $almacenesService = new AlmacenesService();
+
+        $localizacionesSelected = $almacenesService->onGetClasificacionesAlmacenes_By_id_almacen($id);
 
         if ($localizacionesSelected) {
             return $localizacionesSelected;
@@ -165,12 +187,24 @@ function onPostSaveAlmacenes(array $data)
         // Normalizar valores a MAYÚSCULA (sin tildes ni cambios de idioma)
         $codigo_sap = isset($form['codigo_sap']) ? strtoupper($form['codigo_sap']) : null;
         $descripcion = isset($form['descripcion_almacen']) ? strtoupper($form['descripcion_almacen']) : null;
+        $clasificaciones_selected = $form['clasificacion_almacen_select'] ?? [];
+
+        if (!is_array($clasificaciones_selected)) {
+            $clasificaciones_selected = [$clasificaciones_selected];
+        }
+
+        $clasificaciones_selectedIds = [];
+        foreach ($clasificaciones_selected as $clasificaciones_selected_id) {
+            $clasificaciones_selectedIds[] = (int)$clasificaciones_selected_id;
+        }
+
         $id_almacen = Utilidades::generarGUID();
 
         $almacenesDTO = new AlmacenesDTO(
-            id_almacen: null,
+            id_almacen: $id_almacen,
             codigo_sap: $codigo_sap ?? null,
-            descripcion_almacen: $descripcion ?? null
+            descripcion_almacen: $descripcion ?? null,
+            clasificacionesAlmacenesDTO: $clasificaciones_selectedIds,
         );
         Validator::validateAlmacenesDTO($almacenesDTO);
 
@@ -197,40 +231,61 @@ function onPostSaveAlmacenes(array $data)
 function onPostUpdateAlmacen(array $data)
 {
     try {
+        // 1. Preparación de datos del formulario
         $form = $data['form'] ?? [];
         $idsLocalizaciones = $form['localizaciones'] ?? [];
-        $listaLocalizacionesDTO = [];
+        $idsClasificaciones = $form['clasificaciones_select'] ?? [];
         $idAlmacen = $form['id_almacen'] ?? null;
 
+        // Normalizar a array si vienen como string
         if (!is_array($idsLocalizaciones)) {
             $idsLocalizaciones = [$idsLocalizaciones];
         }
+        if (!is_array($idsClasificaciones)) {
+            $idsClasificaciones = [$idsClasificaciones];
+        }
 
+        // 2. Crear lista de Localizaciones DTO
+        $listaLocalizacionesDTO = [];
         foreach ($idsLocalizaciones as $idLocalizacion) {
             $dto = new AlmacenesLocalizacionesDTO(
                 null,
-                (int)$idAlmacen,
+                (string)$idAlmacen,
                 (int)$idLocalizacion
             );
             $listaLocalizacionesDTO[] = $dto;
         }
 
-        $almacenesService = new AlmacenesService();
+        // 3. Crear lista de Clasificaciones DTO
+        $listaClasificacionesDTO = [];
+        foreach ($idsClasificaciones as $idClasificacion) {
+            $dto = new AlmacenesClasificacionesAlmacenesDTO(
+                null,
+                (string)$idAlmacen,
+                (int)$idClasificacion
+            );
+            $listaClasificacionesDTO[] = $dto;
+        }
 
+        // 4. Crear DTO principal del almacén
         $codigo_sap = isset($form['codigo_sap']) ? strtoupper($form['codigo_sap']) : null;
         $descripcion = isset($form['descripcion_almacen']) ? strtoupper($form['descripcion_almacen']) : null;
+
         $almacenesDTO = new AlmacenesDTO(
-            id_almacen: $form['id_almacen'],
+            id_almacen: $idAlmacen,
             codigo_sap: $codigo_sap,
             descripcion_almacen: $descripcion,
             localizacionesAlmacenDTO: $listaLocalizacionesDTO,
+            clasificacionesAlmacenesDTO: $listaClasificacionesDTO
         );
 
+        // 5. Validar y actualizar
         Validator::validateAlmacenesDTO($almacenesDTO);
 
-        $aprobar_administrador = $almacenesService->updateLocalizacionesAlmacen($almacenesDTO);
+        $almacenesService = new AlmacenesService();
+        $updateLocalizacionesAlmacen = $almacenesService->updateLocalizacionesAlmacen($almacenesDTO);
 
-        if (!$aprobar_administrador) {
+        if (!$updateLocalizacionesAlmacen) {
             throw new Exception("No se pudo actualizar el almacén.");
         }
 
@@ -292,6 +347,9 @@ try {
                 break;
             case 'onGet_AlmacenesLocalizaciones':
                 $response = onGetAlmacenesLocalizaciones();
+                break;
+            case 'onGet_clasificacionesSelected':
+                $response = onGetClasificacionesSelected($id_almacen);
                 break;
             case 'onGet_localizacionesSelected':
                 $response = onGetLocalizacionesSelected($id_almacen);

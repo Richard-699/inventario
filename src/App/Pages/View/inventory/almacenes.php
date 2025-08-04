@@ -34,7 +34,7 @@
             <table id="tabla-almacenes" class="table table-striped table-bordered table-sm dt-responsive nowrap" style="width:100%">
                 <thead class="table-light">
                     <tr>
-                        <th style="width: 5%;">Id</th>
+                        <!-- <th style="width: 5%;">Id</th> -->
                         <th style="width: 18%;">Código SAP</th>
                         <th style="width: 18%;">Descripción</th>
                         <th></th>

@@ -32,7 +32,7 @@ class AlmacenesLocalizacionesRepository implements IAlmacenesLocalizacionesRepos
         return array_map([AlmacenesLocalizaciones::class, 'fromArray'], $rows);
     }
 
-    public function delete(int $id)
+    public function delete(string $id)
     {
         $stmt = $this->db->prepare("DELETE FROM inventario_hwi_almacenes_localizaciones WHERE id_almacen = :id");
         $stmt->bindParam(':id', $id);

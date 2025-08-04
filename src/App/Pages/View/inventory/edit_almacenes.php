@@ -20,6 +20,16 @@ if (isset($_GET['Almacen'])) {
 $codigo_sap = $almacenInfo['codigo_sap'] ?? '';
 $descripcion_almacen_val = $almacenInfo['descripcion_almacen'] ?? '';
 
+
+$clasificaciones = json_decode($_GET['clasificaciones'] ?? '[]', true);
+$clasificacionesSelected = json_decode($_GET['clasificacionesSelected'] ?? '[]', true);
+
+$idsClasificacionesSeleccionadas = [];
+foreach ($clasificacionesSelected as $c) {
+    if (isset($c['id_clasificacion_almacenes_almacenes_clasificaciones_almacenes'])) {
+        $idsClasificacionesSeleccionadas[] = (int)$c['id_clasificacion_almacenes_almacenes_clasificaciones_almacenes'];
+    }
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -60,11 +70,7 @@ $descripcion_almacen_val = $almacenInfo['descripcion_almacen'] ?? '';
                     Seleccione las localizaciones para este almacén: *
                 </label>
 
-                <select id="localizaciones"
-                    class="form-control shadow-sm rounded"
-                    multiple
-                    name="localizaciones"
-                    multiple>
+                <select id="localizaciones" class="form-control shadow-sm rounded" multiple name="localizaciones">
                     <?php foreach ($localizaciones as $l): ?>
                         <option value="<?= htmlspecialchars($l['id_localizacion']) ?>"
                             <?= (in_array((int)$l['id_localizacion'], $idsLocalizacionesSeleccionadas)) ? 'selected' : '' ?>>
@@ -76,6 +82,30 @@ $descripcion_almacen_val = $almacenInfo['descripcion_almacen'] ?? '';
                     Puedes buscar y seleccionar múltiples opciones.
                 </div>
             </div>
+
+
+            <div class="mb-4">
+                <label for="clasificaciones_select" class="form-label">
+                    Seleccione las clasificaciones para este almacén: *
+                </label>
+
+                <select id="clasificaciones_select" class="form-control shadow-sm rounded" multiple name="clasificaciones_select">
+                    <?php foreach ($clasificaciones as $clasificacion): ?>
+                        <?php
+                        $idClasificacion = (int)($clasificacion['id_clasificacion_almacenes'] ?? 0);
+                        $descripcion = $clasificacion['descripcion_clasificacion_almacenes'] ?? 'N/A';
+                        $selected = in_array($idClasificacion, $idsClasificacionesSeleccionadas) ? 'selected' : '';
+                        ?>
+                        <option value="<?= htmlspecialchars($idClasificacion) ?>" <?= $selected ?>>
+                            <?= htmlspecialchars($descripcion) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+                <div class="form-text mt-1">
+                    Puedes buscar y seleccionar múltiples opciones.
+                </div>
+            </div>
+
 
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-aprobar-editar">

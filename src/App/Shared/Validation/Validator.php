@@ -73,6 +73,10 @@ class Validator
         if (empty($dto->descripcion_almacen)) {
             throw new Exception('La descripcion es obligatoria.');
         }
+        
+        if (!is_array($dto->clasificacionesAlmacenesDTO) || count($dto->clasificacionesAlmacenesDTO) === 0) {
+            throw new Exception('Debe seleccionar al menos una clasificación.');
+        }
     }
 
     public static function validateGruposDTO(GruposDTO $dto): void

@@ -12,6 +12,8 @@ $(document).ready(function () {
         formData.forEach((value, key) => {
             if (formObj[key] === undefined) {
                 formObj[key] = value;
+            } else if (Array.isArray(formObj[key])) {
+                formObj[key].push(value);
             } else {
                 formObj[key] = [formObj[key], value];
             }
@@ -54,6 +56,12 @@ $(document).ready(function () {
         }
     });
 
+
+    document.addEventListener('click', function (e) {
+        if (e.target.matches('.carousel__button.is-close')) {
+            location.reload();
+        }
+    });
 });
 
 
