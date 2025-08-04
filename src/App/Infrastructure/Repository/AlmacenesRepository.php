@@ -35,6 +35,18 @@ class AlmacenesRepository implements IAlmacenesRepository
         return Almacenes::fromArray($row);
     }
 
+    public function onGet_By__descripcion($descripcion): ?Almacenes
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_almacenes WHERE descripcion_almacen = ?");
+        $stmt->execute([$descripcion]);
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            return null;
+        }
+        return Almacenes::fromArray($row);
+    }
+
     public function save(Almacenes $almacenes): bool
     {
         $data = $almacenes->toArray();

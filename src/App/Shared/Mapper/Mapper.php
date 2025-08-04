@@ -19,11 +19,12 @@ use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
+use App\Domain\DTO\Informacion_sap_mb52DTO;
 use App\Domain\Model\ClasificacionAlmacenes;
 use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
-
+use App\Domain\Model\Informacion_sap_mb52;
 
 class Mapper
 {
@@ -222,13 +223,37 @@ class Mapper
             id_clasificacion_almacenes_almacenes_clasificaciones_almacenes: $model->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
         );
     }
- 
+
     public static function ClasificacionesAlmacenesDTOToModel(AlmacenesClasificacionesAlmacenesDTO $dto): AlmacenesClasificacionesAlmacenes
     {
         return new AlmacenesClasificacionesAlmacenes(
             $dto->id_almacenes_clasificaciones_almacenes,
             $dto->id_almacen_almacenes_clasificaciones_almacenes,
             $dto->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
+        );
+    }
+
+    public static function modelToInformacion_sap_mb52DTO(Informacion_sap_mb52 $model): Informacion_sap_mb52DTO
+    {
+        return new Informacion_sap_mb52DTO(
+            id_informacion_sap_mb52: $model->id_informacion_sap_mb52,
+            fecha_registro_informacion_sap_mb52: $model->fecha_registro_informacion_sap_mb52,
+            id_part_number_informacion_sap_mb52: $model->id_part_number_informacion_sap_mb52,
+            cantidad_informacion_sap_mb52: $model->cantidad_informacion_sap_mb52,
+            id_almacen_informacion_sap_mb52: $model->id_almacen_informacion_sap_mb52,
+            id_grupo_informacion_sap_mb52: $model->id_grupo_informacion_sap_mb52
+        );
+    }
+
+    public static function Informacion_sap_mb52DTOToModel(Informacion_sap_mb52DTO $dto): Informacion_sap_mb52
+    {
+        return new Informacion_sap_mb52(
+            $dto->id_informacion_sap_mb52,
+            $dto->fecha_registro_informacion_sap_mb52,
+            $dto->id_part_number_informacion_sap_mb52,
+            $dto->cantidad_informacion_sap_mb52,
+            $dto->id_almacen_informacion_sap_mb52,
+            $dto->id_grupo_informacion_sap_mb52
         );
     }
 }

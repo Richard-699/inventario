@@ -42,7 +42,8 @@ async function mostrarConfirmacion({
         confirmButtonText: textoConfirmar,
         cancelButtonText: textoCancelar,
         confirmButtonColor: colorConfirmar,
-        preConfirm: preConfirm
+        preConfirm: preConfirm,
+        scrollbarPadding: false 
     });
 
     return resultado.isConfirmed ? resultado : false;

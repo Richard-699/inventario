@@ -73,7 +73,7 @@ class Validator
         if (empty($dto->descripcion_almacen)) {
             throw new Exception('La descripcion es obligatoria.');
         }
-        
+
         if (!is_array($dto->clasificacionesAlmacenesDTO) || count($dto->clasificacionesAlmacenesDTO) === 0) {
             throw new Exception('Debe seleccionar al menos una clasificación.');
         }
@@ -119,6 +119,26 @@ class Validator
         }
         if (empty($dto->id_plataforma_partnumber)) {
             throw new Exception('La plataforma es obligatoria.');
+        }
+    }
+
+    public static function validateArchivosSAP(array $files): void
+    {
+        $camposEsperados = ['mb52', 'wm', '0016'];
+
+        foreach ($camposEsperados as $campo) {
+            if (
+                !isset($files[$campo]) ||
+                $files[$campo]['error'] !== UPLOAD_ERR_OK ||
+                empty($files[$campo]['tmp_name'])
+            ) {
+                throw new Exception("El archivo '{$campo}' no se ha subido correctamente.");
+            }
+
+            $ext = strtolower(pathinfo($files[$campo]['name'], PATHINFO_EXTENSION));
+            if (!in_array($ext, ['xls', 'xlsx'])) {
+                throw new Exception("El archivo '{$campo}' debe ser .xls o .xlsx.");
+            }
         }
     }
 }
