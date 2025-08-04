@@ -94,13 +94,13 @@ async function continuarAlmacen(btn, id) {
     btn.disabled = true;
 
     try {
-        const responseUMBS = await fetch('../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_UMBS', {
-                method: 'GET'
-            });
-        const umbs = await responseUMBS.json();
-        const umbsEncoded = encodeURIComponent(JSON.stringify(umbs));
+        const responseMB52 = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_MB52&id_partnumber=${encodeURIComponent(id)}`, {
+            method: 'GET'
+        });
+        const MB52 = await responseMB52.json();
+        const MB52Encoded = encodeURIComponent(JSON.stringify(MB52));
 
-        var url = `edit_partnumbers.php?umbs=${umbsEncoded}&plataformas=${plataformasEncoded}&partnumberSelected=${partnumberSelectedEnconded}&id=${id}`;
+        var url = `edit_partnumbers.php?mb52=${MB52Encoded}`;
 
         Fancybox.show([{
             src: url,
@@ -110,7 +110,6 @@ async function continuarAlmacen(btn, id) {
         setTimeout(() => {
             ocultarCarga();
 
-            // Evitar que el modal se cierre por clic externo
             Fancybox.getInstance().options = {
                 ...Fancybox.getInstance().options,
                 click: false,

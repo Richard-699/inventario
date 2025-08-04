@@ -2,7 +2,7 @@
 
 namespace App\Domain\DTO;
 
-class Informacion_sap_mb52DTO
+class InformacionSapMB52DTO
 {   
     public function __construct(
         public ?string $id_informacion_sap_mb52  = null,
