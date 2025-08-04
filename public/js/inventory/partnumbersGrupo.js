@@ -40,7 +40,7 @@ $(document).ready(function () {
                 "className": "dt-center",
                 "render": function (data, type, row) {
                     return `
-                            <button class="btn btn-primary btn-sm" onclick="updatePartNumber(this, '${data}')">
+                            <button class="btn btn-primary btn-sm" onclick="continuarAlmacen(this, '${data}')">
                                 <i class="fa-solid fa-warehouse"></i>
                             </button>
                         `;
@@ -87,4 +87,41 @@ $(document).ready(function () {
 function obtenerParametroURL(nombre) {
     const params = new URLSearchParams(window.location.search);
     return params.get(nombre);
+}
+
+async function continuarAlmacen(btn, id) {
+    mostrarCarga();
+    btn.disabled = true;
+
+    try {
+        const responseUMBS = await fetch('../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_UMBS', {
+                method: 'GET'
+            });
+        const umbs = await responseUMBS.json();
+        const umbsEncoded = encodeURIComponent(JSON.stringify(umbs));
+
+        var url = `edit_partnumbers.php?umbs=${umbsEncoded}&plataformas=${plataformasEncoded}&partnumberSelected=${partnumberSelectedEnconded}&id=${id}`;
+
+        Fancybox.show([{
+            src: url,
+            type: 'ajax'
+        }]);
+
+        setTimeout(() => {
+            ocultarCarga();
+
+            // Evitar que el modal se cierre por clic externo
+            Fancybox.getInstance().options = {
+                ...Fancybox.getInstance().options,
+                click: false,
+                trapFocus: false,
+                placeFocusBack: false
+            };
+        }, 100);
+
+    } catch (error) {
+        console.error('Error al cargar la modal:', error);
+    } finally {
+        btn.disabled = false;
+    }
 }
