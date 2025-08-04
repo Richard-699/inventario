@@ -7,12 +7,13 @@ use App\Shared\Validation\Validator;
 function onPostMigrationSap(): array
 {
     try {
-        Validator::validateArchivosSAP($_FILES);
+        if (!isset($_FILES['mb52'], $_FILES['wm'], $_FILES['0016'])) {
+            throw new Exception("Faltan uno o más archivos requeridos.");
+        }
 
-        // Llama al servicio de migración
         $service = new BasesDatosSapService();
         $service->procesarArchivosExcel($_FILES['mb52'], $_FILES['wm'], $_FILES['0016']);
- 
+
         return [
             'success' => true,
             'message' => 'Migración completada correctamente.'
@@ -49,6 +50,7 @@ try {
     ];
 }
 
-header('Content-Type: application/json');
-echo json_encode($response);
+// ✅ Aquí va:
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($response, JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 exit();

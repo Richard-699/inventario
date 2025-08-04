@@ -30,12 +30,12 @@ $(document).ready(function () {
                     location.reload();
                 }, 2000);
             } else {
-                notification('error', resultado.message || 'Error desconocido.', 4000);
+                notification('error', resultado.message || 'Error desconocido.', 5000);
             }
 
         } catch (error) {
             ocultarCarga();
-            notification('error', 'Error al migrar: ' + error.message, 3000);
+            notification('error', error.message, 5000);
         }
     });
 

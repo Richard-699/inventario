@@ -19,12 +19,12 @@ use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
-use App\Domain\DTO\InformacionSapMB52DTO;
+use App\Domain\DTO\InformacionSapMb52DTO;
 use App\Domain\Model\ClasificacionAlmacenes;
 use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
-use App\Domain\Model\InformacionSapMB52;
+use App\Domain\Model\InformacionSapMb52;
 
 class Mapper
 {
@@ -232,8 +232,8 @@ class Mapper
             $dto->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
         );
     }
-
-    public static function modelToInformacionSapMB52DTO(InformacionSapMB52 $model): InformacionSapMB52DTO
+  
+      public static function modelToInformacionSapMB52DTO(InformacionSapMB52 $model): InformacionSapMB52DTO
     {
         return new InformacionSapMB52DTO(
             id_informacion_sap_mb52: $model->id_informacion_sap_mb52,
