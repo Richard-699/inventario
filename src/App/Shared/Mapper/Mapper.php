@@ -4,6 +4,7 @@ namespace App\Shared\Mapper;
 
 use App\Domain\Model\Administradores;
 use App\Domain\DTO\AdministradoresDTO;
+use App\Domain\DTO\AlmacenesClasificacionesAlmacenesDTO;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\LocalizacionesDTO;
 use App\Domain\Model\Permisos;
@@ -18,8 +19,11 @@ use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
+use App\Domain\Model\ClasificacionAlmacenes;
 use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
+use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
+
 
 class Mapper
 {
@@ -206,6 +210,25 @@ class Mapper
             $dto->id_grupo_cronograma,
             $dto->id_estado_cronograma,
             $dto->id_administrador_cronograma
+        );
+    }
+
+
+    public static function modelToAlmacenesClasificacionesAlmacenesDTO(AlmacenesClasificacionesAlmacenes $model): AlmacenesClasificacionesAlmacenesDTO
+    {
+        return new AlmacenesClasificacionesAlmacenesDTO(
+            id_almacenes_clasificaciones_almacenes: $model->id_almacenes_clasificaciones_almacenes,
+            id_almacen_almacenes_clasificaciones_almacenes: $model->id_almacen_almacenes_clasificaciones_almacenes,
+            id_clasificacion_almacenes_almacenes_clasificaciones_almacenes: $model->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
+        );
+    }
+ 
+    public static function ClasificacionesAlmacenesDTOToModel(AlmacenesClasificacionesAlmacenesDTO $dto): AlmacenesClasificacionesAlmacenes
+    {
+        return new AlmacenesClasificacionesAlmacenes(
+            $dto->id_almacenes_clasificaciones_almacenes,
+            $dto->id_almacen_almacenes_clasificaciones_almacenes,
+            $dto->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
         );
     }
 }

@@ -10,7 +10,7 @@ $(document).ready(function() {
         const formObj = {};
         formData.forEach((value, key) => {
             if (formObj[key] === undefined) {
-                formObj[key] = value; // Asignar valor directo
+                formObj[key] = value;
             } else if (Array.isArray(formObj[key])) {
                 formObj[key].push(value);
             } else {
@@ -36,8 +36,6 @@ $(document).ready(function() {
 
             if (resultado.success) {
                 notification('success', 'Se actualizó la información del almacén.', 2000);
-
-
                 setTimeout(function () {
                     window.actualizoAdministrador = true;
 

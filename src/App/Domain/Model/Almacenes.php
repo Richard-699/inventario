@@ -4,7 +4,7 @@ namespace App\Domain\Model;
 
 class Almacenes {
     public function __construct(
-        public ?int $id_almacen,
+        public ?string $id_almacen,
         public ?string $codigo_sap,
         public ?string $descripcion_almacen
     ) {}
