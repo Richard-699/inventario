@@ -24,7 +24,7 @@ class AlmacenesLocalizacionesRepository implements IAlmacenesLocalizacionesRepos
         return array_map([AlmacenesLocalizaciones::class, 'fromArray'], $rows);
     }
 
-    public function onGetAlmacenesLocalizaciones_By_id_almacen($id): ?array
+    public function onGetAlmacenesLocalizaciones_By_Id_Almacen($id): ?array
     {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_almacenes_localizaciones WHERE id_almacen = ?");
         $stmt->execute([$id]);

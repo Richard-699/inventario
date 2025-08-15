@@ -17,6 +17,7 @@ if (isset($_GET['infoGrupo'])) {
 }
 $descripcion_grupo = $grupoInfo['descripcion_grupo'] ?? '';
 $fecha_programacion_grupo = $grupoInfo['fecha_programacion_grupo'] ?? '';
+$informacion_migrada_sap_grupo = $grupoInfo['informacion_migrada_sap_grupo'] ?? '';
 
 ?>
 <!DOCTYPE html>
@@ -42,6 +43,7 @@ $fecha_programacion_grupo = $grupoInfo['fecha_programacion_grupo'] ?? '';
         </h5>
         <form id="formUpdateGrupo">
             <input type="hidden" name="id_grupo" id="id_grupo" value="<?= htmlspecialchars($id_grupo) ?>">
+            <input type="hidden" name="informacion_migrada_sap_grupo" id="informacion_migrada_sap_grupo" value="<?= htmlspecialchars($informacion_migrada_sap_grupo) ?>">
 
             <div class="mb-4">
                 <label for="descripcion_grupo" class="form-label">Descrición o nombre: *</label>

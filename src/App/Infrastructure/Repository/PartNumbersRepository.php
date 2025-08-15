@@ -56,7 +56,6 @@ class PartNumbersRepository implements IPartNumbersRepository
         return PartNumbers::fromArray($row);
     }
 
-
     public function save(PartNumbers $partnumbers): bool
     {
         $data = $partnumbers->toArray();

@@ -7,8 +7,6 @@ use App\Shared\Validation\Validator;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
 use App\Domain\DTO\AlmacenesClasificacionesAlmacenesDTO;
-use App\Domain\DTO\LocalizacionesDTO;
-use App\Domain\Model\ClasificacionAlmacenes;
 use App\Shared\Util\Utilidades;
 
 function onGetAlmacenes()

@@ -2,12 +2,10 @@
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\GruposService;
-use App\Application\Service\CronogramaService;
 use App\Application\Service\PartNumbersService;
 use App\Domain\DTO\CronogramaDTO;
 use App\Shared\Validation\Validator;
 use App\Domain\DTO\GruposDTO;
-use App\Domain\DTO\PartNumbersDTO;
 use App\Shared\Util\Utilidades;
 
 function onGetGrupos()
@@ -77,11 +75,14 @@ function onPostSaveGrupo(array $data)
         $descripcion = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
         $fecha_programacion_grupo = isset($form['fecha_programacion_grupo']) ? $form['fecha_programacion_grupo'] : null;
         $id_grupo = Utilidades::generarGUID();
+
         $gruposDTO = new GruposDTO(
             id_grupo: $id_grupo,
             descripcion_grupo: $descripcion ?? null,
-            fecha_programacion_grupo: $fecha_programacion_grupo
+            fecha_programacion_grupo: $fecha_programacion_grupo,
+            informacion_migrada_sap_grupo: false
         );
+
         Validator::validateGruposDTO($gruposDTO);
 
         $estado_cronograma = 1;
@@ -157,12 +158,14 @@ function onPostUpdateGrupo(array $data)
 
         $nombreGrupo = isset($form['descripcion_grupo']) ? strtoupper($form['descripcion_grupo']) : null;
         $fecha_programacion_grupo = isset($form['fecha_programacion_grupo']) ? $form['fecha_programacion_grupo'] : null;
+        $informacion_migrada_sap_grupo = isset($form['informacion_migrada_sap_grupo']) ? $form['informacion_migrada_sap_grupo'] : null;
 
         $gruposDTO = new GruposDTO(
             id_grupo: $idGrupo,
             descripcion_grupo: $nombreGrupo,
             fecha_programacion_grupo: $fecha_programacion_grupo,
             partnumberGruposDTO: $selectedPartNumberIds,
+            informacion_migrada_sap_grupo: $informacion_migrada_sap_grupo
         );
 
         Validator::validateGruposDTO($gruposDTO);
