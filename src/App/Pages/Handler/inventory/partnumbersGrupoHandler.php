@@ -3,8 +3,6 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\BasesDatosSapService;
 use App\Application\Service\PartNumbersService;
-use App\Shared\Validation\Validator;
-use App\Domain\DTO\PartNumbersDTO;
 
 function onGetPartNumbers($data)
 {
@@ -34,6 +32,7 @@ function onGetMB52($data)
         $mb52 = $basesDatosSapService->onGetMB52($id_partnumber);
 
         if ($mb52) {
+            $_SESSION['mb52'] = $mb52;
             return $mb52;
         } else {
             throw new Exception("No se encontraron datos en mb52.");
@@ -49,31 +48,9 @@ function onGetMB52($data)
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 try {
-    if ($requestMethod === 'POST') {
-        $rawData = file_get_contents('php://input');
-        $data = json_decode($rawData, true);
-
-        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
-            throw new Exception("Datos JSON inválidos o mal formados. Asegúrate de enviar un JSON válido.");
-        }
-
-        $action = $data['action'] ?? null;
-
-        switch ($action) {
-            case 'guardar_partnumber':
-                $response = onPostSavePartnumbers($data);
-                break;
-            case 'edit_partnumber':
-                $response = onPostEditPartnumbers($data);
-                break;
-            case 'delete_partnumber':
-                $response = onPostDeletePartnumbers($data);
-                break;
-            default:
-                throw new Exception("Acción no permitida.");
-                break;
-        }
-    } elseif ($requestMethod === 'GET') {
+    session_start();
+    
+    if ($requestMethod === 'GET') {
         $action = $_GET['action'] ?? null;
 
         switch ($action) {

@@ -97,10 +97,11 @@ async function continuarAlmacen(btn, id) {
         const responseMB52 = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_MB52&id_partnumber=${encodeURIComponent(id)}`, {
             method: 'GET'
         });
+        debugger;
         const MB52 = await responseMB52.json();
         const MB52Encoded = encodeURIComponent(JSON.stringify(MB52));
 
-        var url = `edit_partnumbers.php?mb52=${MB52Encoded}`;
+        var url = `options_almacenes.php?mb52=${MB52Encoded}`;
 
         Fancybox.show([{
             src: url,

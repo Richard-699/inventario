@@ -111,7 +111,7 @@ class GruposService implements IGruposService
         if ($data === false) {
             return null;
         }
-        return new Grupos($data['id_grupo'], $data['descripcion_grupo'], $data['fecha_programacion_grupo']);
+        return new Grupos($data['id_grupo'], $data['descripcion_grupo'], $data['fecha_programacion_grupo'], $data['informacion_migrada_sap_grupo']);
     }
 
     public function deleteGrupo(string $id): bool

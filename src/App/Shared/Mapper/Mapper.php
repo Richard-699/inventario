@@ -178,7 +178,8 @@ class Mapper
         return new GruposDTO(
             id_grupo: $model->id_grupo,
             descripcion_grupo: $model->descripcion_grupo,
-            fecha_programacion_grupo: $model->fecha_programacion_grupo
+            fecha_programacion_grupo: $model->fecha_programacion_grupo,
+            informacion_migrada_sap_grupo: $model->informacion_migrada_sap_grupo
         );
     }
 
@@ -187,7 +188,8 @@ class Mapper
         return new Grupos(
             $dto->id_grupo,
             $dto->descripcion_grupo,
-            $dto->fecha_programacion_grupo
+            $dto->fecha_programacion_grupo,
+            $dto->informacion_migrada_sap_grupo
         );
     }
 

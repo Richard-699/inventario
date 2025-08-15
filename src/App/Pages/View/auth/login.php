@@ -68,19 +68,6 @@
     <script src="../../../../../public/js/utils/notifications.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/auth/login.js"></script>
-
-    <?php if (isset($_GET['session_expired']) && $_GET['session_expired'] === 'true'): ?>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                notification('alert', 'Tu sesión ha expirado por inactividad. Por favor, inicia sesión nuevamente.', 4000);
-                if (window.history.replaceState) {
-                    const url = new URL(window.location);
-                    url.searchParams.delete('session_expired');
-                    window.history.replaceState(null, '', url);
-                }
-            });
-        </script>
-    <?php endif; ?>
 </body>
 
 </html>

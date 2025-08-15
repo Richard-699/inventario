@@ -6,5 +6,6 @@ use App\Domain\Model\InformacionSapMB52;
 
 interface IInformacionSapMB52Repository
 {
+    public function onGet_By__Id_Partnumber($id_partnumber): ?array;
     public function save(InformacionSapMB52 $informacion): bool;
 }

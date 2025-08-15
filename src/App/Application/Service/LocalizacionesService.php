@@ -19,7 +19,7 @@ class LocalizacionesService implements ILocalizacionesService
     private $localizacionesRepository;
     private $tipoLocalizacionesRepository;
     private $tipoAlmacenamientoRepository;
-    private $AlmacenesLocalizacionesRepository;
+    private $almacenesLocalizacionesRepository;
 
     public function __construct()
     {
@@ -28,7 +28,7 @@ class LocalizacionesService implements ILocalizacionesService
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
         $this->tipoLocalizacionesRepository = new TipoLocalizacionesRepository($this->db);
         $this->tipoAlmacenamientoRepository = new TipoAlmacenamientoRepository($this->db);
-        $this->AlmacenesLocalizacionesRepository = new AlmacenesLocalizacionesRepository($this->db);
+        $this->almacenesLocalizacionesRepository = new AlmacenesLocalizacionesRepository($this->db);
     }
 
     public function onGetLocalizaciones(): array
@@ -37,6 +37,32 @@ class LocalizacionesService implements ILocalizacionesService
         $tiposLocalizaciones = $this->onGetTipoLocalizaciones();
 
         // Agregar los tipos a cada localización
+        foreach ($localizaciones as $localizacion) {
+            $id = $localizacion->id_tipo_localizacion_localizaciones ?? null;
+            foreach ($tiposLocalizaciones as $tipo) {
+                if ($id == $tipo->id_tipo_localizacion) {
+                    $localizacion->tipo_localizacion = $tipo->descripcion_tipo_localizacion;
+                }
+            }
+        }
+
+        return $localizaciones;
+    }
+
+    public function onGetLocalizaciones_By__Id_Almacen($id_almacen): array
+    {
+        $almacenes_localizaciones = $this->almacenesLocalizacionesRepository->onGetAlmacenesLocalizaciones_By_Id_Almacen($id_almacen);
+        $localizaciones = [];
+
+        foreach ($almacenes_localizaciones as $almacen_localizacion){
+            $id_localizacion = $almacen_localizacion->id_localizacion_localizaciones;
+            $localizacion = $this->localizacionesRepository->onGet_By__Id($id_localizacion);
+            $localizacionDTO = Mapper::modelToLocalizacionesDTO($localizacion);
+            $localizaciones[] = $localizacionDTO;
+        }
+
+        $tiposLocalizaciones = $this->onGetTipoLocalizaciones();
+
         foreach ($localizaciones as $localizacion) {
             $id = $localizacion->id_tipo_localizacion_localizaciones ?? null;
             foreach ($tiposLocalizaciones as $tipo) {
@@ -105,7 +131,7 @@ class LocalizacionesService implements ILocalizacionesService
 
     public function onGetAlmacenesLocalizaciones(): array
     {
-        $AlmacenesLocalizaciones = $this->AlmacenesLocalizacionesRepository->onGet();
+        $AlmacenesLocalizaciones = $this->almacenesLocalizacionesRepository->onGet();
         return $AlmacenesLocalizaciones;
     }
 }

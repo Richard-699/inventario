@@ -3,20 +3,10 @@ session_start();
 if (!isset($_SESSION['sidebarinactive'])) {
     $_SESSION['sidebarinactive'] = true;
 }
-define('SESSION_TIMEOUT', 900);
 
 if (!isset($_SESSION['administrador'])) {
     header('Location: /inventario/src/App/Pages/View/auth/login.php');
     exit;
 }
-
-if (isset($_SESSION['last_activity']) && (time() - $_SESSION['last_activity'] > SESSION_TIMEOUT)) {
-    session_unset();
-    session_destroy();
-    header('Location: /inventario/src/App/Pages/View/auth/login.php?session_expired=true');
-    exit;
-}
-
-$_SESSION['last_activity'] = time();
 
 ?>

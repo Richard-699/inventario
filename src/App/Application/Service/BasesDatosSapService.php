@@ -13,6 +13,7 @@ use App\Infrastructure\Database\Connection;
 use App\Infrastructure\Repository\InformacionSapMB52Repository;
 use App\Infrastructure\Repository\PartNumbersRepository;
 use App\Infrastructure\Repository\AlmacenesRepository;
+use App\Infrastructure\Repository\UMBRepository;
 use App\Shared\Util\Utilidades;
 
 class BasesDatosSapService implements IBasesDatosSapService
@@ -22,12 +23,14 @@ class BasesDatosSapService implements IBasesDatosSapService
     private $partNumberRepository;
     private $almacenRepository;
     private $informacionSapMB52Repository;
+    private $umbRepository;
 
     public function __construct()
     {
         $this->db = (new Connection())->dbInventarioHwi;
         $this->partNumberRepository = new PartNumbersRepository($this->db);
         $this->almacenRepository = new AlmacenesRepository($this->db);
+        $this->umbRepository = new UMBRepository($this->db);
         $this->informacionSapMB52Repository = new InformacionSapMB52Repository($this->db);
     }
 
@@ -133,6 +136,38 @@ class BasesDatosSapService implements IBasesDatosSapService
 
     public function onGetMB52($id_partnumber): ?array
     {
-        return null;
+        $informacionesSapMB52 = $this->informacionSapMB52Repository->onGet_By__Id_Partnumber($id_partnumber);
+        $almacenes = $this->almacenRepository->onGet();
+
+        foreach ($informacionesSapMB52 as $informacionSapMB52) {
+            $id = $informacionSapMB52->id_almacen_informacion_sap_mb52 ?? null;
+            foreach ($almacenes as $almacen) {
+                if ($id == $almacen->id_almacen) {
+                    $informacionSapMB52->almacen = $almacen->descripcion_almacen;
+                }
+            }
+        }
+
+        $partnumbers = $this->partNumberRepository->onGet();
+
+        foreach ($informacionesSapMB52 as $informacionSapMB52) {
+            $id = $informacionSapMB52->id_part_number_informacion_sap_mb52 ?? null;
+            foreach ($partnumbers as $partnumber) {
+                if ($id == $partnumber->id_partnumber) {
+                    $informacionSapMB52->partnumber = $partnumber->partnumber;
+                    $informacionSapMB52->descripcion_partnumber = $partnumber->descripcion_breve;
+                    
+                    $umbs = $this->umbRepository->onGet();
+                    $id_umb = $partnumber->id_umb_partnumber;
+                    foreach ($umbs as $umb) {
+                        if ($id_umb == $umb->id_umb) {
+                            $informacionSapMB52->umb = $umb->descripcion_umb;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $informacionesSapMB52;
     }
 }
