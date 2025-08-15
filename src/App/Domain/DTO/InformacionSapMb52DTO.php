@@ -12,4 +12,5 @@ class InformacionSapMB52DTO
         public ?string $id_almacen_informacion_sap_mb52  = null,
         public ?string $id_grupo_informacion_sap_mb52  = null
     ) {}
+    
 }
