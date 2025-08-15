@@ -2,11 +2,11 @@
 
 namespace App\Infrastructure\Repository;
 
-use App\Domain\Model\InformacionSapMB52;
-use App\Application\Interface\Repository\IInformacionSapMB52Repository;
+use App\Domain\Model\InformacionSapMb52;
+use App\Application\Interface\Repository\IInformacionSapMb52Repository;
 use PDO;
 
-class InformacionSapMB52Repository implements IInformacionSapMB52Repository
+class InformacionSapMb52Repository implements IInformacionSapMb52Repository
 {
     private $db;
 
@@ -16,7 +16,7 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
     }
 
 
-    public function save(InformacionSapMB52 $informacion): bool
+    public function save(InformacionSapMb52 $informacion): bool
     {
         $data = $informacion->toArray();
 
