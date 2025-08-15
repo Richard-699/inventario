@@ -26,7 +26,6 @@ function onPostMigrationSap(): array
     }
 }
 
-// --- Lógica principal ---
 $response = [];
 
 try {

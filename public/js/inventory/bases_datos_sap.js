@@ -30,7 +30,7 @@ $(document).ready(function () {
                     location.reload();
                 }, 2000);
             } else {
-                notification('error', resultado.message || 'Error desconocido.', 5000);
+                notification('error', resultado.message || 'Error desconocido.', 8000);
             }
 
         } catch (error) {

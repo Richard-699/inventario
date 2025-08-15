@@ -2,11 +2,11 @@
 
 namespace App\Infrastructure\Repository;
 
-use App\Domain\Model\InformacionSapMb52;
-use App\Application\Interface\Repository\IInformacionSapMb52Repository;
+use App\Domain\Model\InformacionSapMB52;
+use App\Application\Interface\Repository\IInformacionSapMB52Repository;
 use PDO;
 
-class InformacionSapMb52Repository implements IInformacionSapMb52Repository
+class InformacionSapMB52Repository implements IInformacionSapMB52Repository
 {
     private $db;
 
@@ -16,7 +16,7 @@ class InformacionSapMb52Repository implements IInformacionSapMb52Repository
     }
 
 
-    public function save(InformacionSapMb52 $informacion): bool
+    public function save(InformacionSapMB52 $informacion): bool
     {
         $data = $informacion->toArray();
 
@@ -31,5 +31,24 @@ class InformacionSapMb52Repository implements IInformacionSapMb52Repository
         }
 
         return $stmt->execute();
+    }
+
+    public function onGet_By__AlmacenAndPartNumber(string $idAlmacen, string $idPartNumber): ?InformacionSapMB52
+    {
+        $sql = "SELECT * FROM inventario_hwi_informacion_sap_mb52 
+                    WHERE id_almacen_informacion_sap_mb52 = :id_almacen
+                    AND id_part_number_informacion_sap_mb52 = :id_part_number
+                    LIMIT 1";
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindValue(':id_almacen', $idAlmacen);
+        $stmt->bindValue(':id_part_number', $idPartNumber);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if (!$row) {
+            return null;
+        }
+        return InformacionSapMB52::fromArray($row);
     }
 }
