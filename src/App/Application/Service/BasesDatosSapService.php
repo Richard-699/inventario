@@ -8,13 +8,14 @@ use App\Domain\DTO\InformacionSapMB52DTO;
 use App\Domain\DTO\InformacionSapWMDTO;
 use App\Domain\Model\Almacenes;
 use App\Domain\Model\InformacionSapMB52;
-use App\Domain\Model\InformacionSapWM;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
 use App\Infrastructure\Repository\InformacionSapMB52Repository;
 use App\Infrastructure\Repository\PartNumbersRepository;
 use App\Infrastructure\Repository\AlmacenesRepository;
+use App\Infrastructure\Repository\InformacionSapWMRepository;
+use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\UMBRepository;
 use App\Shared\Util\Utilidades;
 
@@ -36,7 +37,7 @@ class BasesDatosSapService implements IBasesDatosSapService
         $this->almacenRepository = new AlmacenesRepository($this->db);
         $this->umbRepository = new UMBRepository($this->db);
         $this->informacionSapMB52Repository = new InformacionSapMB52Repository($this->db);
-        $this->informacionSapWMRepository = new informacionSapWMRepository($this->db);
+        $this->informacionSapWMRepository = new InformacionSapWMRepository($this->db);
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
     }
 
