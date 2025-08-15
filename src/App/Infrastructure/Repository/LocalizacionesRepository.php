@@ -23,10 +23,23 @@ class LocalizacionesRepository implements ILocalizacionesRepository
 
         return array_map([Localizaciones::class, 'fromArray'], $rows);
     }
-    
-    public function onGet_By__Id($id): ?Localizaciones {
+
+    public function onGet_By__Id($id): ?Localizaciones
+    {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_localizaciones WHERE id_localizacion = ?");
         $stmt->execute([$id]);
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            return null;
+        }
+        return Localizaciones::fromArray($row);
+    }
+
+    public function onGet_By__descripcion($descripcion): ?Localizaciones
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_localizaciones WHERE descripcion_localizacion = ?");
+        $stmt->execute([$descripcion]);
         $row = $stmt->fetch();
 
         if (!$row) {
@@ -56,9 +69,9 @@ class LocalizacionesRepository implements ILocalizacionesRepository
         $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
 
         $query = "UPDATE inventario_hwi_localizaciones SET $set WHERE id_localizacion = :id_localizacion";
-        
+
         $stmt = $this->db->prepare($query);
-            foreach ($data as $campo => $valor) {
+        foreach ($data as $campo => $valor) {
             $stmt->bindValue(":$campo", $valor);
         }
 

@@ -20,11 +20,13 @@ use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\InformacionSapMb52DTO;
+use App\Domain\DTO\InformacionSapWMDTO;
 use App\Domain\Model\ClasificacionAlmacenes;
 use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
 use App\Domain\Model\InformacionSapMb52;
+use App\Domain\Model\InformacionSapWM;
 
 class Mapper
 {
@@ -232,8 +234,8 @@ class Mapper
             $dto->id_clasificacion_almacenes_almacenes_clasificaciones_almacenes
         );
     }
-  
-      public static function modelToInformacionSapMB52DTO(InformacionSapMB52 $model): InformacionSapMB52DTO
+
+    public static function modelToInformacionSapMB52DTO(InformacionSapMB52 $model): InformacionSapMB52DTO
     {
         return new InformacionSapMB52DTO(
             id_informacion_sap_mb52: $model->id_informacion_sap_mb52,
@@ -254,6 +256,34 @@ class Mapper
             $dto->cantidad_informacion_sap_mb52,
             $dto->id_almacen_informacion_sap_mb52,
             $dto->id_grupo_informacion_sap_mb52
+        );
+    }
+
+    public static function modelToInformacionSapWMDTO(InformacionSapWM $model): InformacionSapWMDTO
+    {
+        return new InformacionSapWMDTO(
+            id_informacion_sap_wm: $model->id_informacion_sap_wm,
+            id_part_number_informacion_sap_wm: $model->id_part_number_informacion_sap_wm,
+            id_localizacion_informacion_sap_wm: $model->id_localizacion_informacion_sap_wm,
+            id_grupo_informacion_sap_wm: $model->id_grupo_informacion_sap_wm,
+            id_informacion_sap_mb52_informacion_sap_wm: $model->id_informacion_sap_mb52_informacion_sap_wm,
+            stock_disponible_sap_informacion_sap_wm: $model->stock_disponible_sap_informacion_sap_wm,
+            stock_entrada_sap_informacion_sap_wm: $model->stock_entrada_sap_informacion_sap_wm,
+            stock_salida_sap_informacion_sap_wm: $model->stock_salida_sap_informacion_sap_wm
+        );
+    }
+
+    public static function InformacionSapWMDTOToModel(InformacionSapWMDTO $dto): InformacionSapWM
+    {
+        return new InformacionSapWM(
+            $dto->id_informacion_sap_wm,
+            $dto->id_part_number_informacion_sap_wm,
+            $dto->id_localizacion_informacion_sap_wm,
+            $dto->id_grupo_informacion_sap_wm,
+            $dto->id_informacion_sap_mb52_informacion_sap_wm,
+            $dto->stock_disponible_sap_informacion_sap_wm,
+            $dto->stock_entrada_sap_informacion_sap_wm,
+            $dto->stock_salida_sap_informacion_sap_wm
         );
     }
 }

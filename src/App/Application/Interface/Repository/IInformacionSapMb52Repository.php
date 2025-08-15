@@ -2,9 +2,10 @@
 
 namespace App\Application\Interface\Repository;
 
-use App\Domain\Model\InformacionSapMb52;
+use App\Domain\Model\InformacionSapMB52;
 
-interface IInformacionSapMb52Repository
+interface IInformacionSapMB52Repository
 {
-    public function save(InformacionSapMb52 $informacion): bool;
+    public function save(InformacionSapMB52 $informacion): bool;
+    public function onGet_By__AlmacenAndPartNumber(string $idAlmacen, string $idPartNumber): ?InformacionSapMB52;
 }
