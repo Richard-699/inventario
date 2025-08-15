@@ -7,5 +7,4 @@ use App\Domain\Model\InformacionSapMB52;
 interface IInformacionSapMB52Repository
 {
     public function save(InformacionSapMB52 $informacion): bool;
-    public function onGet_By__AlmacenAndPartNumber(string $idAlmacen, string $idPartNumber): ?InformacionSapMB52;
 }

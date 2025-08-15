@@ -32,23 +32,4 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
 
         return $stmt->execute();
     }
-
-    public function onGet_By__AlmacenAndPartNumber(string $idAlmacen, string $idPartNumber): ?InformacionSapMB52
-    {
-        $sql = "SELECT * FROM inventario_hwi_informacion_sap_mb52 
-                    WHERE id_almacen_informacion_sap_mb52 = :id_almacen
-                    AND id_part_number_informacion_sap_mb52 = :id_part_number
-                    LIMIT 1";
-
-        $stmt = $this->db->prepare($sql);
-        $stmt->bindValue(':id_almacen', $idAlmacen);
-        $stmt->bindValue(':id_part_number', $idPartNumber);
-        $stmt->execute();
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-        if (!$row) {
-            return null;
-        }
-        return InformacionSapMB52::fromArray($row);
-    }
 }
