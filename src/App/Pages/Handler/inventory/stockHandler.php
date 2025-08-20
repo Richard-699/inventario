@@ -1,27 +1,38 @@
 <?php
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
-use App\Application\Service\AlmacenesService;
-use App\Application\Service\ConteoService;
+use App\Application\Service\BasesDatosSapService;
 use App\Application\Service\LocalizacionesService;
+use App\Application\Service\StockService;
 
 function onGetInfoStock($data)
 {
     try {
         $id_almacen = $data['id_almacen'];
+        $id_partnumber = $data['id_partnumber'];
 
         $localizacionesService = new LocalizacionesService();
-        $localizaciones = $localizacionesService->onGetLocalizaciones_By__Id_Almacen($id_almacen);
+        $basesDatosSapService = new BasesDatosSapService();
+        $stockService = new StockService();
+
+        $informacionSAP = $basesDatosSapService->onGetInformacionSAP($id_partnumber, $id_almacen);
+
+        if($informacionSAP[0]->almacen === "WM01"){
+            $localizaciones = $informacionSAP[0]->localizacionesWM;
+        }else{
+            $localizaciones = $localizacionesService->onGetLocalizaciones_By__Id_Almacen($id_almacen);
+        }
+
+        $stock = $stockService->onGetStock_By__Id_PartNumber_By_Id_Almacen($id_partnumber, $id_almacen);
 
         if ($localizaciones) {
-            $mb52 = $_SESSION['mb52'] ?? [];
-
             return [
                 'localizaciones' => $localizaciones,
-                'mb52' => $mb52
+                'informacionSAP' => $informacionSAP,
+                'stock' => $stock
             ];
         } else {
-            throw new Exception("No se encontraron Localizaciones para este almacén.");
+            throw new Exception("No se encontraron datos para este almacén.");
         }
     } catch (Exception $e) {
         return [

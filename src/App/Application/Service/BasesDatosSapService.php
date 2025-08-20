@@ -25,6 +25,7 @@ class BasesDatosSapService implements IBasesDatosSapService
     private $db;
     private $partNumberRepository;
     private $almacenRepository;
+    private $localizacionesService;
     private $localizacionesRepository;
     private $informacionSapMB52Repository;
     private $umbRepository;
@@ -38,6 +39,7 @@ class BasesDatosSapService implements IBasesDatosSapService
         $this->umbRepository = new UMBRepository($this->db);
         $this->informacionSapMB52Repository = new InformacionSapMB52Repository($this->db);
         $this->informacionSapWMRepository = new InformacionSapWMRepository($this->db);
+        $this->localizacionesService = new LocalizacionesService($this->db);
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
     }
 
@@ -288,40 +290,85 @@ class BasesDatosSapService implements IBasesDatosSapService
         }
     }
 
-    public function onGetMB52($id_partnumber): ?array
-    {
-        $informacionesSapMB52 = $this->informacionSapMB52Repository->onGet_By__Id_Partnumber($id_partnumber);
-        $almacenes = $this->almacenRepository->onGet();
+    function formatearCantidad($valor) {
+        $num = (float)$valor;
 
-        foreach ($informacionesSapMB52 as $informacionSapMB52) {
-            $id = $informacionSapMB52->id_almacen_informacion_sap_mb52 ?? null;
-            foreach ($almacenes as $almacen) {
-                if ($id == $almacen->id_almacen) {
-                    $informacionSapMB52->almacen = $almacen->descripcion_almacen;
-                }
-            }
+        if (fmod($num, 1) == 0) {
+            return (string)(int)$num;
+        }
+
+        return number_format($num, 3, ',', '');
+    }
+
+    public function onGetInformacionSAP($id_partnumber, $id_almacen): ?array
+    {
+        $informacionesSap = $this->informacionSapMB52Repository->onGet_By__Id_Partnumber__Id_Almacen($id_partnumber, $id_almacen);
+
+        $almacenes = $this->almacenRepository->onGet();
+        $almacenesMap = [];
+        foreach ($almacenes as $almacen) {
+            $almacenesMap[$almacen->id_almacen] = $almacen->descripcion_almacen;
+        }
+
+        $umbs = $this->umbRepository->onGet();
+        $umbsMap = [];
+        foreach ($umbs as $umb) {
+            $umbsMap[$umb->id_umb] = $umb->descripcion_umb;
         }
 
         $partnumbers = $this->partNumberRepository->onGet();
+        $partnumbersMap = [];
+        foreach ($partnumbers as $partnumber) {
+            $partnumbersMap[$partnumber->id_partnumber] = [
+                'partnumber' => $partnumber->partnumber,
+                'descripcion_breve' => $partnumber->descripcion_breve,
+                'id_umb' => $partnumber->id_umb_partnumber
+            ];
+        }
 
-        foreach ($informacionesSapMB52 as $informacionSapMB52) {
-            $id = $informacionSapMB52->id_part_number_informacion_sap_mb52 ?? null;
-            foreach ($partnumbers as $partnumber) {
-                if ($id == $partnumber->id_partnumber) {
-                    $informacionSapMB52->partnumber = $partnumber->partnumber;
-                    $informacionSapMB52->descripcion_partnumber = $partnumber->descripcion_breve;
-                    
-                    $umbs = $this->umbRepository->onGet();
-                    $id_umb = $partnumber->id_umb_partnumber;
-                    foreach ($umbs as $umb) {
-                        if ($id_umb == $umb->id_umb) {
-                            $informacionSapMB52->umb = $umb->descripcion_umb;
+        foreach ($informacionesSap as $informacionSAP) {
+            $cantidad = $informacionSAP->cantidad_informacion_sap_mb52;
+            $informacionSAP->cantidad_formateada = $this->formatearCantidad($cantidad);
+
+            $idAlmacen = $informacionSAP->id_almacen_informacion_sap_mb52 ?? null;
+            $id_informacion_sap_mb52 = $informacionSAP->id_informacion_sap_mb52 ?? null;
+
+            if ($idAlmacen && isset($almacenesMap[$idAlmacen])) {
+                $informacionSAP->almacen = $almacenesMap[$idAlmacen];
+
+                if($informacionSAP->almacen == "WM01"){
+                    $informacionSAPWM = $this->informacionSapWMRepository->onGet_By__Id_Mb52($id_informacion_sap_mb52);
+
+                    $localizacionesDTO = [];
+
+                    foreach ($informacionSAPWM as $wm) {
+                        $id_localizacion = $wm->id_localizacion_informacion_sap_wm ?? null;
+
+                        if ($id_localizacion) {
+                            $localizacion = $this->localizacionesService->onGetLocalizacion_By__Id($id_localizacion);
+                            if ($localizacion) {
+                                $localizacionesDTO[] = $localizacion;
+                            }
                         }
                     }
+
+                    $informacionSAP->localizacionesWM = $localizacionesDTO;
+                    $informacionSAP->informacionesSapWM = $informacionSAPWM;
+                }
+            }
+
+            $idPartnumber = $informacionSAP->id_part_number_informacion_sap_mb52 ?? null;
+            if ($idPartnumber && isset($partnumbersMap[$idPartnumber])) {
+                $pn = $partnumbersMap[$idPartnumber];
+                $informacionSAP->partnumber = $pn['partnumber'];
+                $informacionSAP->descripcion_partnumber = $pn['descripcion_breve'];
+
+                $idUmb = $pn['id_umb'] ?? null;
+                if ($idUmb && isset($umbsMap[$idUmb])) {
+                    $informacionSAP->umb = $umbsMap[$idUmb];
                 }
             }
         }
-
-        return $informacionesSapMB52;
+        return $informacionesSap;
     }
 }

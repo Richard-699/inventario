@@ -24,18 +24,18 @@ function onGetPartNumbers($data)
     }
 }
 
-function onGetMB52($data)
+function onGetInformacionSAP($data)
 {
     try {
         $id_partnumber = $data['id_partnumber'];
+        $id_almacen = null;
         $basesDatosSapService = new BasesDatosSapService();
-        $mb52 = $basesDatosSapService->onGetMB52($id_partnumber);
+        $informacionSAP = $basesDatosSapService->onGetInformacionSAP($id_partnumber, $id_almacen);
 
-        if ($mb52) {
-            $_SESSION['mb52'] = $mb52;
-            return $mb52;
+        if ($informacionSAP) {
+            return $informacionSAP;
         } else {
-            throw new Exception("No se encontraron datos en mb52.");
+            throw new Exception("No se encontraron datos de informacion sap.");
         }
     } catch (Exception $e) {
         return [
@@ -57,8 +57,8 @@ try {
             case 'onGet_partnumbers':
                 $response = onGetPartNumbers($_GET);
                 break;
-            case 'onGet_MB52':
-                $response = onGetMB52($_GET);
+            case 'onGet_InformacionSAP':
+                $response = onGetInformacionSAP($_GET);
                 break;
             default:
                 throw new Exception("Acción GET no permitida.");

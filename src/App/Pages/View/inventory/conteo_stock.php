@@ -1,24 +1,5 @@
 <?php
 
-/* if (isset($_GET['mb52'])) {
-    $mb52Json = urldecode($_GET['mb52']);
-    $mb52Array = json_decode($mb52Json, true);
-
-    if (!is_array($mb52Array)) {
-        echo "Error: formato de datos inválido.";
-        exit;
-    }
-
-    $listaAlmacenes = array_map(function ($item) {
-        return [
-            'id_almacen' => $item['id_almacen_informacion_sap_mb52'] ?? '',
-            'almacen' => $item['almacen'] ?? ''
-        ];
-    }, $mb52Array);
-} else {
-    echo "No se recibió el parámetro mb52.";
-} */
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -38,27 +19,18 @@
 <body class="p-4">
 
     <div class="contenido_options_almacenes">
-        <h5 class="mb-4"><i class="fa-solid fa-warehouse me-2 fs-4"></i>
-            Seleccionar Almacén
+        <h5 class="mb-4"><i class="fa-solid fa-calculator me-2 fs-4"></i>
+            Conteo Stock
         </h5>
-        <form id="formOptionAlmacen">
+        <form id="formConteoStock">
             <div class="mb-3">
-                <label for="id_tipo_localizacion_localizaciones" class="form-label">Almacén: *</label>
-                <select class="form-select" id="id_almacen_informacion_sap_mb52" name="id_almacen_informacion_sap_mb52">
-                    <option value="">Seleccione un almacén</option>
-                    <?php
-                    foreach ($listaAlmacenes as $almacen) {
-                        $id = $almacen['id_almacen'];
-                        $nombre = $almacen['almacen'];
-                        echo "<option value='{$id}'>{$nombre}</option>";
-                    }
-                    ?>
-                </select>
+                <label for="id_tipo_localizacion_localizaciones" class="form-label">Cantidad Encontrada: *</label>
+                <input type="text" class="form-control" name="cantidad_stock" id="cantidad_stock">
             </div>
 
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-aprobar-editar">
-                    <i class="bi bi-check-circle me-1"></i>Continuar
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Guardar
                 </button>
             </div>
         </form>

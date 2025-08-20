@@ -1,22 +1,24 @@
 <?php
 
-if (isset($_GET['mb52'])) {
-    $mb52Json = urldecode($_GET['mb52']);
-    $mb52Array = json_decode($mb52Json, true);
+if (isset($_GET['informacionSAP'])) {
+    $informacionSAPJson = urldecode($_GET['informacionSAP']);
+    $informacionSAPArray = json_decode($informacionSAPJson, true);
 
-    if (!is_array($mb52Array)) {
+    if (!is_array($informacionSAPArray)) {
         echo "Error: formato de datos inválido.";
         exit;
     }
+
+    $id_partnumber = $_GET['id_partnumber'];
 
     $listaAlmacenes = array_map(function ($item) {
         return [
             'id_almacen' => $item['id_almacen_informacion_sap_mb52'] ?? '',
             'almacen' => $item['almacen'] ?? ''
         ];
-    }, $mb52Array);
+    }, $informacionSAPArray);
 } else {
-    echo "No se recibió el parámetro mb52.";
+    echo "No se recibió el parámetro información SAP.";
 }
 
 ?>
@@ -43,6 +45,7 @@ if (isset($_GET['mb52'])) {
         </h5>
         <form id="formOptionAlmacen">
             <div class="mb-3">
+                <input type="hidden" value="<?php echo $id_partnumber; ?>" id="id_partnumber" name="id_partnumber">
                 <label for="id_tipo_localizacion_localizaciones" class="form-label">Almacén: *</label>
                 <select class="form-select" id="id_almacen_informacion_sap_mb52" name="id_almacen_informacion_sap_mb52">
                     <option value="">Seleccione un almacén</option>

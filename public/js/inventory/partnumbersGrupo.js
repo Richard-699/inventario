@@ -94,14 +94,14 @@ async function continuarAlmacen(btn, id) {
     btn.disabled = true;
 
     try {
-        const responseMB52 = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_MB52&id_partnumber=${encodeURIComponent(id)}`, {
+        const responseInfoSAP = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_InformacionSAP&id_partnumber=${encodeURIComponent(id)}`, {
             method: 'GET'
         });
-        debugger;
-        const MB52 = await responseMB52.json();
-        const MB52Encoded = encodeURIComponent(JSON.stringify(MB52));
 
-        var url = `options_almacenes.php?mb52=${MB52Encoded}`;
+        const InfoSAP = await responseInfoSAP.json();
+        const InfoSAPEncoded = encodeURIComponent(JSON.stringify(InfoSAP));
+
+        var url = `options_almacenes.php?informacionSAP=${InfoSAPEncoded}&id_partnumber=${encodeURIComponent(id)}`;
 
         Fancybox.show([{
             src: url,

@@ -1,6 +1,8 @@
 $(document).ready(function () {
   const id_almacen = obtenerParametroURL("id_almacen");
-  if (!id_almacen) {
+  const id_partnumber = obtenerParametroURL("id_partnumber");
+
+  if (!id_almacen || !id_partnumber) {
     window.location.href = "cronograma.php";
   }
 
@@ -17,10 +19,10 @@ $(document).ready(function () {
     pageLength: 10,
 
     ajax: {
-      url: `../../Handler/inventory/stockHandler.php?action=onGet_InfoStock&id_almacen=${id_almacen}`,
+      url: `../../Handler/inventory/stockHandler.php?action=onGet_InfoStock&id_almacen=${id_almacen}&id_partnumber=${id_partnumber}`,
       dataSrc: function (json) {
-        if (json.mb52 && json.mb52.length > 0) {
-          const item = json.mb52.find(
+        if (json.informacionSAP && json.informacionSAP.length > 0) {
+          const item = json.informacionSAP.find(
             (data) => data.id_almacen_informacion_sap_mb52 === id_almacen
           );
 
@@ -35,12 +37,15 @@ $(document).ready(function () {
             partnumber = item.partnumber ?? "N/A";
             descripcion_partnumber = item.descripcion_partnumber ?? "N/A";
             umb = item.umb ?? "N/A";
-            cantidad_informacion_sap_mb52 = item.cantidad_informacion_sap_mb52 ?? "N/A";
+            cantidad_informacion_sap_mb52 = item.cantidad_formateada ?? "N/A";
           } else {
             console.log("No se encontró el item con el ID de almacén especificado.");
           }
          
           let disponible_fisico = 0;
+          if (json.stock && json.stock.length > 0) {
+            disponible_fisico = json.stock.reduce((acc, s) => acc + Number(s.cantidad_stock), 0);
+          }
           let diferencia = disponible_fisico - cantidad_informacion_sap_mb52;
 
           const almacenHTML = `
@@ -62,13 +67,23 @@ $(document).ready(function () {
           }
         }
 
-        return json.localizaciones;
+        return json.localizaciones.map(loc => {
+          const stockItem = json.stock.find(
+            s => s.id_localizacion_stock == loc.id_localizacion
+          );
+          return {
+            ...loc,
+            cantidad_stock: stockItem ? stockItem.cantidad_stock : 0
+          };
+        });
       },
     },
     columns: [
       { data: "id_localizacion", className: "dt-center" },
+      { data: "tipo_localizacion", className: "dt-center" },
       { data: "descripcion_localizacion", className: "dt-center" },
-      { data: "descripcion_localizacion", className: "dt-center" },
+      { data: "tipo_almacenamiento", className: "dt-center" },
+      { data: "cantidad_stock", className: "dt-center" },
       {
         data: "id_localizacion",
         className: "dt-center",
@@ -109,7 +124,7 @@ async function conteo(btn, id) {
     const MB52 = await responseMB52.json();
     const MB52Encoded = encodeURIComponent(JSON.stringify(MB52));
 
-    var url = `options_almacenes.php?mb52=${MB52Encoded}`;
+    var url = `conteo_stock.php`;
 
     Fancybox.show([
       {

@@ -33,10 +33,19 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
         return $stmt->execute();
     }
 
-    public function onGet_By__Id_Partnumber($id_partnumber): ?array
+    public function onGet_By__Id_Partnumber__Id_Almacen($id_partnumber, $id_almacen): ?array
     {
-        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_part_number_informacion_sap_mb52 = ?");
-        $stmt->execute([$id_partnumber]);
+        if($id_almacen == null){
+            $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_part_number_informacion_sap_mb52 = ?");
+            $stmt->execute([$id_partnumber]);
+        }else{
+            $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_part_number_informacion_sap_mb52 = ? AND id_almacen_informacion_sap_mb52 = ?");
+            $stmt->execute([
+                $id_partnumber,
+                $id_almacen
+            ]);
+        }
+       
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map([InformacionSapMB52::class, 'fromArray'], $rows);
     }
