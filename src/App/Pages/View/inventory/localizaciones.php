@@ -34,8 +34,9 @@
                 <thead class="table-light">
                     <tr>
                         <th style="width: 5%;">Id</th>
-                        <th style="width: 18%;">Tipo</th>
+                        <th style="width: 18%;">Tipo Localización</th>
                         <th style="width: 18%;">Descripción</th>
+                        <th style="width: 18%;">Tipo Almacenamiento</th>
                         <th></th>
                     </tr>
                 </thead>

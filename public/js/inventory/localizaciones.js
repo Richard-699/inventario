@@ -19,6 +19,7 @@ $(document).ready(function () {
             { "data": "id_localizacion", "className": "dt-center" },
             { "data": "tipo_localizacion", "className": "dt-center" },
             { "data": "descripcion_localizacion", "className": "dt-center" },
+            { "data": "tipo_almacenamiento", "className": "dt-center" },
             {
                 "data": "id_localizacion",
                 "className": "dt-center",

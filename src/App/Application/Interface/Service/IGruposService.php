@@ -13,6 +13,5 @@ interface IGruposService {
     public function saveGrupo(GruposDTO $gruposDTO , CronogramaDTO $cronogramaDTO): bool;
     public function deleteGrupo(string $id): bool;
     public function updateGrupoPartNumbersCronograma(GruposDTO $gruposDTO, CronogramaDTO $cronograma_dto): bool;
-    public function onGet_By__GrupoAndExcludeId(string $grupoNombre, string $idGrupoAExcluir): ?Grupos;
 }
 ?>

@@ -49,7 +49,6 @@ try {
         }
         session_start();
         $_SESSION['administrador'] = $administradorLogin;
-        $_SESSION['last_activity'] = time();
         $_SESSION['sidebarinactive'] = true;
     }
     

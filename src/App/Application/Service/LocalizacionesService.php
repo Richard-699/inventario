@@ -35,13 +35,24 @@ class LocalizacionesService implements ILocalizacionesService
     {
         $localizaciones = $this->localizacionesRepository->onGet();
         $tiposLocalizaciones = $this->onGetTipoLocalizaciones();
+        $tiposAlmacenamientos = $this->onGetTipoAlmacenamiento();
 
-        // Agregar los tipos a cada localización
+        // Agregar los tipos de loc a cada localización
         foreach ($localizaciones as $localizacion) {
             $id = $localizacion->id_tipo_localizacion_localizaciones ?? null;
             foreach ($tiposLocalizaciones as $tipo) {
                 if ($id == $tipo->id_tipo_localizacion) {
                     $localizacion->tipo_localizacion = $tipo->descripcion_tipo_localizacion;
+                }
+            }
+        }
+
+        // Agregar los tipos de almacenamiento a cada localización
+        foreach ($localizaciones as $localizacion) {
+            $id = $localizacion->id_tipo_almacenamientos_localizaciones ?? null;
+            foreach ($tiposAlmacenamientos as $tipo) {
+                if ($id == $tipo->id_tipo_almacenamiento) {
+                    $localizacion->tipo_almacenamiento = $tipo->descripcion_tipo_almacenamiento;
                 }
             }
         }
@@ -91,6 +102,24 @@ class LocalizacionesService implements ILocalizacionesService
     {
         $localizacion = $this->localizacionesRepository->onGet_By__Id($id);
         $localizacionDTO = Mapper::modelToLocalizacionesDTO($localizacion);
+
+        $tiposLocalizaciones = $this->onGetTipoLocalizaciones();
+        $tiposAlmacenamientos = $this->onGetTipoAlmacenamiento();
+
+        $idTipoLoc = $localizacionDTO->id_tipo_localizacion_localizaciones ?? null;
+        foreach ($tiposLocalizaciones as $tipo) {
+            if ($idTipoLoc == $tipo->id_tipo_localizacion) {
+                $localizacionDTO->tipo_localizacion = $tipo->descripcion_tipo_localizacion;
+            }
+        }
+
+        $idTipoAlm = $localizacionDTO->id_tipo_almacenamientos_localizaciones ?? null;
+        foreach ($tiposAlmacenamientos as $tipo) {
+            if ($idTipoAlm == $tipo->id_tipo_almacenamiento) {
+                $localizacionDTO->tipo_almacenamiento = $tipo->descripcion_tipo_almacenamiento;
+            }
+        }
+
         return $localizacionDTO;
     }
 

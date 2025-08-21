@@ -96,24 +96,6 @@ class GruposService implements IGruposService
         return Mapper::modelToGruposDTO($grupo);
     }
 
-    public function onGet_By__GrupoAndExcludeId(string $grupoNombre, string $idGrupoAExcluir): ?Grupos
-    {
-        $query = "SELECT id_grupo, descripcion_grupo, fecha_programacion_grupo FROM inventario_hwi_grupos
-                  WHERE descripcion_grupo = :descripcion_grupo
-                  AND id_grupo != :id_grupo_excluir LIMIT 1";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->bindParam(':descripcion_grupo', $grupoNombre, \PDO::PARAM_STR);
-        $stmt->bindParam(':id_grupo_excluir', $idGrupoAExcluir, \PDO::PARAM_STR);
-        $stmt->execute();
-        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
-
-        if ($data === false) {
-            return null;
-        }
-        return new Grupos($data['id_grupo'], $data['descripcion_grupo'], $data['fecha_programacion_grupo'], $data['informacion_migrada_sap_grupo']);
-    }
-
     public function deleteGrupo(string $id): bool
     {
         try {
@@ -145,7 +127,7 @@ class GruposService implements IGruposService
 
             // 1. Validar si el grupo ya existe
             $grupoDescripcion = trim($gruposDTO->descripcion_grupo); // Limpiar espacios
-            $existeGrupo = $this->onGet_By__GrupoAndExcludeId($grupoDescripcion, $idGrupo); // Usar la descripción limpia
+            $existeGrupo = $this->gruposRepository->onGet_By__GrupoAndExcludeId($grupoDescripcion, $idGrupo); // Usar la descripción limpia
 
             // Si existe un grupo lanzar excepción
             if ($existeGrupo !== null && !empty($existeGrupo->id_grupo)) {
