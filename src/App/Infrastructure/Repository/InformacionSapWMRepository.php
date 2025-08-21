@@ -32,5 +32,12 @@ class InformacionSapWMRepository implements IInformacionSapWMRepository
         return $stmt->execute();
     }
 
-    
+    public function onDelete_By__IdGrupo(string $idGrupo): void
+    {
+        $query = "DELETE FROM inventario_hwi_informacion_sap_wm WHERE id_grupo_informacion_sap_wm = :id_grupo";
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':id_grupo', $idGrupo, PDO::PARAM_STR);
+        $statement->execute();
+    }
+
 }

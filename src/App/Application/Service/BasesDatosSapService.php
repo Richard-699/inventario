@@ -6,6 +6,7 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Application\Interface\Service\IBasesDatosSapService;
 use App\Domain\DTO\InformacionSapMB52DTO;
 use App\Domain\DTO\InformacionSapWMDTO;
+use App\Domain\DTO\GruposDTO;
 use App\Domain\Model\Almacenes;
 use App\Domain\Model\InformacionSapMB52;
 use Exception;
@@ -17,6 +18,8 @@ use App\Infrastructure\Repository\AlmacenesRepository;
 use App\Infrastructure\Repository\InformacionSapWMRepository;
 use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\UMBRepository;
+use App\Infrastructure\Repository\CronogramaRepository;
+use App\Infrastructure\Repository\GruposRepository;
 use App\Shared\Util\Utilidades;
 
 class BasesDatosSapService implements IBasesDatosSapService
@@ -29,6 +32,8 @@ class BasesDatosSapService implements IBasesDatosSapService
     private $informacionSapMB52Repository;
     private $umbRepository;
     private $informacionSapWMRepository;
+    private $cronogramaRepository;
+    private $gruposRepository;
 
     public function __construct()
     {
@@ -39,25 +44,57 @@ class BasesDatosSapService implements IBasesDatosSapService
         $this->informacionSapMB52Repository = new InformacionSapMB52Repository($this->db);
         $this->informacionSapWMRepository = new InformacionSapWMRepository($this->db);
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
+        $this->cronogramaRepository = new CronogramaRepository($this->db);
+        $this->gruposRepository = new GruposRepository($this->db);
     }
 
-    public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File): void
+    public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File, string $idGrupo, string $id_administrador): void
     {
-        // 1. Iniciar la transacción.
         try {
+            // 1. Iniciar la transacción para asegurar la integridad de los datos
             $this->db->beginTransaction();
-            // 2. Procesar todos los archivos.
+
+            // 2. onGet de tablas Stock, WM y MB52
+            $OnGetStock = $this->informacionSapWMRepository->onDelete_By__IdGrupo($idGrupo);
+
+
+            // 2. Eliminar información de las tablas WM y MB52 por ID de grupo
+            $this->informacionSapWMRepository->onDelete_By__IdGrupo($idGrupo);
+            $this->informacionSapMB52Repository->onDelete_By__IdGrupo($idGrupo);
+
+            // 3.1 Obtener el cronograma para evaluar su estado
+            $cronograma = $this->cronogramaRepository->onGet_by_Id_grupo($idGrupo);
+            // 3.2 Asignacion de nuevo estado
+            $nuevoEstado = 1;
+            if ($cronograma) {
+                $estadoActual = $cronograma->id_estado_cronograma;
+                if ($estadoActual === 1) { //pendiente 
+                    $nuevoEstado = 2; //En Proceso Conteo 1
+                } else if ($estadoActual === 5) { //Pendiente conteo 2
+                    $nuevoEstado = 8; //En Proceso Conteo 2
+                } else if ($estadoActual === 6) { //Pendiente conteo 3
+                    $nuevoEstado = 9; //En Proceso Conteo 3
+                }
+            }
+            // 3.3 Actualizar el estado y el asignado en la tabla cronogramas
+            $this->cronogramaRepository->UpdateEstado_Asignado_By_IdGrupo($idGrupo, $nuevoEstado, $id_administrador);
+
+            // 4. Actualizar estado de la migración
+            $id_estado_migracion = 1;
+            $this->gruposRepository->update_estado_migration($idGrupo, $id_estado_migracion);
+
+            // 5. Procesar los nuevos archivos Excel
             $this->procesarArchivo($mb52File, $this->informacionSapMB52Repository, 'mb52');
             $this->procesarArchivo($wmFile, $this->informacionSapWMRepository, 'wm');
             $this->procesarArchivo($cero016File, $this->informacionSapWMRepository, 'cero016');
 
-            // 3. Confirmar la transacción (commit).
+            // 5. Confirmar la transacción (commit)
             $this->db->commit();
         } catch (Exception $e) {
-            // 4. Revertir la transacción (rollback).
+            // 6. Revertir la transacción (rollback) en caso de cualquier error
             $this->db->rollBack();
 
-            // 5. Relanzar la excepción.
+            // 7. Relanzar la excepción para que el Handler la capture
             throw new Exception("Error al procesar los archivos. La transacción ha sido revertida. Detalles: " . $e->getMessage());
         }
     }
@@ -310,7 +347,7 @@ class BasesDatosSapService implements IBasesDatosSapService
                 if ($id == $partnumber->id_partnumber) {
                     $informacionSapMB52->partnumber = $partnumber->partnumber;
                     $informacionSapMB52->descripcion_partnumber = $partnumber->descripcion_breve;
-                    
+
                     $umbs = $this->umbRepository->onGet();
                     $id_umb = $partnumber->id_umb_partnumber;
                     foreach ($umbs as $umb) {
