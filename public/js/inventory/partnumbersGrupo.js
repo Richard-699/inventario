@@ -61,7 +61,7 @@ $(document).ready(function () {
 
         try {
             Fancybox.show([{
-                src: "bases_datos_sap.php",
+                src: `bases_datos_sap.php?id_grupo=${id_grupo}`,
                 type: 'ajax'
             }]);
 

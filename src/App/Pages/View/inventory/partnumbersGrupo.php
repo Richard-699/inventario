@@ -12,7 +12,9 @@
     <link rel="stylesheet" href="../../../../../public/css/dataTable/dataTable.css">
     <link rel="stylesheet" href="../../../../../public/css/inventory/partnumbersGrupo.css">
 
-    <?php include('../../../Shared/Util/spinner.php'); ?>
+    <?php
+    include('../../../Shared/Util/spinner.php');
+    ?>
 </head>
 
 <body>

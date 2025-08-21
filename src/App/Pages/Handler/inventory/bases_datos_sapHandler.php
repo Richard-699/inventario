@@ -4,7 +4,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 use App\Application\Service\BasesDatosSapService;
 use App\Shared\Validation\Validator;
 
-function onPostMigrationSap(): array
+function onPostMigrationSap(string $idGrupo, string $id_administrador): array
 {
     try {
         if (!isset($_FILES['mb52'], $_FILES['wm'], $_FILES['0016'])) {
@@ -12,7 +12,8 @@ function onPostMigrationSap(): array
         }
 
         $service = new BasesDatosSapService();
-        $service->procesarArchivosExcel($_FILES['mb52'], $_FILES['wm'], $_FILES['0016']);
+        // Llama al nuevo método del servicio que manejará la limpieza y el procesamiento
+        $service->procesarArchivosExcel($_FILES['mb52'], $_FILES['wm'], $_FILES['0016'], $idGrupo, $id_administrador);
 
         return [
             'success' => true,
@@ -25,7 +26,6 @@ function onPostMigrationSap(): array
         ];
     }
 }
-
 $response = [];
 
 try {
@@ -34,7 +34,9 @@ try {
 
         switch ($action) {
             case 'migration_bds_sap':
-                $response = onPostMigrationSap();
+                $idGrupo = $_POST['id_grupo'] ?? null;
+                $id_administrador = $_POST['id_administrador'] ?? null;
+                $response = onPostMigrationSap($idGrupo, $id_administrador);
                 break;
             default:
                 throw new Exception("Acción no permitida.");

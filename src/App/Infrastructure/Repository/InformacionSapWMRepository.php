@@ -31,6 +31,7 @@ class InformacionSapWMRepository implements IInformacionSapWMRepository
 
         return $stmt->execute();
     }
+
     
     public function onGet_By__Id_Mb52($id_mb52): ?array
     {
@@ -41,4 +42,12 @@ class InformacionSapWMRepository implements IInformacionSapWMRepository
         return array_map([InformacionSapWM::class, 'fromArray'], $rows);
     }
     
+    public function onDelete_By__IdGrupo(string $idGrupo): void
+    {
+        $query = "DELETE FROM inventario_hwi_informacion_sap_wm WHERE id_grupo_informacion_sap_wm = :id_grupo";
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':id_grupo', $idGrupo, PDO::PARAM_STR);
+        $statement->execute();
+    }
+
 }
