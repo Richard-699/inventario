@@ -2,20 +2,22 @@
 
 namespace App\Domain\Model;
 
-class Stock {
+class Stock
+{
     public function __construct(
-        public ?int $id_stock ,
-        public ?int $id_partnumber_stock ,
-        public ?string $id_almacen_stock ,
-        public ?int $id_localizacion_stock ,
-        public ?float $cantidad_stock,
+        public ?int $id_stock,
+        public ?int $id_partnumber_stock,
+        public ?string $id_almacen_stock,
+        public ?int $id_localizacion_stock,
+        public ?string $cantidad_stock,
         public ?string $id_informacion_sap_mb52_stock,
-        public ?int $id_novedad_stock = null,
-        public ?string $observaciones_novedad_stock = null,
-        public ?string $id_grupo_stock = null
+        public ?int $id_novedad_stock,
+        public ?string $observaciones_novedad_stock,
+        public ?string $id_grupo_stock
     ) {}
 
-    public static function fromArray(array $data): self {
+    public static function fromArray(array $data): self
+    {
         return new self(
             $data['id_stock'] ?? null,
             $data['id_partnumber_stock'] ?? null,
@@ -44,5 +46,3 @@ class Stock {
         ];
     }
 }
-
-?>

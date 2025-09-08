@@ -3,6 +3,7 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\BasesDatosSapService;
 use App\Application\Service\PartNumbersService;
+use App\Application\Service\GruposService;
 
 function onGetPartNumbers($data)
 {
@@ -23,6 +24,32 @@ function onGetPartNumbers($data)
         ];
     }
 }
+
+function onGetInfoGrupo($data)
+{
+    try {
+        $id = $data['id_grupo'] ?? null;
+
+        if ($id === null) {
+            throw new Exception("Error al procesar el Id Grupo.");
+        }
+
+        $GrupoService = new GruposService();
+        $Grupo = $GrupoService->onGetGrupo_By__Id($id);
+
+        if ($Grupo) {
+            return $Grupo;
+        } else {
+            throw new Exception("No se encontró el grupo.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 
 function onGetInformacionSAP($data)
 {
@@ -49,7 +76,7 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 try {
     session_start();
-    
+
     if ($requestMethod === 'GET') {
         $action = $_GET['action'] ?? null;
 
@@ -59,6 +86,9 @@ try {
                 break;
             case 'onGet_InformacionSAP':
                 $response = onGetInformacionSAP($_GET);
+                break;
+            case 'onGet_info_grupo':
+                $response = onGetInfoGrupo($_GET);
                 break;
             default:
                 throw new Exception("Acción GET no permitida.");

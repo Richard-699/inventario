@@ -3,8 +3,13 @@ if (!id_grupo) {
     window.location.href = 'cronograma.php';
 }
 
+let informacionMigradaSAPGrupo = 0;
+mostrarCarga();
+
 $(document).ready(function () {
 
+    obtenerInfoGrupo(id_grupo);
+    console.log(informacionMigradaSAPGrupo)
     $('#tabla-partnumbers-grupo').DataTable({
         "language": {
             "url": "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json"
@@ -39,11 +44,15 @@ $(document).ready(function () {
                 "data": "id_partnumber",
                 "className": "dt-center",
                 "render": function (data, type, row) {
-                    return `
-                            <button class="btn btn-primary btn-sm" onclick="continuarAlmacen(this, '${data}')">
-                                <i class="fa-solid fa-warehouse"></i>
-                            </button>
-                        `;
+                    if (informacionMigradaSAPGrupo == 1) {
+                        return `<button class="btn btn-primary btn-sm" onclick="continuarAlmacen(this, '${data}')"><i class="fa-solid fa-warehouse"></i></button>`;
+                    } else {
+                        return `
+                                <div title="Para continuar con el conteo, primero debe importar la información del grupo.">
+                                    <button class="btn btn-primary btn-sm" disabled><i class="fa-solid fa-warehouse"></i></button>
+                                </div>
+                                `;
+                    }
                 }
             }
         ],
@@ -82,11 +91,26 @@ $(document).ready(function () {
             btn.disabled = false;
         }
     });
+    ocultarCarga();
 });
 
 function obtenerParametroURL(nombre) {
     const params = new URLSearchParams(window.location.search);
     return params.get(nombre);
+}
+
+async function obtenerInfoGrupo(id_grupo) {
+    try {
+        const response = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_info_grupo&id_grupo=${id_grupo}`);
+        const data = await response.json();
+        console.log(data)
+        // Se actualiza la variable global con la información del grupo
+        if (data.informacion_migrada_sap_grupo !== undefined) {
+            informacionMigradaSAPGrupo = data.informacion_migrada_sap_grupo;
+        }
+    } catch (error) {
+        console.error("Error al obtener la información del grupo:", error);
+    }
 }
 
 async function continuarAlmacen(btn, id) {
