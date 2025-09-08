@@ -86,4 +86,14 @@ class CronogramaRepository implements ICronogramaRepository
         // 6. Ejecutar la sentencia
         return $stmt->execute();
     }
+
+    public function UpdateEstado_Asignado_By_IdGrupo(string $idGrupo, int $id_estado_cronograma,string $id_administrador): void
+    {
+        $query = "UPDATE inventario_hwi_cronograma SET id_estado_cronograma = :estado, id_administrador_cronograma = :asignado_a WHERE id_grupo_cronograma = :id_grupo_cronograma";
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':estado', $id_estado_cronograma, PDO::PARAM_INT);
+        $statement->bindValue(':asignado_a', $id_administrador, PDO::PARAM_STR);
+        $statement->bindValue(':id_grupo_cronograma', $idGrupo, PDO::PARAM_STR);
+        $statement->execute();
+    }
 }

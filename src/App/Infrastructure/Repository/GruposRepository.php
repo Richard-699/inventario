@@ -114,4 +114,13 @@ class GruposRepository implements IGruposRepository
         // 6. Ejecutar la sentencia
         return $stmt->execute();
     }
+
+    public function update_estado_migration($idGrupo , $id_estado_migracion): void
+    {
+        $query = "UPDATE inventario_hwi_grupos SET informacion_migrada_sap_grupo = :id_estado_migracion WHERE id_grupo = :id_grupo";
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':id_grupo', $idGrupo, PDO::PARAM_STR);
+        $statement->bindValue(':id_estado_migracion', $id_estado_migracion, PDO::PARAM_STR);
+        $statement->execute();
+    }
 }
