@@ -6,8 +6,12 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
 use App\Application\Interface\Service\IBasesDatosSapService;
 use App\Domain\DTO\InformacionSapMB52DTO;
 use App\Domain\DTO\InformacionSapWMDTO;
+use App\Domain\DTO\HistoricoStockDTO;
+use App\Domain\DTO\HistoricoWMDTO;
+use App\Domain\DTO\HistoricoMB52DTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\Model\Almacenes;
+use App\Domain\Model\HistoricoStock;
 use App\Domain\Model\InformacionSapMB52;
 use Exception;
 use App\Shared\Mapper\Mapper;
@@ -20,6 +24,10 @@ use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\UMBRepository;
 use App\Infrastructure\Repository\CronogramaRepository;
 use App\Infrastructure\Repository\GruposRepository;
+use App\Infrastructure\Repository\HistoricoStockRepository;
+use App\Infrastructure\Repository\HistoricoWMRepository;
+use App\Infrastructure\Repository\HistoricoMB52Repository;
+use App\Infrastructure\Repository\StockRepository;
 use App\Shared\Util\Utilidades;
 
 class BasesDatosSapService implements IBasesDatosSapService
@@ -35,7 +43,10 @@ class BasesDatosSapService implements IBasesDatosSapService
     private $informacionSapWMRepository;
     private $cronogramaRepository;
     private $gruposRepository;
-
+    private $stockRepository;
+    private $stockHistoricoRepository;
+    private $HistoricoWMRepository;
+    private $HistoricoMB52Repository;
     public function __construct()
     {
         $this->db = (new Connection())->dbInventarioHwi;
@@ -48,6 +59,10 @@ class BasesDatosSapService implements IBasesDatosSapService
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
         $this->cronogramaRepository = new CronogramaRepository($this->db);
         $this->gruposRepository = new GruposRepository($this->db);
+        $this->stockRepository = new StockRepository($this->db);
+        $this->stockHistoricoRepository = new HistoricoStockRepository($this->db);
+        $this->HistoricoWMRepository = new HistoricoWMRepository($this->db);
+        $this->HistoricoMB52Repository = new HistoricoMB52Repository($this->db);
     }
 
     public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File, string $idGrupo, string $id_administrador): void
@@ -56,13 +71,84 @@ class BasesDatosSapService implements IBasesDatosSapService
             // 1. Iniciar la transacción para asegurar la integridad de los datos
             $this->db->beginTransaction();
 
-            // 2. onGet de tablas Stock, WM y MB52
-            $OnGetStock = $this->informacionSapWMRepository->onDelete_By__IdGrupo($idGrupo);
+            // 2. onGet de tablas Stock
+            $OnGetStock = $this->stockRepository->onGet_by_Id_grupo($idGrupo);
+            // 2.1 Si se encontraron registros en la tabla stock, se guardan en el historico y luego se eliminan.
+            if ($OnGetStock) {
+                foreach ($OnGetStock as $stockModel) {
+                    $HistoricoStockDTO = new HistoricoStockDTO(
+                        id_historico_stock: null,
+                        fecha_historico_stock: date('Y-m-d H:i:s'),
+                        cantidad_historico_stock: $stockModel->cantidad_stock,
+                        id_almacen_historico_stock: $stockModel->id_almacen_stock,
+                        id_localizacion_historico_stock: $stockModel->id_localizacion_stock,
+                        id_informacion_sap_mb52_historico_stock: $stockModel->id_informacion_sap_mb52_stock,
+                        id_partnumber_historico_stock: $stockModel->id_partnumber_stock,
+                        id_novedad_historico_stock: $stockModel->id_novedad_stock,
+                        observaciones_novedad_historico_stock: $stockModel->observaciones_novedad_stock,
+                        id_grupo_historico_stock: $stockModel->id_grupo_stock
+                    );
 
+                    // Guardar DTO en la tabla stock_historico
+                    $historicoStockModel = Mapper::HistoricoStockDTOToModel($HistoricoStockDTO);
+                    $this->stockHistoricoRepository->save($historicoStockModel);
+                }
+                // Eliminar los registros de la tabla stock
+                $this->stockRepository->delete($idGrupo);
+            }
+
+
+            // 2. onGet WM
+            $OnGetWM = $this->informacionSapWMRepository->onGet_By__Id_grupo($idGrupo);
+            // 2.1 Si se encontraron registros en la tabla wm, se guardan en el historico y luego se eliminan.
+            if ($OnGetWM) {
+                foreach ($OnGetWM as $WMModel) {
+                    $HistoricoWMDTO = new HistoricoWMDTO(
+                        id_historico_wm : null,
+                        fecha_historico_wm: date('Y-m-d H:i:s'),
+                        stock_disponible_historico_wm: $WMModel->stock_disponible_sap_informacion_sap_wm,
+                        stock_entrada_historico_wm: $WMModel->stock_entrada_sap_informacion_sap_wm,
+                        stock_salida_historico_wm: $WMModel->stock_salida_sap_informacion_sap_wm,
+                        id_localizacion_historico_wm: $WMModel->id_localizacion_informacion_sap_wm,
+                        id_partnumber_historico_wm: $WMModel->id_part_number_informacion_sap_wm,
+                        id_grupo_historico_wm : $WMModel->id_grupo_informacion_sap_wm ,
+                        id_informacion_sap_mb52_historico_wm : $WMModel->id_informacion_sap_mb52_informacion_sap_wm 
+                    );
+
+                    // Guardar DTO en la tabla historicowm
+                    $historicoWMModel = Mapper::HistoricoWMDTOToModel($HistoricoWMDTO);
+                    $this->HistoricoWMRepository->save($historicoWMModel);
+                }
+               
+            }
+
+             // 3. onGet MB52
+            $OnGetMB52 = $this->informacionSapMB52Repository->onGet_By__Id_grupo($idGrupo);
+            // 3.1 Si se encontraron registros en la tabla wm, se guardan en el historico y luego se eliminan.
+            if ($OnGetMB52) {
+                foreach ($OnGetMB52 as $MB52Model) {
+                    $HistoricoMB52DTO = new HistoricoMB52DTO(
+                        id_historico_mb52 : null,
+                        id_informacion_sap_mb52_historico_mb52: $MB52Model->id_informacion_sap_mb52,
+                        fecha_historico_mb52: date('Y-m-d H:i:s'),
+                        cantidad_historico_mb52: $MB52Model->cantidad_informacion_sap_mb52,
+                        fechaRegistro_historico_mb52: $MB52Model->fecha_registro_informacion_sap_mb52,
+                        id_part_number_historico_mb52: $MB52Model->id_part_number_informacion_sap_mb52,
+                        id_almacen_historico_mb52: $MB52Model->id_almacen_informacion_sap_mb52,
+                        id_grupo_historico_mb52 : $MB52Model->id_grupo_informacion_sap_mb52
+                    );
+
+                    // Guardar DTO en la tabla historicowm
+                    $historicoMB52Model = Mapper::HistoricoMB52DTOToModel($HistoricoMB52DTO);
+                    $this->HistoricoMB52Repository->save($historicoMB52Model);
+                }
+               
+            }
 
             // 2. Eliminar información de las tablas WM y MB52 por ID de grupo
+             // Eliminar los registros de la tabla WM
             $this->informacionSapWMRepository->onDelete_By__IdGrupo($idGrupo);
-            $this->informacionSapMB52Repository->onDelete_By__IdGrupo($idGrupo);
+            /* $this->informacionSapMB52Repository->onDelete_By__IdGrupo($idGrupo); */
 
             // 3.1 Obtener el cronograma para evaluar su estado
             $cronograma = $this->cronogramaRepository->onGet_by_Id_grupo($idGrupo);
@@ -327,7 +413,8 @@ class BasesDatosSapService implements IBasesDatosSapService
         }
     }
 
-    function formatearCantidad($valor) {
+    function formatearCantidad($valor)
+    {
         $num = (float)$valor;
 
         if (fmod($num, 1) == 0) {
@@ -373,7 +460,7 @@ class BasesDatosSapService implements IBasesDatosSapService
             if ($idAlmacen && isset($almacenesMap[$idAlmacen])) {
                 $informacionSAP->almacen = $almacenesMap[$idAlmacen];
 
-                if($informacionSAP->almacen == "WM01"){
+                if ($informacionSAP->almacen == "WM01") {
                     $informacionSAPWM = $this->informacionSapWMRepository->onGet_By__Id_Mb52($id_informacion_sap_mb52);
 
                     $localizacionesDTO = [];

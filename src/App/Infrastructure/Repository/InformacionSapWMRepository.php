@@ -32,16 +32,30 @@ class InformacionSapWMRepository implements IInformacionSapWMRepository
         return $stmt->execute();
     }
 
-    
+
     public function onGet_By__Id_Mb52($id_mb52): ?array
     {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_wm WHERE id_informacion_sap_mb52_informacion_sap_wm = ?");
         $stmt->execute([$id_mb52]);
-       
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map([InformacionSapWM::class, 'fromArray'], $rows);
     }
-    
+
+    public function onGet_By__Id_grupo(string $id_grupo): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_wm WHERE id_grupo_informacion_sap_wm  = ?");
+        $stmt->execute([$id_grupo]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $wms = [];
+        foreach ($rows as $row) {
+            $wms[] = InformacionSapWM::fromArray($row);
+        }
+
+        return $wms;
+    }
+
     public function onDelete_By__IdGrupo(string $idGrupo): void
     {
         $query = "DELETE FROM inventario_hwi_informacion_sap_wm WHERE id_grupo_informacion_sap_wm = :id_grupo";
@@ -49,5 +63,4 @@ class InformacionSapWMRepository implements IInformacionSapWMRepository
         $statement->bindValue(':id_grupo', $idGrupo, PDO::PARAM_STR);
         $statement->execute();
     }
-
 }

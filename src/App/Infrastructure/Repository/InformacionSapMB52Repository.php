@@ -35,17 +35,17 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
 
     public function onGet_By__Id_Partnumber__Id_Almacen($id_partnumber, $id_almacen): ?array
     {
-        if($id_almacen == null){
+        if ($id_almacen == null) {
             $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_part_number_informacion_sap_mb52 = ?");
             $stmt->execute([$id_partnumber]);
-        }else{
+        } else {
             $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_part_number_informacion_sap_mb52 = ? AND id_almacen_informacion_sap_mb52 = ?");
             $stmt->execute([
                 $id_partnumber,
                 $id_almacen
             ]);
         }
-       
+
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return array_map([InformacionSapMB52::class, 'fromArray'], $rows);
     }
@@ -67,6 +67,20 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
             return null;
         }
         return InformacionSapMB52::fromArray($row);
+    }
+
+    public function onGet_By__Id_grupo(string $id_grupo): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_grupo_informacion_sap_mb52 = ?");
+        $stmt->execute([$id_grupo]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $wms = [];
+        foreach ($rows as $row) {
+            $wms[] = InformacionSapMB52::fromArray($row);
+        }
+
+        return $wms;
     }
 
     public function onDelete_By__IdGrupo(string $idGrupo): void

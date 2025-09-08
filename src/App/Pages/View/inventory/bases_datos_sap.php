@@ -25,7 +25,7 @@ $id_administrador = $_SESSION['administrador']->id_administrador;
 
     <div class="contenido_bases_sap">
         <h5 class="mb-4"><i class="fa-solid fa-file-excel me-2 fs-4"></i>
-            Adjuntar Bases de Datos SAP
+            Importar Bases de Datos SAP
         </h5>
         <form id="formBdsSap" enctype="multipart/form-data">
             <input type="hidden" class="form-control" name="id_grupo" id="id_grupo" value="<?= htmlspecialchars($id_grupo) ?>">

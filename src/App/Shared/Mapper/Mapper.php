@@ -19,14 +19,20 @@ use App\Domain\DTO\CronogramaDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
+use App\Domain\DTO\HistoricoStockDTO;
 use App\Domain\DTO\InformacionSapMb52DTO;
 use App\Domain\DTO\InformacionSapWMDTO;
 use App\Domain\Model\ClasificacionAlmacenes;
 use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
+use App\Domain\Model\HistoricoStock;
 use App\Domain\Model\InformacionSapMb52;
 use App\Domain\Model\InformacionSapWM;
+use App\Domain\Model\HistoricoWM;
+use App\Domain\DTO\HistoricoWMDTO;
+use App\Domain\Model\HistoricoMB52;
+use App\Domain\DTO\HistoricoMB52DTO;
 
 class Mapper
 {
@@ -286,6 +292,97 @@ class Mapper
             $dto->stock_disponible_sap_informacion_sap_wm,
             $dto->stock_entrada_sap_informacion_sap_wm,
             $dto->stock_salida_sap_informacion_sap_wm
+        );
+    }
+
+
+    public static function modelToHistoricoStockDTO(HistoricoStock $model): HistoricoStockDTO
+    {
+        return new HistoricoStockDTO(
+            id_historico_stock: $model->id_historico_stock,
+            fecha_historico_stock: $model->fecha_historico_stock,
+            cantidad_historico_stock: $model->cantidad_historico_stock,
+            id_almacen_historico_stock: $model->id_almacen_historico_stock,
+            id_localizacion_historico_stock: $model->id_localizacion_historico_stock,
+            id_informacion_sap_mb52_historico_stock: $model->id_informacion_sap_mb52_historico_stock,
+            id_partnumber_historico_stock: $model->id_partnumber_historico_stock,
+            id_novedad_historico_stock: $model->id_novedad_historico_stock,
+            observaciones_novedad_historico_stock: $model->observaciones_novedad_historico_stock,
+            id_grupo_historico_stock: $model->id_grupo_historico_stock
+        );
+    }
+
+    public static function HistoricoStockDTOToModel(HistoricoStockDTO $dto): HistoricoStock
+    {
+        return new HistoricoStock(
+            $dto->id_historico_stock,
+            $dto->fecha_historico_stock,
+            $dto->cantidad_historico_stock,
+            $dto->id_almacen_historico_stock,
+            $dto->id_localizacion_historico_stock,
+            $dto->id_informacion_sap_mb52_historico_stock,
+            $dto->id_partnumber_historico_stock,
+            $dto->id_novedad_historico_stock,
+            $dto->observaciones_novedad_historico_stock,
+            $dto->id_grupo_historico_stock
+        );
+    }
+
+    public static function modelToHistoricoWMDTO(HistoricoWM $model): HistoricoWMDTO
+    {
+        return new HistoricoWMDTO(
+            id_historico_wm: $model->id_historico_wm,
+            fecha_historico_wm: $model->fecha_historico_wm,
+            stock_disponible_historico_wm: $model->stock_disponible_historico_wm,
+            stock_entrada_historico_wm: $model->stock_entrada_historico_wm,
+            stock_salida_historico_wm: $model->stock_salida_historico_wm,
+            id_localizacion_historico_wm: $model->id_localizacion_historico_wm,
+            id_partnumber_historico_wm: $model->id_partnumber_historico_wm,
+            id_grupo_historico_wm: $model->id_grupo_historico_wm,
+            id_informacion_sap_mb52_historico_wm: $model->id_informacion_sap_mb52_historico_wm
+        );
+    }
+
+    public static function HistoricoWMDTOToModel(HistoricoWMDTO $dto): HistoricoWM
+    {
+        return new HistoricoWM(
+            $dto->id_historico_wm,
+            $dto->fecha_historico_wm,
+            $dto->stock_disponible_historico_wm,
+            $dto->stock_entrada_historico_wm,
+            $dto->stock_salida_historico_wm,
+            $dto->id_localizacion_historico_wm,
+            $dto->id_partnumber_historico_wm,
+            $dto->id_grupo_historico_wm,
+            $dto->id_informacion_sap_mb52_historico_wm
+        );
+    }
+
+    public static function modelToHistoricoMB52DTO(HistoricoMB52 $model): HistoricoMB52DTO
+    {
+        return new HistoricoMB52DTO(
+            id_historico_mb52: $model->id_historico_mb52,
+            id_informacion_sap_mb52_historico_mb52: $model->id_informacion_sap_mb52_historico_mb52,
+            fecha_historico_mb52: $model->fecha_historico_mb52,
+            cantidad_historico_mb52: $model->cantidad_historico_mb52,
+            fechaRegistro_historico_mb52: $model->fechaRegistro_historico_mb52,
+            id_part_number_historico_mb52: $model->id_part_number_historico_mb52,
+            id_almacen_historico_mb52: $model->id_almacen_historico_mb52,
+            id_grupo_historico_mb52: $model->id_grupo_historico_mb52
+        );
+    }
+
+    public static function HistoricoMB52DTOToModel(HistoricoMB52DTO $dto): HistoricoMB52
+    {
+        return new HistoricoMB52(
+            $dto->id_historico_mb52,
+            $dto->id_informacion_sap_mb52_historico_mb52,
+            $dto->fecha_historico_mb52,
+            $dto->cantidad_historico_mb52,
+            $dto->fechaRegistro_historico_mb52,
+            $dto->id_part_number_historico_mb52,
+            $dto->id_almacen_historico_mb52,
+            $dto->id_grupo_historico_mb52
         );
     }
 }

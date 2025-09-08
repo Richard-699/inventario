@@ -28,7 +28,7 @@
                     <h5 class="m-0 fw-semibold text-dark"></h5>
                 </div>
                 <button class="btn btn-primary btn-sm" id="btnAgregarExcel">
-                    <i class="fa-solid fa-file-excel me-1"></i> Adjuntar Bases de Datos SAP
+                    <i class="fa-solid fa-file-excel me-1"></i> Importar Bases de Datos SAP
                 </button>
             </div>
 

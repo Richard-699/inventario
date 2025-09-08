@@ -27,8 +27,14 @@ $(document).ready(function () {
                     if (typeof Fancybox !== 'undefined' && Fancybox.getInstance()) {
                         Fancybox.getInstance().close();
                     }
-                    location.reload();
-                }, 2000);
+
+                    // Obtén la URL actual y agrega un parámetro de caché aleatorio
+                    const urlActual = window.location.href.split('?')[0];
+                    const parametroCache = `?timestamp=${new Date().getTime()}`;
+
+                    // Recarga la página con la nueva URL para evitar la caché
+                    window.location.href = urlActual + parametroCache;
+                }, 3000);
             } else {
                 notification('error', resultado.message || 'Error desconocido.', 8000);
             }
