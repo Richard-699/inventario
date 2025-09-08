@@ -1,11 +1,12 @@
+const id_grupo = obtenerParametroURL('id_grupo');
+if (!id_grupo) {
+    window.location.href = 'cronograma.php';
+}
+
 let informacionMigradaSAPGrupo = 0;
 mostrarCarga();
-$(document).ready(function () {
 
-    const id_grupo = obtenerParametroURL('id_grupo');
-    if (!id_grupo) {
-        window.location.href = 'cronograma.php';
-    }
+$(document).ready(function () {
 
     obtenerInfoGrupo(id_grupo);
     console.log(informacionMigradaSAPGrupo)
@@ -124,7 +125,7 @@ async function continuarAlmacen(btn, id) {
         const InfoSAP = await responseInfoSAP.json();
         const InfoSAPEncoded = encodeURIComponent(JSON.stringify(InfoSAP));
 
-        var url = `options_almacenes.php?informacionSAP=${InfoSAPEncoded}&id_partnumber=${encodeURIComponent(id)}`;
+        var url = `options_almacenes.php?informacionSAP=${InfoSAPEncoded}&id_partnumber=${encodeURIComponent(id)}&id_grupo=${id_grupo}`;
 
         Fancybox.show([{
             src: url,

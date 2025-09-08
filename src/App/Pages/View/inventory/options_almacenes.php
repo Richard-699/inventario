@@ -10,6 +10,7 @@ if (isset($_GET['informacionSAP'])) {
     }
 
     $id_partnumber = $_GET['id_partnumber'];
+    $id_grupo = $_GET['id_grupo'];
 
     $listaAlmacenes = array_map(function ($item) {
         return [
@@ -46,6 +47,7 @@ if (isset($_GET['informacionSAP'])) {
         <form id="formOptionAlmacen">
             <div class="mb-3">
                 <input type="hidden" value="<?php echo $id_partnumber; ?>" id="id_partnumber" name="id_partnumber">
+                <input type="hidden" value="<?php echo $id_grupo; ?>" id="id_grupo" name="id_grupo">
                 <label for="id_tipo_localizacion_localizaciones" class="form-label">Almacén: *</label>
                 <select class="form-select" id="id_almacen_informacion_sap_mb52" name="id_almacen_informacion_sap_mb52">
                     <option value="">Seleccione un almacén</option>

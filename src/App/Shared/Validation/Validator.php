@@ -8,6 +8,7 @@ use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\LocalizacionesDTO;
 use App\Domain\DTO\PartNumbersDTO;
+use App\Domain\DTO\StockDTO;
 
 class Validator
 {
@@ -25,6 +26,9 @@ class Validator
                 break;
             case $dto instanceof PartNumbersDTO:
                 self::validatePartnumberDTO($dto);
+                break;
+            case $dto instanceof StockDTO:
+                self::validateStockDTO($dto);
                 break;
             default:
                 throw new Exception('No hay reglas de validación definidas para este DTO.');
@@ -139,6 +143,25 @@ class Validator
             if (!in_array($ext, ['xls', 'xlsx'])) {
                 throw new Exception("El archivo '{$campo}' debe ser .xls o .xlsx.");
             }
+        }
+    }
+
+    public static function validateStockDTO(StockDTO $dto): void
+    {
+        if (empty($dto->id_partnumber_stock)) {
+            throw new Exception('El partnumber es obligatorio');
+        }
+
+        if (empty($dto->id_almacen_stock)) {
+            throw new Exception('El almacén es obligatorio');
+        }
+
+        if (empty($dto->id_localizacion_stock)) {
+            throw new Exception('La localización es obligatoria');
+        }
+
+        if (empty($dto->cantidad_stock)) {
+            throw new Exception('La cantidad es obligatoria');
         }
     }
 }

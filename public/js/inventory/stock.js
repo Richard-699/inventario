@@ -1,3 +1,7 @@
+let jsonConteoStock = null;
+let tableStock = null;
+const id_grupo = obtenerParametroURL('id_grupo');
+
 $(document).ready(function () {
   const id_almacen = obtenerParametroURL("id_almacen");
   const id_partnumber = obtenerParametroURL("id_partnumber");
@@ -6,7 +10,7 @@ $(document).ready(function () {
     window.location.href = "cronograma.php";
   }
 
-  $("#tabla-stock").DataTable({
+  tableStock = $("#tabla-stock").DataTable({
     language: {
       url: "https://cdn.datatables.net/plug-ins/1.13.7/i18n/es-ES.json",
     },
@@ -21,6 +25,17 @@ $(document).ready(function () {
     ajax: {
       url: `../../Handler/inventory/stockHandler.php?action=onGet_InfoStock&id_almacen=${id_almacen}&id_partnumber=${id_partnumber}`,
       dataSrc: function (json) {
+        const infoConteoStock = (json.informacionSAP || []).map((item) => ({
+          id_informacion_sap_mb52: item.id_informacion_sap_mb52,
+          id_part_number_informacion_sap_mb52:
+            item.id_part_number_informacion_sap_mb52,
+          id_almacen_informacion_sap_mb52: item.id_almacen_informacion_sap_mb52,
+        }));
+
+        jsonConteoStock = {
+          informacionSAP: infoConteoStock,
+        };
+
         if (json.informacionSAP && json.informacionSAP.length > 0) {
           const item = json.informacionSAP.find(
             (data) => data.id_almacen_informacion_sap_mb52 === id_almacen
@@ -39,12 +54,17 @@ $(document).ready(function () {
             umb = item.umb ?? "N/A";
             cantidad_informacion_sap_mb52 = item.cantidad_formateada ?? "N/A";
           } else {
-            console.log("No se encontró el item con el ID de almacén especificado.");
+            console.log(
+              "No se encontró el item con el ID de almacén especificado."
+            );
           }
-         
+
           let disponible_fisico = 0;
           if (json.stock && json.stock.length > 0) {
-            disponible_fisico = json.stock.reduce((acc, s) => acc + Number(s.cantidad_stock), 0);
+            disponible_fisico = json.stock.reduce(
+              (acc, s) => acc + Number(s.cantidad_stock),
+              0
+            );
           }
           let diferencia = disponible_fisico - cantidad_informacion_sap_mb52;
 
@@ -67,13 +87,13 @@ $(document).ready(function () {
           }
         }
 
-        return json.localizaciones.map(loc => {
+        return json.localizaciones.map((loc) => {
           const stockItem = json.stock.find(
-            s => s.id_localizacion_stock == loc.id_localizacion
+            (s) => s.id_localizacion_stock == loc.id_localizacion
           );
           return {
             ...loc,
-            cantidad_stock: stockItem ? stockItem.cantidad_stock : 0
+            cantidad_stock: stockItem ? stockItem.cantidad_stock : 0,
           };
         });
       },
@@ -112,40 +132,49 @@ async function conteo(btn, id) {
   mostrarCarga();
   btn.disabled = true;
 
-  try {
-    const responseMB52 = await fetch(
-      `../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_MB52&id_partnumber=${encodeURIComponent(
-        id
-      )}`,
-      {
-        method: "GET",
-      }
-    );
-    const MB52 = await responseMB52.json();
-    const MB52Encoded = encodeURIComponent(JSON.stringify(MB52));
+  if (!tableStock) {
+    console.error("La tabla #tabla-stock no está inicializada aún.");
+    btn.disabled = false;
+    ocultarCarga();
+    return;
+  }
 
-    var url = `conteo_stock.php`;
+  const row = tableStock.row($(btn).closest("tr")).data();
+
+  const infoConLocalizacion = (jsonConteoStock.informacionSAP || []).map(
+    (it) => ({
+      ...it,
+      id_localizacion: row.id_localizacion,
+    })
+  );
+  const jsonFinal = { ...jsonConteoStock, informacionSAP: infoConLocalizacion };
+  sessionStorage.setItem("stockData", JSON.stringify(jsonFinal));
+
+  try {
+    const d = jsonFinal.informacionSAP[0] || {};
+
+    const params = new URLSearchParams({
+      id_informacion_sap_mb52: d.id_informacion_sap_mb52 ?? "",
+      id_part_number_informacion_sap_mb52:
+        d.id_part_number_informacion_sap_mb52 ?? "",
+      id_almacen_informacion_sap_mb52: d.id_almacen_informacion_sap_mb52 ?? "",
+      id_localizacion: d.id_localizacion ?? "",
+      id_grupo: id_grupo
+    });
+
+    params.append("_ts", Date.now().toString());
 
     Fancybox.show([
       {
-        src: url,
+        src: `conteo_stock.php?${params.toString()}`,
         type: "ajax",
       },
     ]);
 
-    setTimeout(() => {
-      ocultarCarga();
-
-      Fancybox.getInstance().options = {
-        ...Fancybox.getInstance().options,
-        click: false,
-        trapFocus: false,
-        placeFocusBack: false,
-      };
-    }, 100);
-  } catch (error) {
-    console.error("Error al cargar la modal:", error);
+  } catch (e) {
+    console.error(e);
   } finally {
+    ocultarCarga();
     btn.disabled = false;
   }
 }

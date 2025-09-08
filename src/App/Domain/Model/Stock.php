@@ -14,7 +14,6 @@ class Stock
         public ?int $id_novedad_stock,
         public ?string $observaciones_novedad_stock,
         public ?string $id_grupo_stock
-
     ) {}
 
     public static function fromArray(array $data): self
@@ -43,7 +42,7 @@ class Stock
             'id_informacion_sap_mb52_stock' => $this->id_informacion_sap_mb52_stock,
             'id_novedad_stock' => $this->id_novedad_stock,
             'observaciones_novedad_stock' => $this->observaciones_novedad_stock,
-            'id_grupo_stock' => $this->id_grupo_stock,
+            'id_grupo_stock' => $this->id_grupo_stock
         ];
     }
 }
