@@ -4,6 +4,8 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 use App\Application\Service\BasesDatosSapService;
 use App\Application\Service\LocalizacionesService;
 use App\Application\Service\StockService;
+use App\Domain\DTO\StockDTO;
+use App\Shared\Validation\Validator;
 
 function onGetInfoStock($data)
 {
@@ -42,6 +44,42 @@ function onGetInfoStock($data)
     }
 }
 
+function onPostSaveStock(array $data){
+    try {
+        $form = $data['form'] ?? [];
+
+        $stockDTO = new StockDTO(
+            id_partnumber_stock: $form['id_partnumber_stock'],
+            id_almacen_stock: $form['id_almacen_stock'] ?? null,
+            id_localizacion_stock: $form['id_localizacion_stock'] ?? null,
+            cantidad_stock: $form['cantidad_stock'],
+            id_informacion_sap_mb52_stock: $form['id_informacion_sap_mb52_stock'] ?? null,
+            id_novedad_stock: null,
+            observaciones_novedad_stock: null,
+            id_grupo_stock: $form['id_grupo_stock']
+        );
+
+        Validator::validateStockDTO($stockDTO);
+
+        $stockService = new StockService();
+
+        $guardarGrupo = $stockService->saveStock($stockDTO);
+
+        if (!$guardarGrupo) {
+            throw new Exception("No se pudo guardar el grupo");
+        }
+
+        return [
+            'success' => true
+        ];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
 
 try {
@@ -56,6 +94,24 @@ try {
                 break;
             default:
                 throw new Exception("Acción GET no permitida.");
+                break;
+        }
+    }elseif ($requestMethod === 'POST'){
+        $rawData = file_get_contents('php://input');
+        $data = json_decode($rawData, true);
+
+        if (json_last_error() !== JSON_ERROR_NONE || !is_array($data)) {
+            throw new Exception("Datos JSON inválidos o mal formados. Asegúrate de enviar un JSON válido.");
+        }
+
+        $action = $data['action'] ?? null;
+
+        switch ($action) {
+            case 'guardar_stock':
+                $response = onPostSaveStock($data);
+                break;
+            default:
+                throw new Exception("Acción no permitida.");
                 break;
         }
     } else {

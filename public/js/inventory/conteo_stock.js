@@ -1,13 +1,12 @@
 $(document).ready(function () {
 
-    document.getElementById('formAgregarGrupo').addEventListener('submit', async function (e) {
+    document.getElementById('formConteoStock').addEventListener('submit', async function (e) {
         e.preventDefault();
         mostrarCarga();
 
-        const form = document.getElementById('formAgregarGrupo');
-        const formData = new FormData(form);
+        const form = document.getElementById('formConteoStock');
+        const formData = new FormData(form);Ñ
 
-        // Convertimos FormData en un objeto plano
         const formObj = {};
         formData.forEach((value, key) => {
             if (formObj[key] === undefined) {
@@ -17,10 +16,10 @@ $(document).ready(function () {
             }
         });
 
-        const action = 'guardar_grupo';
+        const action = 'guardar_stock';
 
         try {
-            const response = await fetch('../../Handler/inventory/gruposHandler.php', {
+            const response = await fetch('../../Handler/inventory/stockHandler.php', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -34,7 +33,7 @@ $(document).ready(function () {
             ocultarCarga();
 
             if (resultado.success) {
-                notification('success', 'Se registró el grupo.', 2000);
+                notification('success', 'Se registró el conteo.', 2000);
 
                 setTimeout(function () {
                     if (Fancybox.getInstance()) {
@@ -53,6 +52,3 @@ $(document).ready(function () {
     });
 
 });
-
-
-

@@ -1,5 +1,8 @@
 <?php
-
+function val($key)
+{
+    return htmlspecialchars($_GET[$key] ?? '', ENT_QUOTES, 'UTF-8');
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -8,7 +11,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../../../../../public/css/inventory/options_almacenes.css" rel="stylesheet">
+    <link href="../../../../../public/css/inventory/conteo_stock.css" rel="stylesheet">
     <link rel="shortcut icon" href="../../../public/img/LogoBlanco.png" type="image/x-icon">
 
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
@@ -18,18 +21,23 @@
 
 <body class="p-4">
 
-    <div class="contenido_options_almacenes">
+    <div class="contenido_conteo_stock">
         <h5 class="mb-4"><i class="fa-solid fa-calculator me-2 fs-4"></i>
             Conteo Stock
         </h5>
         <form id="formConteoStock">
+            <input type="hidden" name="id_informacion_sap_mb52_stock" id="id_informacion_sap_mb52" value="<?= val('id_informacion_sap_mb52') ?>">
+            <input type="hidden" name="id_partnumber_stock" id="id_part_number_informacion_sap_mb52" value="<?= val('id_part_number_informacion_sap_mb52') ?>">
+            <input type="hidden" name="id_almacen_stock" id="id_almacen_informacion_sap_mb52" value="<?= val('id_almacen_informacion_sap_mb52') ?>">
+            <input type="hidden" name="id_localizacion_stock" id="id_localizacion" value="<?= val('id_localizacion') ?>">
+            <input type="hidden" name="id_grupo_stock" id="id_grupo" value="<?= val('id_grupo') ?>">
             <div class="mb-3">
                 <label for="id_tipo_localizacion_localizaciones" class="form-label">Cantidad Encontrada: *</label>
                 <input type="text" class="form-control" name="cantidad_stock" id="cantidad_stock">
             </div>
 
             <div class="d-flex justify-content-end">
-                <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-aprobar-editar">
+                <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-save">
                     <i class="fa-solid fa-floppy-disk me-2"></i>Guardar
                 </button>
             </div>
@@ -47,7 +55,7 @@
     <script src="../../../../../public/js/utils/libs/select2.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/utils/notifications.js"></script>
-    <script src="../../../../../public/js/inventory/options_almacenes.js"></script>
+    <script src="../../../../../public/js/inventory/conteo_stock.js"></script>
 </body>
 
 </html>

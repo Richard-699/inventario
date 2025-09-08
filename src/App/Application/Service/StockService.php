@@ -3,6 +3,7 @@
 namespace App\Application\Service;
 
 use App\Application\Interface\Service\IStockService;
+use App\Domain\DTO\StockDTO;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
@@ -24,5 +25,10 @@ class StockService implements IStockService
     {
         $stock = $this->stockRepository->onGet__By_Id_PartNumber_Id_Almacen($id_partnumber, $id_almacen);
         return $stock;
+    }
+
+    public function saveStock(StockDTO $stockDTO): bool
+    {
+        return true;
     }
 }

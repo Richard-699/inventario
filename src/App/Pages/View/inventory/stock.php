@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
     <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
     <link rel="stylesheet" href="../../../../../public/css/dataTable/dataTable.css">
-    <link rel="stylesheet" href="../../../../../public/css/inventory/conteo.css">
+    <link rel="stylesheet" href="../../../../../public/css/inventory/stock.css">
 
     <?php include('../../../Shared/Util/spinner.php'); ?>
 </head>
@@ -25,6 +25,9 @@
                     <i class="fa-solid fa-boxes-packing me-2 fs-4"></i>
                     <h5 class="m-0 fw-semibold text-dark">Stock</h5>
                 </div>
+                <button class="btn btn-primary btn-sm" id="btnFinalizarConteo">
+                    <i class="fa-solid fa-floppy-disk me-1"></i> Guardar y Finalizar Conteo
+                </button>
             </div>
 
             <table id="tabla-stock" class="table table-striped table-bordered table-sm dt-responsive nowrap" style="width:100%">
