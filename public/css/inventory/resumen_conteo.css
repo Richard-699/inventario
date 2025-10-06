@@ -1,0 +1,31 @@
+.finalizar_conteo_stock {
+    max-width: 2000px;
+    width: 700px;
+    margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .finalizar_conteo_stock {
+        width: 90%;
+        max-width: 100%;
+        padding: 0 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .finalizar_conteo_stock {
+        width: 95%;
+        padding: 0 10px;
+    }
+}
+
+.col-observaciones {
+    max-width: 120px; /* Puedes ajustar este valor */
+}
+
+.observaciones-cell {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}

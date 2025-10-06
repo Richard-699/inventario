@@ -1,0 +1,10 @@
+/* Asegura que el texto se ajuste a varias líneas */
+#tabla-conteos .observaciones-col {
+    white-space: normal;
+}
+/* Opcional: ajustar el ancho de la columna de observaciones si es necesario */
+#tabla-conteos th.observaciones-col,
+#tabla-conteos td.observaciones-col {
+    max-width: 300px;
+    word-wrap: break-word;
+}

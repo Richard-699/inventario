@@ -14,7 +14,10 @@ class HistoricoStock
         public ?int $id_partnumber_historico_stock,
         public ?int $id_novedad_historico_stock,
         public ?string $observaciones_novedad_historico_stock,
-        public ?string $id_grupo_historico_stock
+        public ?string $id_grupo_historico_stock,
+        public ?int $id_conteo_stock,
+        public ?string $fecha_hora_stock,
+        public ?string $id_administrador_stock
     ) {}
 
     public static function fromArray(array $data): self
@@ -30,6 +33,9 @@ class HistoricoStock
             $data['id_novedad_historico_stock'] ?? null,
             $data['observaciones_novedad_historico_stock'] ?? null,
             $data['id_grupo_historico_stock'] ?? null,
+            $data['id_conteo_stock'] ?? null,
+            $data['fecha_hora_stock'] ?? null,
+            $data['id_administrador_stock'] ?? null
         );
     }
 
@@ -45,7 +51,10 @@ class HistoricoStock
             'id_partnumber_historico_stock' => $this->id_partnumber_historico_stock,
             'id_novedad_historico_stock' => $this->id_novedad_historico_stock,
             'observaciones_novedad_historico_stock' => $this->observaciones_novedad_historico_stock,
-            'id_grupo_historico_stock' => $this->id_grupo_historico_stock
+            'id_grupo_historico_stock' => $this->id_grupo_historico_stock,
+            'id_conteo_stock' => $this->id_conteo_stock,
+            'fecha_hora_stock' => $this->fecha_hora_stock,
+            'id_administrador_stock' => $this->id_administrador_stock
         ];
     }
 }

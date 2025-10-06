@@ -170,4 +170,16 @@ class GruposService implements IGruposService
             throw $e;
         }
     }
+
+    public function updateGrupo(GruposDTO $GruposDTO): bool
+    {
+        $Grupo = Mapper::GruposDTOToModel($GruposDTO);
+        $guardarGrupo = $this->gruposRepository->update($Grupo);
+
+        if (!$guardarGrupo) {
+            return false;
+        } else {
+            return true;
+        }
+    }
 }

@@ -1,11 +1,25 @@
 $(document).ready(function () {
+    console.log("js cargadop")
 
+    // funcionalidad del para el conteo de caracteres en el textArea
+    window.updateCharCount = function () {
+        const textarea = document.getElementById('observaciones');
+        const charCount = document.getElementById('charCount');
+        if (!textarea || !charCount) return;
+        const maxLength = textarea.getAttribute('maxlength') || 500;
+        const currentLength = textarea.value.length;
+        charCount.textContent = `${currentLength} / ${maxLength} carácteres`;
+    };
+    $('#observaciones').on('input', window.updateCharCount);
+    window.updateCharCount();
+
+    /* evento para enviar el formulario */
     document.getElementById('formConteoStock').addEventListener('submit', async function (e) {
         e.preventDefault();
         mostrarCarga();
 
         const form = document.getElementById('formConteoStock');
-        const formData = new FormData(form);Ñ
+        const formData = new FormData(form);
 
         const formObj = {};
         formData.forEach((value, key) => {
@@ -51,4 +65,16 @@ $(document).ready(function () {
         }
     });
 
+
 });
+
+function updateCharCount() {
+    const textarea = document.getElementById('observaciones');
+    const charCount = document.getElementById('charCount');
+    const maxLength = textarea.getAttribute('maxlength');
+    const currentLength = textarea.value.length;
+
+    charCount.textContent = `${currentLength} / ${maxLength} caracteres`;
+}
+// Exponer al scope global
+window.updateCharCount = updateCharCount;

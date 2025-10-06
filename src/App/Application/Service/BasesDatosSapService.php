@@ -9,6 +9,8 @@ use App\Domain\DTO\InformacionSapWMDTO;
 use App\Domain\DTO\HistoricoStockDTO;
 use App\Domain\DTO\HistoricoWMDTO;
 use App\Domain\DTO\HistoricoMB52DTO;
+use App\Domain\DTO\ConteoDTO;
+use App\Domain\DTO\ExactitudDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\Model\Almacenes;
 use App\Domain\Model\HistoricoStock;
@@ -24,10 +26,12 @@ use App\Infrastructure\Repository\LocalizacionesRepository;
 use App\Infrastructure\Repository\UMBRepository;
 use App\Infrastructure\Repository\CronogramaRepository;
 use App\Infrastructure\Repository\GruposRepository;
+use App\Infrastructure\Repository\ConteoRepository;
 use App\Infrastructure\Repository\HistoricoStockRepository;
 use App\Infrastructure\Repository\HistoricoWMRepository;
 use App\Infrastructure\Repository\HistoricoMB52Repository;
 use App\Infrastructure\Repository\StockRepository;
+use App\Infrastructure\Repository\ExactitudRepository;
 use App\Shared\Util\Utilidades;
 
 class BasesDatosSapService implements IBasesDatosSapService
@@ -43,6 +47,8 @@ class BasesDatosSapService implements IBasesDatosSapService
     private $informacionSapWMRepository;
     private $cronogramaRepository;
     private $gruposRepository;
+    private $conteoRepository;
+    private $exactitudRepository;
     private $stockRepository;
     private $stockHistoricoRepository;
     private $HistoricoWMRepository;
@@ -59,10 +65,12 @@ class BasesDatosSapService implements IBasesDatosSapService
         $this->localizacionesRepository = new LocalizacionesRepository($this->db);
         $this->cronogramaRepository = new CronogramaRepository($this->db);
         $this->gruposRepository = new GruposRepository($this->db);
+        $this->conteoRepository = new ConteoRepository($this->db);
         $this->stockRepository = new StockRepository($this->db);
         $this->stockHistoricoRepository = new HistoricoStockRepository($this->db);
         $this->HistoricoWMRepository = new HistoricoWMRepository($this->db);
         $this->HistoricoMB52Repository = new HistoricoMB52Repository($this->db);
+        $this->exactitudRepository = new ExactitudRepository($this->db);
     }
 
     public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File, string $idGrupo, string $id_administrador): void
@@ -71,7 +79,24 @@ class BasesDatosSapService implements IBasesDatosSapService
             // 1. Iniciar la transacción para asegurar la integridad de los datos
             $this->db->beginTransaction();
 
-            // 2. onGet de tablas Stock
+            // 1. Registrar el nuevo conteo:::
+
+            date_default_timezone_set('America/Bogota');
+            $conteoDTO = new ConteoDTO(
+                id_conteo: null,
+                id_grupo_conteo: $idGrupo,
+                id_encargado_conteo: $id_administrador,
+                fecha_hora_inicio_conteo: date('Y-m-d H:i:s'),
+                fecha_hora_final_conteo: null,
+                observaciones_conteo: null,
+                estado_conteo: null
+            );
+            // Guardar DTO en la tabla stock_historico
+            $ConteoStockModel = Mapper::ConteoDTOToModel($conteoDTO);
+            $this->conteoRepository->save($ConteoStockModel);
+
+
+            /*             // 2. onGet de tablas Stock
             $OnGetStock = $this->stockRepository->onGet_by_Id_grupo($idGrupo);
             // 2.1 Si se encontraron registros en la tabla stock, se guardan en el historico y luego se eliminan.
             if ($OnGetStock) {
@@ -95,10 +120,10 @@ class BasesDatosSapService implements IBasesDatosSapService
                 }
                 // Eliminar los registros de la tabla stock
                 $this->stockRepository->delete($idGrupo);
-            }
+            } */
 
 
-            // 2. onGet WM
+            /*             // 2. onGet WM
             $OnGetWM = $this->informacionSapWMRepository->onGet_By__Id_grupo($idGrupo);
             // 2.1 Si se encontraron registros en la tabla wm, se guardan en el historico y luego se eliminan.
             if ($OnGetWM) {
@@ -121,8 +146,8 @@ class BasesDatosSapService implements IBasesDatosSapService
                 }
                
             }
-
-             // 3. onGet MB52
+ */
+            /*             // 3. onGet MB52
             $OnGetMB52 = $this->informacionSapMB52Repository->onGet_By__Id_grupo($idGrupo);
             // 3.1 Si se encontraron registros en la tabla wm, se guardan en el historico y luego se eliminan.
             if ($OnGetMB52) {
@@ -143,10 +168,10 @@ class BasesDatosSapService implements IBasesDatosSapService
                     $this->HistoricoMB52Repository->save($historicoMB52Model);
                 }
                
-            }
+            } */
 
             // 2. Eliminar información de las tablas WM y MB52 por ID de grupo
-             // Eliminar los registros de la tabla WM
+            // Eliminar los registros de la tabla WM (Con esto ya se eliminan de las dos tablas por la relacion FK ON DELETE IN CASCADE)
             $this->informacionSapWMRepository->onDelete_By__IdGrupo($idGrupo);
             /* $this->informacionSapMB52Repository->onDelete_By__IdGrupo($idGrupo); */
 
@@ -184,6 +209,94 @@ class BasesDatosSapService implements IBasesDatosSapService
 
             // 7. Relanzar la excepción para que el Handler la capture
             throw new Exception("Error al procesar los archivos. La transacción ha sido revertida. Detalles: " . $e->getMessage());
+        }
+    }
+
+    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador): void
+    {
+        try {
+            // 1. Iniciar la transacción para asegurar la integridad de los datos
+            $this->db->beginTransaction();
+
+            date_default_timezone_set('America/Bogota');
+            $fechaActual = date('Y-m-d');
+            $eliminarRegistrosHOY = $this->exactitudRepository->onDelete_By__fecha($fechaActual);
+            if (!$eliminarRegistrosHOY) {
+                throw new Exception("Hubo un error al intentar eliminar los registrosd de hoy");
+            }
+
+            // 2. Cargar el único archivo de Excel
+            // Se asume que $lx03 es un array con la información de un solo archivo, por ejemplo, $_FILES['lx03']
+            $spreadsheet = IOFactory::load($lx03['tmp_name']);
+
+            // 3. Obtener la hoja específica
+            $sheetName = "SAP LX03";
+            $sheet = $spreadsheet->getSheetByName($sheetName);
+            if (!$sheet) {
+                throw new Exception("No se encontró la hoja '$sheetName' en el archivo Excel.");
+            }
+            $sheet->getStyle('A1:Z1000')->getNumberFormat()->setFormatCode('@'); // Forzar modo texto
+            $filas = $sheet->toArray();
+
+
+            // 4. Filtrar filas vacías o donde la columna clave (PartNumber) está vacía
+            $filasFiltradas = array_filter($filas, function ($fila, $index) {
+                // Ignora encabezado
+                if ($index === 0) return false;
+                // Si la fila está completamente vacía
+                if (empty(array_filter($fila))) return false;
+                // Si la columna clave (PartNumber) está vacía
+                if (empty(trim($fila[0] ?? ''))) return false;
+                return true;
+            }, ARRAY_FILTER_USE_BOTH);
+
+            // 5. Iterar sobre las filas filtradas para procesar cada una
+            foreach ($filasFiltradas as $fila) {
+                $codigoPartNumber = trim($fila[0] ?? '');
+                $tipoAlmacen = trim($fila[5] ?? '');
+                $areaAlmacenamiento = trim($fila[6] ?? '');
+                $localizacion = trim($fila[7] ?? '');
+
+                // Obtener ID del part number y su grupo
+                $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
+                if (!$partNumber) {
+                    $filaPreview = implode(' - ', array_slice($fila, 0, 2));
+                    if ($codigoPartNumber == "<< vacías >>") {
+                        $descripcionPartnumber = "<< vacías >>";
+                    } else {
+                        $descripcionPartnumber = "Partnumber no registrado en el sistema";
+                        /* throw new Exception("No se encontró el Part Number '{$codigoPartNumber}' en la fila con datos: [{$filaPreview}]"); */
+                    }
+                } else {
+                    $descripcionPartnumber = $partNumber->descripcion_breve;
+                }
+
+                // Crear DTO y guardar en el repositorio
+                $dto = new ExactitudDTO(
+                    partnumber_exactitud: $codigoPartNumber,
+                    descripcion_partnumber_exactitud: $descripcionPartnumber,
+                    tipo_almacen_exactitud: $tipoAlmacen,
+                    area_almacenamiento_exactitud: $areaAlmacenamiento,
+                    localizacion_exactitud: $localizacion,
+                    coincide_exactitud: null,
+                    novedad_exactitud: null,
+                    descripcion_novedad_exactitud: null,
+                    fecha_hora_migracion_exactitud: date('Y-m-d H:i:s'),
+                    id_administrador: $id_administrador
+                );
+                $mb52Model = Mapper::ExactitudDTOToModel($dto);
+                // Aquí se debería tener la instancia del repositorio, por ejemplo:
+                $this->exactitudRepository->save($mb52Model);
+            }
+
+            // 6. Confirmar la transacción (commit) después de procesar todas las filas
+            $this->db->commit();
+        } catch (Exception $e) {
+            // 7. Revertir la transacción (rollback) en caso de cualquier error
+            $this->db->rollBack();
+
+            // 8. Relanzar la excepción para que el Handler la capture
+            throw new Exception("Error al procesar el archivo. La transacción ha sido revertida. Detalles: " . $e->getMessage());
         }
     }
 
@@ -494,5 +607,16 @@ class BasesDatosSapService implements IBasesDatosSapService
             }
         }
         return $informacionesSap;
+    }
+
+    public function onGetExactitud(): ?array
+    {
+        date_default_timezone_set('America/Bogota');
+        $fechaActual = date('Y-m-d');
+        $informacionesSapExactitud = $this->exactitudRepository->onGet__Fecha($fechaActual);
+        if (!$informacionesSapExactitud) {
+            throw new Exception("Error al intentar obtener los registros de exactitud");
+        }
+        return $informacionesSapExactitud;
     }
 }

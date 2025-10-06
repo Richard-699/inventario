@@ -32,6 +32,14 @@ class InformacionSapWMRepository implements IInformacionSapWMRepository
         return $stmt->execute();
     }
 
+    public function onGet(): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_wm");
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([InformacionSapWM::class, 'fromArray'], $rows);
+    }
+
 
     public function onGet_By__Id_Mb52($id_mb52): ?array
     {

@@ -89,33 +89,23 @@ class GruposRepository implements IGruposRepository
 
     public function update(Grupos $grupos): bool
     {
-        $dataToUpdate = $grupos->toArray();
-        $id_grupo = $dataToUpdate['id_grupo'] ?? null;
+        $data = $grupos->toArray();
+        $id = $data['id_grupo'];
+        $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
 
-        $setClauses = [];
-        foreach ($dataToUpdate as $column => $value) {
-            $setClauses[] = "$column = :$column";
-        }
-        $setSql = implode(', ', $setClauses);
-        $query = "UPDATE inventario_hwi_grupos
-                  SET " . $setSql . "
-                  WHERE id_grupo = :id_grupo";
+        $query = "UPDATE inventario_hwi_grupos SET $set WHERE id_grupo = :id_grupo";
 
-        // 4. Preparar la sentencia
         $stmt = $this->db->prepare($query);
-
-        // 5. Vincular los parámetros usando foreach y bindValue
-        foreach ($dataToUpdate as $campo => $valor) {
+        foreach ($data as $campo => $valor) {
             $stmt->bindValue(":$campo", $valor);
         }
-        // Vincular el parámetro para la cláusula WHERE
-        $stmt->bindValue(':id_grupo', $id_grupo);
 
-        // 6. Ejecutar la sentencia
+        $stmt->bindValue(':id_grupo', $id, \PDO::PARAM_STR);
+
         return $stmt->execute();
     }
 
-    public function update_estado_migration($idGrupo , $id_estado_migracion): void
+    public function update_estado_migration($idGrupo, $id_estado_migracion): void
     {
         $query = "UPDATE inventario_hwi_grupos SET informacion_migrada_sap_grupo = :id_estado_migracion WHERE id_grupo = :id_grupo";
         $statement = $this->db->prepare($query);

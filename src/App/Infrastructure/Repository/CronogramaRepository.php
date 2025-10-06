@@ -62,32 +62,63 @@ class CronogramaRepository implements ICronogramaRepository
     public function update(Cronograma $cronograma): bool
     {
         $dataToUpdate = $cronograma->toArray();
-        $id_cronograma = $dataToUpdate['id_cronograma'] ?? null;
+
+        // Buscamos el id de grupo que usaremos para el WHERE
+        $id_grupo = $dataToUpdate['id_grupo_cronograma'] ?? null;
+        if ($id_grupo === null) {
+            // No tenemos id de grupo -> no podemos saber qué fila actualizar
+            return false;
+        }
+
+        // Excluir claves que no queremos actualizar
+        $exclude = ['id_cronograma', 'id_grupo_cronograma'];
+
+        // Construir solo los campos que el DTO incluyó (aunque su valor sea null)
+        $fieldsToSet = [];
+        foreach ($dataToUpdate as $column => $value) {
+            if (in_array($column, $exclude, true)) {
+                continue;
+            }
+            
+            // actualizar explícitamente los nulls que aparezcan.
+            if (array_key_exists($column, $dataToUpdate)) {
+                $fieldsToSet[$column] = $value;
+            }
+        }
+
+        if (empty($fieldsToSet)) {
+            // Nada que actualizar
+            return false;
+        }
 
         $setClauses = [];
-        foreach ($dataToUpdate as $column => $value) {
-            $setClauses[] = "$column = :$column";
+        foreach (array_keys($fieldsToSet) as $column) {
+            $setClauses[] = "`$column` = :$column";
         }
         $setSql = implode(', ', $setClauses);
-        $query = "UPDATE inventario_hwi_cronograma
-                  SET " . $setSql . "
-                  WHERE id_cronograma = :id_cronograma";
 
-        // 4. Preparar la sentencia
+        $query = "UPDATE inventario_hwi_cronograma
+              SET {$setSql}
+              WHERE id_grupo_cronograma = :id_grupo_cronograma";
+
         $stmt = $this->db->prepare($query);
 
-        // 5. Vincular los parámetros usando foreach y bindValue
-        foreach ($dataToUpdate as $campo => $valor) {
-            $stmt->bindValue(":$campo", $valor);
+        // Vincular parámetros a actualizar (respetando NULL explícitos)
+        foreach ($fieldsToSet as $campo => $valor) {
+            if ($valor === null) {
+                $stmt->bindValue(":$campo", null, PDO::PARAM_NULL);
+            } else {
+                $stmt->bindValue(":$campo", $valor);
+            }
         }
-        // Vincular el parámetro para la cláusula WHERE
-        $stmt->bindValue(':id_cronograma', $id_cronograma);
 
-        // 6. Ejecutar la sentencia
+        // Vincular id_grupo para el WHERE (ajusta el tipo si es INT)
+        $stmt->bindValue(':id_grupo_cronograma', $id_grupo);
+
         return $stmt->execute();
     }
 
-    public function UpdateEstado_Asignado_By_IdGrupo(string $idGrupo, int $id_estado_cronograma,string $id_administrador): void
+    public function UpdateEstado_Asignado_By_IdGrupo(string $idGrupo, int $id_estado_cronograma, string $id_administrador): void
     {
         $query = "UPDATE inventario_hwi_cronograma SET id_estado_cronograma = :estado, id_administrador_cronograma = :asignado_a WHERE id_grupo_cronograma = :id_grupo_cronograma";
         $statement = $this->db->prepare($query);

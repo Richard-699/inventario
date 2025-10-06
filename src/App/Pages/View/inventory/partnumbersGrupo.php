@@ -27,9 +27,17 @@
                     <i class="fa-solid fa-boxes-packing me-2 fs-4"></i>
                     <h5 class="m-0 fw-semibold text-dark"></h5>
                 </div>
-                <button class="btn btn-primary btn-sm" id="btnAgregarExcel">
-                    <i class="fa-solid fa-file-excel me-1"></i> Importar Bases de Datos SAP
-                </button>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-info btn-sm me-2" id="btnResumen">
+                        <i class="fa-solid fa-clipboard-list"></i> Resumen
+                    </button>
+                    <button class="btn btn-success btn-sm me-2" id="btnFinalizar">
+                        <i class="fa-solid fa-check me-1"></i> Finalizar
+                    </button>
+                    <button class="btn btn-primary btn-sm" id="btnAgregarExcel">
+                        <i class="fa-solid fa-file-excel me-1"></i> Importar Bases de Datos SAP
+                    </button>
+                </div>
             </div>
 
             <table id="tabla-partnumbers-grupo" class="table table-striped table-bordered table-sm dt-responsive nowrap" style="width:100%">
@@ -37,7 +45,7 @@
                     <tr>
                         <th style="width: 5%;">Id</th>
                         <th style="width: 10%">PartNumber</th>
-                        <th style="width: 25%;">Texto breve de material SAP</th>
+                        <!-- <th style="width: 25%;">Texto breve de material SAP</th> -->
                         <th style="width: 5%;">UMB</th>
                         <th style="width: 25%;">Nombre interno</th>
                         <th style="width: 18%;">Grupo</th>

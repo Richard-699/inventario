@@ -33,6 +33,17 @@ function Cronograma() {
     window.location.href = "cronograma.php";
 }
 
+function Aprobacion() {
+    mostrarCarga();
+    window.location.href = "aprobacionAjuste.php";
+}
+
+function Exactitud() {
+    mostrarCarga();
+    window.location.href = "exactitud.php";
+}
+
+
 document.querySelectorAll('#BtnCerrarSesion, #BtnCerrarSesionMenu').forEach(btn => {
     btn.addEventListener('click', function (e) {
         debugger;

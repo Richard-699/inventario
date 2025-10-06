@@ -5,6 +5,7 @@ namespace App\Shared\Validation;
 use Exception;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\AlmacenesDTO;
+use App\Domain\DTO\ConteoDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\LocalizacionesDTO;
 use App\Domain\DTO\PartNumbersDTO;
@@ -164,4 +165,5 @@ class Validator
             throw new Exception('La cantidad es obligatoria');
         }
     }
+
 }

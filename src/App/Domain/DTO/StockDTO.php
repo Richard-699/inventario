@@ -12,6 +12,9 @@ class StockDTO {
         public ?string $id_informacion_sap_mb52_stock  = null,
         public ?int $id_novedad_stock  = null,
         public ?string $observaciones_novedad_stock = null ,
-        public ?string $id_grupo_stock  = null ,
+        public ?string $id_grupo_stock  = null,
+        public ?int $id_conteo_stock  = null,
+        public ?string $fecha_hora_stock  = null,
+        public ?string $id_administrador_stock = null
     ) {}
 }

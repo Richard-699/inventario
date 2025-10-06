@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../../../../../vendor/autoload.php';
+session_start();
+$id_administrador = $_SESSION['administrador']->id_administrador;
 function val($key)
 {
     return htmlspecialchars($_GET[$key] ?? '', ENT_QUOTES, 'UTF-8');
@@ -31,9 +34,21 @@ function val($key)
             <input type="hidden" name="id_almacen_stock" id="id_almacen_informacion_sap_mb52" value="<?= val('id_almacen_informacion_sap_mb52') ?>">
             <input type="hidden" name="id_localizacion_stock" id="id_localizacion" value="<?= val('id_localizacion') ?>">
             <input type="hidden" name="id_grupo_stock" id="id_grupo" value="<?= val('id_grupo') ?>">
+            <input type="hidden" name="id_administrador" id="id_administrador" value="<?= htmlspecialchars($id_administrador) ?>">
             <div class="mb-3">
-                <label for="id_tipo_localizacion_localizaciones" class="form-label">Cantidad Encontrada: *</label>
+                <label for="cantidad_stock" class="form-label">Cantidad Encontrada: *</label>
                 <input type="text" class="form-control" name="cantidad_stock" id="cantidad_stock">
+            </div>
+
+            <div class="mb-3">
+                <label for="observaciones" class="form-label">Observaciones (Opcional)</label>
+                <textarea
+                    class="form-control"
+                    name="observaciones"
+                    id="observaciones"
+                    maxlength="500"
+                    rows="4"></textarea>
+                <small id="charCount" class="text-muted">0 / 500 caracteres</small>
             </div>
 
             <div class="d-flex justify-content-end">

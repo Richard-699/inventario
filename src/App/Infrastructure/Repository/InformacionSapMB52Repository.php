@@ -33,6 +33,16 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
         return $stmt->execute();
     }
 
+    public function onGet(): ?array
+    {
+
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52");
+        $stmt->execute();
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return array_map([InformacionSapMB52::class, 'fromArray'], $rows);
+    }
+
     public function onGet_By__Id_Partnumber__Id_Almacen($id_partnumber, $id_almacen): ?array
     {
         if ($id_almacen == null) {
@@ -73,6 +83,20 @@ class InformacionSapMB52Repository implements IInformacionSapMB52Repository
     {
         $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_grupo_informacion_sap_mb52 = ?");
         $stmt->execute([$id_grupo]);
+
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $wms = [];
+        foreach ($rows as $row) {
+            $wms[] = InformacionSapMB52::fromArray($row);
+        }
+
+        return $wms;
+    }
+
+    public function onGet_By__Id(string $id): ?array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_informacion_sap_mb52 WHERE id_informacion_sap_mb52  = ?");
+        $stmt->execute([$id]);
 
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $wms = [];

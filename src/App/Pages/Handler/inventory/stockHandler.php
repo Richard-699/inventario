@@ -4,10 +4,18 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 use App\Application\Service\BasesDatosSapService;
 use App\Application\Service\LocalizacionesService;
 use App\Application\Service\StockService;
+use App\Application\Service\ConteoService;
+use App\Application\Service\CronogramaService;
+use App\Application\Service\FinalizarConteoService;
+use App\Application\Service\GruposService;
+use App\Domain\DTO\ConteoDTO;
+use App\Domain\DTO\CronogramaDTO;
+use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\StockDTO;
 use App\Shared\Validation\Validator;
 
-function onGetInfoStock($data)
+
+function onGetInfoStock(array $data): array
 {
     try {
         $id_almacen = $data['id_almacen'];
@@ -19,9 +27,9 @@ function onGetInfoStock($data)
 
         $informacionSAP = $basesDatosSapService->onGetInformacionSAP($id_partnumber, $id_almacen);
 
-        if($informacionSAP[0]->almacen === "WM01"){
+        if ($informacionSAP[0]->almacen === "WM01") {
             $localizaciones = $informacionSAP[0]->localizacionesWM;
-        }else{
+        } else {
             $localizaciones = $localizacionesService->onGetLocalizaciones_By__Id_Almacen($id_almacen);
         }
 
@@ -44,34 +52,26 @@ function onGetInfoStock($data)
     }
 }
 
-function onPostSaveStock(array $data){
+function onGetInfoCronograma(array $data): array
+{
     try {
-        $form = $data['form'] ?? [];
+        $id_grupo = $data['id_grupo'];
 
-        $stockDTO = new StockDTO(
-            id_partnumber_stock: $form['id_partnumber_stock'],
-            id_almacen_stock: $form['id_almacen_stock'] ?? null,
-            id_localizacion_stock: $form['id_localizacion_stock'] ?? null,
-            cantidad_stock: $form['cantidad_stock'],
-            id_informacion_sap_mb52_stock: $form['id_informacion_sap_mb52_stock'] ?? null,
-            id_novedad_stock: null,
-            observaciones_novedad_stock: null,
-            id_grupo_stock: $form['id_grupo_stock']
-        );
+        $cronogramaService = new CronogramaService();
+        $infoCronograma = $cronogramaService->onGetCronograma_By__Id_Grupo($id_grupo);
 
-        Validator::validateStockDTO($stockDTO);
-
-        $stockService = new StockService();
-
-        $guardarGrupo = $stockService->saveStock($stockDTO);
-
-        if (!$guardarGrupo) {
-            throw new Exception("No se pudo guardar el grupo");
+        if ($infoCronograma) {
+            return [
+                'success' => true,
+                'id_cronograma' => $infoCronograma->id_cronograma,
+                'fecha_cronograma' => $infoCronograma->fecha_cronograma,
+                'id_grupo_cronograma' => $infoCronograma->id_grupo_cronograma,
+                'id_estado_cronograma' => $infoCronograma->id_estado_cronograma,
+                'id_administrador_cronograma' => $infoCronograma->id_administrador_cronograma
+            ];
+        } else {
+            throw new Exception("No se encontraron datos para este grupo en el cronograma.");
         }
-
-        return [
-            'success' => true
-        ];
     } catch (Exception $e) {
         return [
             'success' => false,
@@ -80,23 +80,129 @@ function onPostSaveStock(array $data){
     }
 }
 
+function onGetInfoConteoResumen(array $data): array
+{
+    try {
+        $id_grupo = $data['id_grupo'];
+
+        $conteoService = new ConteoService();
+        $infoConteo = $conteoService->onGetInfo_Conteo_By_Grupo($id_grupo);
+
+        if ($infoConteo) {
+            // convertir el DTO en array (ajusta según las propiedades reales de ConteoDTO)
+            $result = [
+                'infoStock' => $infoConteo->infoStock ?? [],
+                'infoMB52'  => $infoConteo->infoMB52 ?? [],
+                'infoWM'    => $infoConteo->infoWM ?? [],
+                'infoPartNumbers'    => $infoConteo->infoPartNumbers ?? [],
+                'infoAlmacenes'    => $infoConteo->infoAlmacenes ?? [],
+                'infoLocalizaciones'    => $infoConteo->infoLocalizaciones ?? [],
+                'infoInventarioHwiUmb'    => $infoConteo->infoInventarioHwiUmb ?? []
+            ];
+
+            return [
+                'success' => true,
+                'data'    => $result
+            ];
+        } else {
+            throw new Exception("No se encontraron datos para este grupo.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+function onPostSaveStock(array $data): array
+{
+    try {
+        $form = $data['form'] ?? [];
+        date_default_timezone_set('America/Bogota');
+
+        $conteoService = new ConteoService();
+        $conteoData = $conteoService->onGetConteo_By__Fecha_Reciente_Grupo($form['id_grupo_stock']);
+
+        if (empty($conteoData)) {
+            throw new Exception("No se pudo consultar el id del conteo.");
+        }
+
+        $idConteo = $conteoData->id_conteo;
+
+        $stockDTO = new StockDTO(
+            id_partnumber_stock: $form['id_partnumber_stock'],
+            id_almacen_stock: $form['id_almacen_stock'] ?? null,
+            id_localizacion_stock: $form['id_localizacion_stock'] ?? null,
+            cantidad_stock: $form['cantidad_stock'],
+            id_informacion_sap_mb52_stock: $form['id_informacion_sap_mb52_stock'] ?? null,
+            id_novedad_stock: null,
+            observaciones_novedad_stock: $form['observaciones'] ?? null,
+            id_grupo_stock: $form['id_grupo_stock'],
+            id_conteo_stock: $idConteo,
+            fecha_hora_stock: date('Y-m-d H:i:s'),
+            id_administrador_stock: $form['id_administrador']
+        );
+
+        Validator::validateStockDTO($stockDTO);
+
+        $stockService = new StockService();
+        $guardarStock = $stockService->saveStock($stockDTO);
+
+        if (!$guardarStock) {
+            throw new Exception("No se pudo guardar el stock.");
+        }
+
+        return ['success' => true];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+function onPost_FinalizarConteo(array $data): array
+{
+    try {
+        $finalizarConteoService = new FinalizarConteoService();
+        $finalizarConteoService->finalizarConteo($data['form'] ?? []);
+
+        return ['success' => true];
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
+// ----------------------------------------------------
+// Lógica principal para manejar las peticiones HTTP
+// ----------------------------------------------------
+
 $requestMethod = $_SERVER['REQUEST_METHOD'];
+$response = [];
 
 try {
     session_start();
-    
+
     if ($requestMethod === 'GET') {
         $action = $_GET['action'] ?? null;
-
         switch ($action) {
             case 'onGet_InfoStock':
                 $response = onGetInfoStock($_GET);
                 break;
+            case 'onGet_InfoCronograma':
+                $response = onGetInfoCronograma($_GET);
+                break;
+            case 'onGet_InfoConteoResumen':
+                $response = onGetInfoConteoResumen($_GET);
+                break;
             default:
                 throw new Exception("Acción GET no permitida.");
-                break;
         }
-    }elseif ($requestMethod === 'POST'){
+    } elseif ($requestMethod === 'POST') {
         $rawData = file_get_contents('php://input');
         $data = json_decode($rawData, true);
 
@@ -105,14 +211,15 @@ try {
         }
 
         $action = $data['action'] ?? null;
-
         switch ($action) {
             case 'guardar_stock':
                 $response = onPostSaveStock($data);
                 break;
+            case 'finalizar_Conteo':
+                $response = onPost_FinalizarConteo($data);
+                break;
             default:
                 throw new Exception("Acción no permitida.");
-                break;
         }
     } else {
         throw new Exception("Método no permitido.");

@@ -4,6 +4,7 @@ namespace App\Application\Service;
 
 use App\Application\Interface\Service\ICronogramaService;
 use App\Domain\DTO\CronogramaDTO;
+use App\Domain\Model\Cronograma;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
@@ -28,6 +29,13 @@ class CronogramaService implements ICronogramaService
         $this->gruposRepository = new GruposRepository($this->db);
         $this->administradoresRepository = new AdministradoresRepository($this->db);
         $this->estadosRepository = new EstadosRepository($this->db);
+    }
+
+    public function onGetCronograma_By__Id_Grupo($id_grupo): CronogramaDTO
+    {
+        $cronograma = $this->cronogramaRepository->onGet_by_Id_grupo($id_grupo);
+        $cronogramaDTO = Mapper::modelToCronogramaDTO($cronograma);
+        return $cronogramaDTO;
     }
 
     public function onGetCronograma($mes_inicial, $mes_final): array
@@ -76,5 +84,17 @@ class CronogramaService implements ICronogramaService
         }
 
         return $cronogramas;
+    }
+
+    public function updateCronograma(CronogramaDTO $cronogramaDTO): bool
+    {
+        $Cronograma = Mapper::CronogramaDTOToModel($cronogramaDTO);
+        $guardarCronograma = $this->cronogramaRepository->update($Cronograma);
+
+        if (!$guardarCronograma) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }

@@ -14,6 +14,9 @@ class HistoricoStockDTO
         public ?int $id_partnumber_historico_stock ,
         public ?string $id_novedad_historico_stock ,
         public ?string $observaciones_novedad_historico_stock,
-        public ?string $id_grupo_historico_stock
+        public ?string $id_grupo_historico_stock,
+        public ?int $id_conteo_stock,
+        public ?string $fecha_hora_stock,
+        public ?string $id_administrador_stock
     ) {}
 }

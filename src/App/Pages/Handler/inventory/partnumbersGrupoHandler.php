@@ -2,6 +2,7 @@
 require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\BasesDatosSapService;
+use App\Application\Service\CronogramaService;
 use App\Application\Service\PartNumbersService;
 use App\Application\Service\GruposService;
 
@@ -50,6 +51,31 @@ function onGetInfoGrupo($data)
     }
 }
 
+function onGetInfoCronograma($data)
+{
+    try {
+        $id = $data['id_grupo'] ?? null;
+
+        if ($id === null) {
+            throw new Exception("Error al procesar el Id Grupo.");
+        }
+
+        $CronogramaService = new CronogramaService();
+        $Cronograma = $CronogramaService->onGetCronograma_By__Id_Grupo($id);
+
+        if ($Cronograma) {
+            return $Cronograma;
+        } else {
+            throw new Exception("No se encontró el cronograma.");
+        }
+    } catch (Exception $e) {
+        return [
+            'success' => false,
+            'message' => $e->getMessage()
+        ];
+    }
+}
+
 
 function onGetInformacionSAP($data)
 {
@@ -89,6 +115,9 @@ try {
                 break;
             case 'onGet_info_grupo':
                 $response = onGetInfoGrupo($_GET);
+                break;
+            case 'onGet_info_cronograma':
+                $response = onGetInfoCronograma($_GET);
                 break;
             default:
                 throw new Exception("Acción GET no permitida.");

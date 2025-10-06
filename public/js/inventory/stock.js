@@ -67,17 +67,15 @@ $(document).ready(function () {
             );
           }
           let diferencia = disponible_fisico - cantidad_informacion_sap_mb52;
-
           const almacenHTML = `
-              <p id="info" class="text-muted small mt-2 mb-0">Almacén: <strong>${almacen}</strong></p>
-              <p id="info" class="text-muted small mt-2 mb-0">PartNumber: <strong>${partnumber} - ${descripcion_partnumber}</strong></p>
-              <p id="info" class="text-muted small mt-2 mb-0">UMB: <strong>${umb}</strong></p>
-              <p id="info" class="text-muted small mt-2 mb-0">Disponible SAP: <strong>${cantidad_informacion_sap_mb52}</strong></p>
-              <p id="info" class="text-muted small mt-2 mb-0">Disponible Físico: <strong>${disponible_fisico}</strong></p>
-              <p id="info" class="text-muted small mt-2 mb-0">Diferencia: <strong>${diferencia}</strong></p>
-              <hr class="mt-4">
-          `;
-
+          <p id="info" class="text-muted small mt-2 mb-0">Almacén: <strong>${almacen}</strong></p>
+          <p id="info" class="text-muted small mt-2 mb-0">PartNumber: <strong>${partnumber} - ${descripcion_partnumber}</strong></p>
+          <p id="info" class="text-muted small mt-2 mb-0">UMB: <strong>${umb}</strong></p>
+          <p id="info" class="text-muted small mt-2 mb-0">Disponible SAP: <strong>${cantidad_informacion_sap_mb52}</strong></p>
+          <p id="info" class="text-muted small mt-2 mb-0">Disponible Físico: <strong>${disponible_fisico}</strong></p>
+          <p id="info" class="text-muted small mt-2 mb-0">Diferencia: <strong class="${diferencia < 0 ? 'bg-danger p-2 rounded d-inline-block text-white' : (diferencia === 0 ? 'bg-info p-2 rounded d-inline-block text-white' : 'bg-success p-2 rounded d-inline-block text-white')}">${diferencia}</strong></p>
+          <hr class="mt-4">
+        `;
           const contenedorTitulo = document.querySelector(
             ".d-flex.align-items-center.justify-content-between.mb-4.border-bottom.pb-2"
           );
@@ -87,10 +85,15 @@ $(document).ready(function () {
           }
         }
 
+        // Obtén la información de stock de SAP del primer elemento de informacionSAP
+        const informacionesSapWm = (json.informacionSAP[0]?.informacionesSapWm) || [];
+
         return json.localizaciones.map((loc) => {
           const stockItem = json.stock.find(
             (s) => s.id_localizacion_stock == loc.id_localizacion
           );
+
+
           return {
             ...loc,
             cantidad_stock: stockItem ? stockItem.cantidad_stock : 0,
@@ -99,11 +102,22 @@ $(document).ready(function () {
       },
     },
     columns: [
-      { data: "id_localizacion", className: "dt-center" },
+      /* { data: "id_localizacion", className: "dt-center" }, */
       { data: "tipo_localizacion", className: "dt-center" },
       { data: "descripcion_localizacion", className: "dt-center" },
       { data: "tipo_almacenamiento", className: "dt-center" },
-      { data: "cantidad_stock", className: "dt-center" },
+      {
+        data: "cantidad_stock",
+        className: "dt-center",
+       
+        render: function (data, type, row) {
+          if (data == 0) {
+            return `<span class="bg-danger p-1 rounded-pill d-inline-block text-white">${data}</span>`;
+          } else {
+            return `<span class="bg-success p-1 rounded-pill d-inline-block text-white">${data}</span>`;
+          }
+        },
+      },
       {
         data: "id_localizacion",
         className: "dt-center",
@@ -120,6 +134,11 @@ $(document).ready(function () {
     ordering: true,
     info: true,
     searching: true,
+  });
+
+  // Evento de click para el botón de "Guardar y Finalizar Conteo"
+  $("#btnFinalizarConteo").on("click", function () {
+    finalizarConteo();
   });
 });
 
@@ -178,3 +197,4 @@ async function conteo(btn, id) {
     btn.disabled = false;
   }
 }
+

@@ -15,7 +15,9 @@ use App\Domain\Model\Almacenes;
 use App\Domain\Model\Localizaciones;
 use App\Domain\Model\AlmacenesLocalizaciones;
 use App\Domain\DTO\AlmacenesLocalizacionesDTO;
+use App\Domain\DTO\ConteoDTO;
 use App\Domain\DTO\CronogramaDTO;
+use App\Domain\DTO\ExactitudDTO;
 use App\Domain\DTO\PartNumbersDTO;
 use App\Domain\Model\PartNumbers;
 use App\Domain\DTO\GruposDTO;
@@ -33,6 +35,10 @@ use App\Domain\Model\HistoricoWM;
 use App\Domain\DTO\HistoricoWMDTO;
 use App\Domain\Model\HistoricoMB52;
 use App\Domain\DTO\HistoricoMB52DTO;
+use App\Domain\DTO\StockDTO;
+use App\Domain\Model\Conteo;
+use App\Domain\Model\Exactitud;
+use App\Domain\Model\Stock;
 
 class Mapper
 {
@@ -97,7 +103,6 @@ class Mapper
             $dto->id_administrador_permisos
         );
     }
-
 
     public static function modelToAlmacenesDTO(Almacenes $model): AlmacenesDTO
     {
@@ -224,7 +229,6 @@ class Mapper
         );
     }
 
-
     public static function modelToAlmacenesClasificacionesAlmacenesDTO(AlmacenesClasificacionesAlmacenes $model): AlmacenesClasificacionesAlmacenesDTO
     {
         return new AlmacenesClasificacionesAlmacenesDTO(
@@ -295,7 +299,6 @@ class Mapper
         );
     }
 
-
     public static function modelToHistoricoStockDTO(HistoricoStock $model): HistoricoStockDTO
     {
         return new HistoricoStockDTO(
@@ -308,7 +311,11 @@ class Mapper
             id_partnumber_historico_stock: $model->id_partnumber_historico_stock,
             id_novedad_historico_stock: $model->id_novedad_historico_stock,
             observaciones_novedad_historico_stock: $model->observaciones_novedad_historico_stock,
-            id_grupo_historico_stock: $model->id_grupo_historico_stock
+            id_grupo_historico_stock: $model->id_grupo_historico_stock,
+            id_conteo_stock: $model->id_conteo_stock,
+            fecha_hora_stock: $model->fecha_hora_stock,
+            id_administrador_stock: $model->id_administrador_stock
+
         );
     }
 
@@ -324,7 +331,10 @@ class Mapper
             $dto->id_partnumber_historico_stock,
             $dto->id_novedad_historico_stock,
             $dto->observaciones_novedad_historico_stock,
-            $dto->id_grupo_historico_stock
+            $dto->id_grupo_historico_stock,
+            $dto->id_conteo_stock,
+            $dto->fecha_hora_stock,
+            $dto->id_administrador_stock,
         );
     }
 
@@ -383,6 +393,103 @@ class Mapper
             $dto->id_part_number_historico_mb52,
             $dto->id_almacen_historico_mb52,
             $dto->id_grupo_historico_mb52
+        );
+    }
+
+    public static function modelTOStockDTO(Stock $model): StockDTO
+    {
+        return new StockDTO(
+            id_stock: $model->id_stock,
+            id_partnumber_stock: $model->id_partnumber_stock,
+            id_almacen_stock: $model->id_almacen_stock,
+            id_localizacion_stock: $model->id_localizacion_stock,
+            cantidad_stock: $model->cantidad_stock,
+            id_informacion_sap_mb52_stock: $model->id_informacion_sap_mb52_stock,
+            id_novedad_stock: $model->id_novedad_stock,
+            observaciones_novedad_stock: $model->observaciones_novedad_stock,
+            id_grupo_stock: $model->id_grupo_stock,
+            id_conteo_stock: $model->id_conteo_stock,
+            fecha_hora_stock: $model->fecha_hora_stock,
+            id_administrador_stock: $model->id_administrador_stock
+        );
+    }
+
+    public static function StockDTOToModel(StockDTO $dto): Stock
+    {
+        return new Stock(
+            $dto->id_stock,
+            $dto->id_partnumber_stock,
+            $dto->id_almacen_stock,
+            $dto->id_localizacion_stock,
+            $dto->cantidad_stock,
+            $dto->id_informacion_sap_mb52_stock,
+            $dto->id_novedad_stock,
+            $dto->observaciones_novedad_stock,
+            $dto->id_grupo_stock,
+            $dto->id_conteo_stock,
+            $dto->fecha_hora_stock,
+            $dto->id_administrador_stock
+        );
+    }
+
+    public static function modelTOConteoDTO(Conteo $model): ConteoDTO
+    {
+        return new ConteoDTO(
+            id_conteo: $model->id_conteo,
+            id_grupo_conteo: $model->id_grupo_conteo,
+            id_encargado_conteo: $model->id_encargado_conteo,
+            fecha_hora_inicio_conteo: $model->fecha_hora_inicio_conteo,
+            fecha_hora_final_conteo: $model->fecha_hora_final_conteo,
+            observaciones_conteo: $model->observaciones_conteo,
+            estado_conteo: $model->estado_conteo
+        );
+    }
+
+    public static function ConteoDTOToModel(ConteoDTO $dto): Conteo
+    {
+        return new Conteo(
+            $dto->id_conteo,
+            $dto->id_grupo_conteo,
+            $dto->id_encargado_conteo,
+            $dto->fecha_hora_inicio_conteo,
+            $dto->fecha_hora_final_conteo,
+            $dto->observaciones_conteo,
+            $dto->estado_conteo
+        );
+    }
+
+
+    public static function modelTOExactitudDTO(Exactitud $model): ExactitudDTO
+    {
+        return new ExactitudDTO(
+            id_exactitud: $model->id_exactitud,
+            partnumber_exactitud: $model->partnumber_exactitud,
+            descripcion_partnumber_exactitud: $model->descripcion_partnumber_exactitud,
+            tipo_almacen_exactitud: $model->tipo_almacen_exactitud,
+            area_almacenamiento_exactitud: $model->area_almacenamiento_exactitud,
+            localizacion_exactitud: $model->localizacion_exactitud,
+            coincide_exactitud: $model->coincide_exactitud,
+            novedad_exactitud: $model->novedad_exactitud,
+            descripcion_novedad_exactitud: $model->descripcion_novedad_exactitud,
+            fecha_hora_migracion_exactitud: $model->fecha_hora_migracion_exactitud,
+            id_administrador: $model->id_administrador
+        );
+    }
+
+    public static function ExactitudDTOToModel(ExactitudDTO $dto): Exactitud
+    {
+        return new Exactitud(
+            $dto->id_exactitud,
+            $dto->partnumber_exactitud,
+            $dto->descripcion_partnumber_exactitud,
+            $dto->tipo_almacen_exactitud,
+            $dto->area_almacenamiento_exactitud,
+            $dto->localizacion_exactitud,
+            $dto->coincide_exactitud,
+            $dto->novedad_exactitud,
+            $dto->descripcion_novedad_exactitud,
+            $dto->fecha_hora_migracion_exactitud,
+            $dto->id_administrador
         );
     }
 }
