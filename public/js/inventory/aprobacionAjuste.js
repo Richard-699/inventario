@@ -34,6 +34,9 @@ $(document).ready(function () {
             <button class="btn btn-success btn-sm" onclick="aprobarConteo('${id_conteo}')">
                 <i class="fa-solid fa-check"></i>
             </button>
+            <button class="btn btn-danger btn-sm" onclick="RechazarConteo('${id_conteo}')">
+                <i class="fa-solid fa-x"></i>
+            </button>
         `;
                 }
             }
@@ -80,7 +83,26 @@ function aprobarConteo(id_conteo) {
                 },
                 error: (fancybox, slide) => {
                     // Hay un error. Oculta el spinner.
-                    
+
+                    console.error('Error al cargar la modal:', slide.error);
+                }
+            }
+        }
+    ]);
+}
+
+function RechazarConteo(id_conteo) {
+    Fancybox.show([
+        {
+            src: `rechazar_conteo.php?id_conteo=${id_conteo}`,
+            type: 'ajax',
+            on: {
+                done: (fancybox, slide) => {
+
+                },
+                error: (fancybox, slide) => {
+                    // Hay un error. Oculta el spinner.
+
                     console.error('Error al cargar la modal:', slide.error);
                 }
             }

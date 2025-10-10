@@ -1,5 +1,24 @@
 $(document).ready(function () {
 
+    const checkAll = document.getElementById('checkAll');
+    const grupoChecks = document.querySelectorAll('.grupo-check');
+
+    checkAll.addEventListener('change', function () {
+        grupoChecks.forEach(checkbox => {
+            checkbox.checked = this.checked;
+        });
+    });
+
+    grupoChecks.forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            if (!this.checked) {
+                checkAll.checked = false;
+            } else if (document.querySelectorAll('.grupo-check:checked').length === grupoChecks.length) {
+                checkAll.checked = true;
+            }
+        });
+    });
+
     document.getElementById('formBdsSapExactitud').addEventListener('submit', async function (e) {
         e.preventDefault();
         mostrarCarga();
@@ -44,5 +63,8 @@ $(document).ready(function () {
             notification('error', error.message, 5000);
         }
     });
+
+
+
 
 });

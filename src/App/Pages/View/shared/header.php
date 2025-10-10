@@ -35,30 +35,28 @@ if (isset($_SESSION['administrador'])) {
             $id_permiso_permisos = $permisoAdministrador->id_permiso_permisos;
             foreach ($permisos as $permiso) {
                 if ($permiso->id_permiso == $id_permiso_permisos) {
-                    if($permiso->tipo_permiso == 'Gestión Interna Inventario'){
+                    if ($permiso->tipo_permiso == 'Gestión Interna Inventario') {
                         echo '<a class="hov" href="javascript:void(0);" onclick="Almacen();"><i class="fa-solid fa-warehouse"></i> Almacenes</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="Localizaciones();"><i class="fa-solid fa-location-dot"></i> Localizaciones</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
-                         echo '<a class="hov" href="javascript:void(0);" onclick="Grupos();"><i class="fa-solid fa-layer-group"></i> Grupos</a>';
+                        echo '<a class="hov" href="javascript:void(0);" onclick="Grupos();"><i class="fa-solid fa-layer-group"></i> Grupos</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="PartNumbers();"><i class="fa-solid fa-dolly"></i> Part Numbers</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         echo '<a class="hov" href="javascript:void(0);" onclick="Cronograma();"><i class="fa-solid fa-calendar-check"></i> Cronograma</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
-                        echo '<a class="hov" href="javascript:void(0);" onclick="Exactitud();"><i class="fa-solid fa-clipboard-check"></i> Exactitud</a>';
+                        echo '<a class="hov" href="javascript:void(0);" onclick="Exactitud();"><i class="fa-solid fa-crosshairs"></i> Exactitud</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         break;
                     }
-                    if($permiso->tipo_permiso == 'Gestionar Administradores'){
+                    if ($permiso->tipo_permiso == 'Gestionar Administradores') {
                         echo '<a class="hov" href="javascript:void(0);" onclick="GestionarAdministradores();"><i class="fa-solid fa-users-gear"></i> Gestionar Administradores</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         break;
                     }
-                    if($permiso->tipo_permiso == 'Aprobación y Ajuste Inventario'){
+                    if ($permiso->tipo_permiso == 'Aprobación y Ajuste Inventario') {
                         echo '<a class="hov" href="javascript:void(0);" onclick="Aprobacion();"><i class="fa-regular fa-circle-check"></i> Aprobación Inventario</a>';
-                        echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
-                        echo '<a class="hov" href="javascript:void(0);" onclick="Ajustes();"><i class="fas fa-cogs"></i> Ajustes Inventario</a>';
                         echo '<hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />';
                         break;
                     }

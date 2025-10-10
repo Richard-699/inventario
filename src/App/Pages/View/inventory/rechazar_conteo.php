@@ -11,7 +11,7 @@ function val($key)
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="../../../../../public/css/inventory/formulario_exactitud.css" rel="stylesheet">
+    <link href="../../../../../public/css/inventory/aprobar_conteo.css" rel="stylesheet">
     <link rel="shortcut icon" href="../../../public/img/LogoBlanco.png" type="image/x-icon">
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
     <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
@@ -19,39 +19,15 @@ function val($key)
 
 <body class="p-4">
 
-    <div class="exactitud">
-        <h5 class="mb-4">
-            <i class="fa-solid fa-check-to-slot  me-2 fs-4"></i>
-            Registro Exactitud
+    <div class="aprobar_conteo">
+        <h5 class="mb-4"><i class="fa-solid fa-calculator me-2 fs-4"></i>
+            Rechazar Conteo
         </h5>
-        <form id="form_exactitud">
-            <input type="hidden" name="id_exactitud" id="id_exactitud" value="<?= val('id_exactitud') ?>">
-
-            <label for="coincide" class="form-label">
-                ¿Hay exactitud en esta ubicación? *
-            </label>
-            <select id="coincide"
-                class="form-control shadow-sm rounded"
-                name="coincide">
-                <option value="" selected disabled>Seleccione una opción</option>
-                <option value="Si">Sí</option>
-                <option value="No">No</option>
-            </select>
-
-
-            <label for="novedad" class="form-label mt-3">
-               Seleccione la novedad: *
-            </label>
-            <select id="novedad"
-                class="form-control shadow-sm rounded"
-                name="novedad">
-                <option value="" selected disabled>Seleccione una opción</option>
-                <option value="Sin Novedad">Sin Novedad</option>
-                <option value="No">No</option>
-            </select>
+        <form id="form_aprobar_conteo">
+            <input type="hidden" name="id_conteo" id="id_conteo" value="<?= val('id_conteo') ?>">
 
             <div class="mb-3">
-                <label for="observaciones" class="form-label mt-3">Describa la novedad (Opcional):</label>
+                <label for="observaciones" class="form-label">Observaciones (Opcional):</label>
                 <textarea
                     class="form-control"
                     name="observaciones"
@@ -63,7 +39,7 @@ function val($key)
 
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-save">
-                    <i class="fa-solid fa-floppy-disk me-2"></i>Aprobar
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Rechazar
                 </button>
             </div>
         </form>
@@ -78,7 +54,7 @@ function val($key)
     <script src="../../../../../public/js/utils/libs/select2.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/utils/notifications.js"></script>
-    <script src="../../../../../public/js/inventory/formulario_exactitud.js"></script>
+    <script src="../../../../../public/js/inventory/aprobar_conteo.js"></script>
 </body>
 
 </html>

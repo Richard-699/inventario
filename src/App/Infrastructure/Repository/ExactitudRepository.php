@@ -15,6 +15,14 @@ class ExactitudRepository implements IExactitudRepository
         $this->db = $db;
     }
 
+    public function onGet__By_Id($id_exactitud): Exactitud
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_exactitud WHERE id_exactitud = :id_exactitud LIMIT 1");
+        $stmt->bindValue(':id_exactitud', $id_exactitud, PDO::PARAM_INT);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return Exactitud::fromArray($row);
+    }
 
     public function onGet__Fecha(string $fecha): array
     {
@@ -42,7 +50,6 @@ class ExactitudRepository implements IExactitudRepository
         return $stmt->execute();
     }
 
-
     public function onDelete_By__fecha(string $fecha): bool
     {
         // La función DATE() de MySQL extrae solo la parte de la fecha (YYYY-MM-DD) de una columna DATETIME.
@@ -52,5 +59,23 @@ class ExactitudRepository implements IExactitudRepository
         $statement->bindValue(':fecha', $fecha, PDO::PARAM_STR);
 
         return $statement->execute();
+    }
+
+    public function update(Exactitud $exactitud): bool
+    {
+        $data = $exactitud->toArray();
+        $id = $data['id_exactitud'];
+        $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
+
+        $query = "UPDATE inventario_hwi_exactitud SET $set WHERE id_exactitud = :id_exactitud";
+
+        $stmt = $this->db->prepare($query);
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+
+        $stmt->bindValue(':id_exactitud', $id, \PDO::PARAM_STR);
+
+        return $stmt->execute();
     }
 }

@@ -11,6 +11,7 @@ class ConteoDTO
  * @param infoAlmacenes[]|null
  * @param infoLocalizaciones[]|null
  * @param infoInventarioHwiUmb[]|null
+ * @param infoLocalizacionesAlmacenes[]|null
  */
 {
     public function __construct(
@@ -27,6 +28,7 @@ class ConteoDTO
         public ?array $infoPartNumbers = null,
         public ?array $infoAlmacenes = null,
         public ?array $infoLocalizaciones = null,
-        public ?array $infoInventarioHwiUmb = null
+        public ?array $infoInventarioHwiUmb = null,
+        public ?array $infoLocalizacionesAlmacenes = null
     ) {}
 }

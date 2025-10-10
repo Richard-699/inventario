@@ -9,6 +9,7 @@ use App\Domain\Model\Conteo;
 use Exception;
 use App\Shared\Mapper\Mapper;
 use App\Infrastructure\Database\Connection;
+use App\Infrastructure\Repository\AlmacenesLocalizacionesRepository;
 use App\Infrastructure\Repository\ConteoRepository;
 use App\Infrastructure\Repository\InformacionSapMB52Repository;
 use App\Infrastructure\Repository\StockRepository;
@@ -30,6 +31,7 @@ class ConteoService implements IConteoService
     private $AlmacenRepository;
     private $LocalizacionRepository;
     private $UmbRepository;
+    private $localizacionesAlmacenesRepository;
 
     public function __construct()
     {
@@ -42,6 +44,7 @@ class ConteoService implements IConteoService
         $this->AlmacenRepository = new AlmacenesRepository($this->db);
         $this->LocalizacionRepository = new LocalizacionesRepository($this->db);
         $this->UmbRepository = new UMBRepository($this->db);
+        $this->localizacionesAlmacenesRepository = new AlmacenesLocalizacionesRepository($this->db);
     }
 
     public function onGetConteo_By__Fecha_Reciente_Grupo($id_grupo): ConteoDTO
@@ -176,6 +179,27 @@ class ConteoService implements IConteoService
                 }
             }
 
+            // --- Consultar toda la información de la tabla localizaciones_almacenes ---
+            $localizacionesAlmacenesData = $this->localizacionesAlmacenesRepository->onGet();
+
+            if ($localizacionesAlmacenesData === null) {
+                throw new Exception("Error al consultar la tabla de localizaciones_almacenes.");
+            }
+
+            // Asegurar que el resultado sea siempre un array para su manejo
+            if ($localizacionesAlmacenesData !== false) {
+                // Si el resultado no es ya un array, lo convertimos
+                if (!is_array($localizacionesAlmacenesData)) {
+                    $localizacionesAlmacenesData = [$localizacionesAlmacenesData];
+                }
+            } else {
+                // Si la consulta devolvió false, asumimos un array vacío
+                $localizacionesAlmacenesData = [];
+            }
+
+            // Asignamos el resultado final a una variable con un nombre claro
+            $infoLocalizacionesAlmacenes = array_values($localizacionesAlmacenesData);
+
             // ---CONSULTAR TABLA inventario_hwi_umb ---
             $infoInventarioHwiUmb = [];
             $umbs = $this->UmbRepository->onGet();
@@ -206,7 +230,7 @@ class ConteoService implements IConteoService
             $conteoDTO->infoAlmacenes = $infoAlmacenes;
             $conteoDTO->infoLocalizaciones = $infoLocalizaciones;
             $conteoDTO->infoInventarioHwiUmb = $infoInventarioHwiUmb;
-
+            $conteoDTO->infoLocalizacionesAlmacenes = $infoLocalizacionesAlmacenes;
             // Si todo salió bien, confirmamos la transacción
             $this->db->commit();
 
@@ -216,7 +240,6 @@ class ConteoService implements IConteoService
             throw $e;
         }
     }
-
 
     public function updateConteo(ConteoDTO $ConteoDTO): bool
     {

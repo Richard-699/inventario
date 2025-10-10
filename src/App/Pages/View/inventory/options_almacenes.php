@@ -1,63 +1,88 @@
 <?php
+require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
-if (isset($_GET['informacionSAP'])) {
-    $informacionSAPJson = urldecode($_GET['informacionSAP']);
-    $informacionSAPArray = json_decode($informacionSAPJson, true);
+use App\Application\Service\BasesDatosSapService;
 
-    if (!is_array($informacionSAPArray)) {
-        echo "Error: formato de datos inválido.";
+$id_partnumber = $_POST['id_partnumber'] ?? $_GET['id_partnumber'] ?? null;
+$id_grupo = $_POST['id_grupo'] ?? $_GET['id_grupo'] ?? null;
+
+if (!$id_partnumber) {
+    echo "<div class='alert alert-danger'>No se recibió el Part Number.</div>";
+    exit;
+}
+
+try {
+    $basesDatosSapService = new BasesDatosSapService();
+    $informacionesSap = $basesDatosSapService->onGetInformacionSAP($id_partnumber, null);
+
+/*     // === Debug temporal ===
+    echo "<pre style='background:#111;color:#0f0;padding:10px;border-radius:6px;'>";
+    print_r($informacionesSap);
+    echo "</pre>";
+    exit;
+    // ====================== */
+
+    if (empty($informacionesSap)) {
+        echo "<div class='alert alert-warning'>No se encontraron datos SAP para el Part Number.</div>";
         exit;
     }
 
-    $id_partnumber = $_GET['id_partnumber'];
-    $id_grupo = $_GET['id_grupo'];
+    $listaAlmacenes = [];
+    $almacenesUnicos = [];
 
-    $listaAlmacenes = array_map(function ($item) {
-        return [
-            'id_almacen' => $item['id_almacen_informacion_sap_mb52'] ?? '',
-            'almacen' => $item['almacen'] ?? ''
-        ];
-    }, $informacionSAPArray);
-} else {
-    echo "No se recibió el parámetro información SAP.";
+    foreach ($informacionesSap as $item) {
+        $idAlmacen = $item->id_almacen_informacion_sap_mb52 ?? '';
+        $nombreAlmacen = $item->almacen ?? '';
+
+        // Solo agregar si tiene id y aún no se ha agregado
+        if (!empty($idAlmacen) && !isset($almacenesUnicos[$idAlmacen])) {
+            $almacenesUnicos[$idAlmacen] = true;
+
+            $listaAlmacenes[] = [
+                'id_almacen' => $idAlmacen,
+                'almacen' => $nombreAlmacen
+            ];
+        }
+    }
+
+    // Si después del filtrado no quedó nada, mostrar aviso
+    if (empty($listaAlmacenes)) {
+        echo "<div class='alert alert-warning'>No se encontraron almacenes asociados a la información SAP del Part Number.</div>";
+        exit;
+    }
+} catch (Throwable $e) {
+    echo "<div class='alert alert-danger'>Error al obtener información SAP: " . htmlspecialchars($e->getMessage()) . "</div>";
+    exit;
 }
-
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>Seleccionar almacén</title>
     <link href="../../../../../public/css/inventory/options_almacenes.css" rel="stylesheet">
-    <link rel="shortcut icon" href="../../../public/img/LogoBlanco.png" type="image/x-icon">
-
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
-
-    <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
 </head>
 
 <body class="p-4">
-
     <div class="contenido_options_almacenes">
-        <h5 class="mb-4"><i class="fa-solid fa-warehouse me-2 fs-4"></i>
-            Seleccionar Almacén
-        </h5>
-        <form id="formOptionAlmacen">
+        <h5 class="mb-4"><i class="fa-solid fa-warehouse me-2 fs-4"></i> Seleccionar Almacén</h5>
+
+        <form id="formOptionAlmacen" method="post">
+            <input type="hidden" id="id_partnumber" name="id_partnumber" value="<?php echo htmlspecialchars($id_partnumber); ?>">
+            <input type="hidden" id="id_grupo" name="id_grupo" value="<?php echo htmlspecialchars($id_grupo); ?>">
+
             <div class="mb-3">
-                <input type="hidden" value="<?php echo $id_partnumber; ?>" id="id_partnumber" name="id_partnumber">
-                <input type="hidden" value="<?php echo $id_grupo; ?>" id="id_grupo" name="id_grupo">
-                <label for="id_tipo_localizacion_localizaciones" class="form-label">Almacén: *</label>
+                <label for="id_almacen_informacion_sap_mb52" class="form-label">Almacén: *</label>
                 <select class="form-select" id="id_almacen_informacion_sap_mb52" name="id_almacen_informacion_sap_mb52">
                     <option value="">Seleccione un almacén</option>
-                    <?php
-                    foreach ($listaAlmacenes as $almacen) {
-                        $id = $almacen['id_almacen'];
-                        $nombre = $almacen['almacen'];
-                        echo "<option value='{$id}'>{$nombre}</option>";
-                    }
+                    <?php foreach ($listaAlmacenes as $almacen):
+                        $id = htmlspecialchars($almacen['id_almacen']);
+                        $nombre = htmlspecialchars($almacen['almacen']);
                     ?>
+                        <option value="<?php echo $id; ?>"><?php echo $nombre; ?></option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 

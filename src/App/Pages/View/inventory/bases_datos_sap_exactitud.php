@@ -35,6 +35,90 @@ $id_administrador = $_SESSION['administrador']->id_administrador;
                 <input type="file" accept=".xlsx, .xls" class="form-control" id="" name="lx03">
             </div>
 
+            <div class="mb-4">
+                <label class="form-label">Filtrar por tipo de almacén:</label>
+                <div class="filtro-opciones">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="checkAll" name="check_all">
+                        <label class="form-check-label" for="checkAll">(Seleccionar todo)</label>
+                    </div>
+                    <div id="lista-grupos" class="lista-checkboxes">
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="901" id="grupo901">
+                            <label class="form-check-label" for="grupo901">901</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="902" id="grupo902">
+                            <label class="form-check-label" for="grupo902">902</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="904" id="grupo904">
+                            <label class="form-check-label" for="grupo904">904</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="910" id="grupo910">
+                            <label class="form-check-label" for="grupo910">910</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="917" id="grupo917">
+                            <label class="form-check-label" for="grupo917">917</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="921" id="grupo921">
+                            <label class="form-check-label" for="grupo921">921</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="922" id="grupo922">
+                            <label class="form-check-label" for="grupo922">922</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="998" id="grupo998">
+                            <label class="form-check-label" for="grupo998">998</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="999" id="grupo999">
+                            <label class="form-check-label" for="grupo999">999</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="ALP" id="grupoALP">
+                            <label class="form-check-label" for="grupoALP">ALP</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="COL" id="grupoCOL">
+                            <label class="form-check-label" for="grupoCOL">COL</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="DOP" id="grupoDOP">
+                            <label class="form-check-label" for="grupoDOP">DOP</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="EGR" id="grupoEGR">
+                            <label class="form-check-label" for="grupoEGR">EGR</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="ETQ" id="grupoETQ">
+                            <label class="form-check-label" for="grupoETQ">ETQ</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="LAM" id="grupoLAM">
+                            <label class="form-check-label" for="grupoLAM">LAM</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="PKN" id="grupoPKN">
+                            <label class="form-check-label" for="grupoPKN">PKN</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="SPI" id="grupoSPI">
+                            <label class="form-check-label" for="grupoSPI">SPI</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input grupo-check" type="checkbox" name="grupos[]" value="TER" id="grupoTER">
+                            <label class="form-check-label" for="grupoTER">TER</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-cargar-bds">
                     <i class="bi bi-check-circle me-1"></i>Cargar

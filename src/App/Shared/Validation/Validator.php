@@ -6,6 +6,7 @@ use Exception;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Domain\DTO\AlmacenesDTO;
 use App\Domain\DTO\ConteoDTO;
+use App\Domain\DTO\ExactitudDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\DTO\LocalizacionesDTO;
 use App\Domain\DTO\PartNumbersDTO;
@@ -163,6 +164,17 @@ class Validator
 
         if (empty($dto->cantidad_stock)) {
             throw new Exception('La cantidad es obligatoria');
+        }
+    }
+
+    public static function validateExactitudDTO(ExactitudDTO $dto): void
+    {
+        if (empty($dto->coincide_exactitud)) {
+            throw new Exception('Seleccione algo en el campo "¿Hay exactitud en esta ubicación?"');
+        }
+
+        if (empty($dto->novedad_exactitud)) {
+            throw new Exception('La novedad es obligatoria');
         }
     }
 

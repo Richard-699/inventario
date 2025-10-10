@@ -37,10 +37,11 @@
                     <tr>
                         <th style="width: 12%">Material</th>
                         <th style="width: 30%;">Descripcion</th>
-                        <th style="width: 10%;">Tipo almacén</th>
-                        <th style="width: 20%;">Área almacenamiento</th>
+                        <th style="width: 8%;">Tipo Alma.</th>
+                        <th style="width: 8%;">Área Alma.</th>
                         <th style="width: 10%;">Ubicación</th>
                         <th style="width: 10%;">¿Coincide?</th>
+                        <th style="width: 20%;">Fecha Migración</th>
                         <th></th>
                     </tr>
                 </thead>

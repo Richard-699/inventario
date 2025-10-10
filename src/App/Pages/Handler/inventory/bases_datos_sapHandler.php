@@ -33,10 +33,14 @@ function onPostMigrationSapExactitud(string $id_administrador): array
         if (!isset($_FILES['lx03'])) {
             throw new Exception("El archivo es requerido para la migración");
         }
+        $gruposSeleccionados = $_POST['grupos'] ?? [];
 
+        if (empty($gruposSeleccionados)) {
+            throw new Exception("Debe seleccionar al menos un grupo para la migración.");
+        }
+        
         $service = new BasesDatosSapService();
-        // Llama al nuevo método del servicio que manejará la limpieza y el procesamiento
-        $service->procesarArchivosExcelExactitud($_FILES['lx03'], $id_administrador);
+        $service->procesarArchivosExcelExactitud($_FILES['lx03'], $id_administrador, $gruposSeleccionados);
 
         return [
             'success' => true,

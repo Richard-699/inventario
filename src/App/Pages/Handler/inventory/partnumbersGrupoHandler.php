@@ -103,25 +103,30 @@ $requestMethod = $_SERVER['REQUEST_METHOD'];
 try {
     session_start();
 
-    if ($requestMethod === 'GET') {
-        $action = $_GET['action'] ?? null;
+    // soporte GET y POST: unificamos la fuente de datos
+    if ($requestMethod === 'GET' || $requestMethod === 'POST') {
+        $input = $requestMethod === 'GET' ? $_GET : $_POST;
+        $action = $input['action'] ?? null;
 
         switch ($action) {
             case 'onGet_partnumbers':
-                $response = onGetPartNumbers($_GET);
+                $response = onGetPartNumbers($input);
                 break;
             case 'onGet_InformacionSAP':
-                $response = onGetInformacionSAP($_GET);
+                $response = onGetInformacionSAP($input);
                 break;
             case 'onGet_info_grupo':
-                $response = onGetInfoGrupo($_GET);
+                $response = onGetInfoGrupo($input);
                 break;
             case 'onGet_info_cronograma':
-                $response = onGetInfoCronograma($_GET);
+                $response = onGetInfoCronograma($input);
                 break;
+            case 'onPostSeleccionAlmacen':
+                // implementar lógica para procesar la selección (POST)
+                // ejemplo: $response = onPostSeleccionAlmacen($input);
+                // break;
             default:
-                throw new Exception("Acción GET no permitida.");
-                break;
+                throw new Exception("Acción no permitida.");
         }
     } else {
         throw new Exception("Método no permitido.");

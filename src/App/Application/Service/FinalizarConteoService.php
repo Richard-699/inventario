@@ -84,23 +84,46 @@ class FinalizarConteoService implements IFinalizarConteoService
             );
             $this->conteoService->updateConteo($conteoDTO);
 
-            // Lógica para determinar el nuevo estado
+            /* ACTUALIZAR LA INFORMACION DEL CRONOGRAMA */
+            $FechaActualCronograma = $this->cronogramaService->onGetCronograma_By__Id_Grupo($id_grupo);
+            $fechaBD = $FechaActualCronograma->fecha_cronograma;
+            $id_estado_cronograma = $FechaActualCronograma->id_estado_cronograma;
+
+            // Se inicializan las variables con valores por defecto
+            $id_nuevo_estado = null;
+            $nuevaFechaCronograma = null;
+
+            $fechaCronograma = DateTime::createFromFormat('Y-m', $fechaBD);
+
+            // Lógica para determinar el nuevo estado y la nueva fecha
             if ($otro_conteo_seleccionado === 'si') {
+                // Si se selecciona otro conteo, la fecha no se mueve
+                $nuevaFechaCronograma = $fechaCronograma;
+
                 if ($id_estado_cronograma == 2) {
                     $id_nuevo_estado = 5; // "Pendiente conteo 2"
                 } else if ($id_estado_cronograma == 8) {
                     $id_nuevo_estado = 6; // "Pendiente conteo 3"
+                } else {
+                    // Manejar un estado inesperado, por ejemplo, lanzar una excepción
+                    throw new Exception("Estado actual del cronograma no válido para un nuevo conteo: {$id_estado_cronograma}");
                 }
             } else if ($otro_conteo_seleccionado === 'no') {
-                $id_nuevo_estado = 3; // Pasa directo a "Esperar aprobación"
+                // Si no se necesita otro conteo, el estado cambia a "Esperar aprobación" y la fecha se adelanta 3 meses
+                $id_nuevo_estado = 3;
+                $fechaCronograma->modify('+3 months');
+                $nuevaFechaCronograma = $fechaCronograma;
             }
 
-            /* ACTUALIZAR LA INFORMACION DEL CRONOGRAMA */
-            $FechaActualCronograma = $this->cronogramaService->onGetCronograma_By__Id_Grupo($id_grupo);
-            $fechaBD = $FechaActualCronograma->fecha_cronograma;
-            $fechaCronograma = DateTime::createFromFormat('Y-m', $fechaBD);
-            $fechaCronograma->modify('+3 months');
-            $nuevaFechaCronograma = $fechaCronograma->format('Y-m');
+            // Ahora, al final de la lógica, puedes usar las variables ya asignadas
+            if (is_null($id_nuevo_estado) || is_null($nuevaFechaCronograma)) {
+                // Manejar el caso si no se asignó un estado o fecha (por si el 'if' inicial falla)
+                throw new Exception("No se pudo determinar el nuevo estado o fecha del cronograma.");
+            }
+
+            // Aquí es donde actualizas la base de datos, usando las variables ya validadas
+            // Por ejemplo: $this->cronogramaRepository->update($id_grupo, $id_nuevo_estado, $nuevaFechaCronograma->format('Y-m'));
+
 
             $cronogramaDTO = new CronogramaDTO(
                 fecha_cronograma: $nuevaFechaCronograma,

@@ -23,6 +23,7 @@ $(document).ready(function () {
             { "data": "area_almacenamiento_exactitud", "className": "dt-center" },
             { "data": "localizacion_exactitud", "className": "dt-center" },
             { "data": "coincide_exactitud", "className": "dt-center" },
+            { "data": "fecha_hora_migracion_exactitud", "className": "dt-center" },
             {
                 "data": "id_exactitud",
                 "className": "dt-center",

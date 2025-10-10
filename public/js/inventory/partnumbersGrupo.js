@@ -115,6 +115,20 @@ async function obtenerInfoGrupo(id_grupo) {
             informacionMigradaSAPGrupo = data.informacion_migrada_sap_grupo;
         }
 
+        // Validar si la información ya fue migrada a SAP y desactivar el botón si es así
+        const btnMigracionSap = document.getElementById('btnAgregarExcel');
+        if (btnMigracionSap) {
+            if (informacionMigradaSAPGrupo == 1) {
+                aplicarEstadoBoton(
+                    btnMigracionSap,
+                    "La información del grupo ya fue migrada a SAP. No puedes volver a importar.",
+                    true
+                );
+            } else {
+                aplicarEstadoBoton(btnMigracionSap, "", false);
+            }
+        }
+
         // Se inicializa el DataTable aquí, después de obtener los datos.
         $('#tabla-partnumbers-grupo').DataTable({
             "language": {
@@ -317,33 +331,43 @@ async function continuarAlmacen(btn, id) {
     btn.disabled = true;
 
     try {
-        const responseInfoSAP = await fetch(`../../Handler/inventory/partnumbersGrupoHandler.php?action=onGet_InformacionSAP&id_partnumber=${encodeURIComponent(id)}`, {
-            method: 'GET'
+        const id_grupo = obtenerParametroURL('id_grupo') || document.getElementById('id_grupo')?.value || '';
+
+        const formData = new FormData();
+        formData.append('id_partnumber', id);
+        formData.append('id_grupo', id_grupo);
+
+        const resp = await fetch('options_almacenes.php', {
+            method: 'POST',
+            body: formData,
+            credentials: 'same-origin'
         });
 
-        const InfoSAP = await responseInfoSAP.json();
-        const InfoSAPEncoded = encodeURIComponent(JSON.stringify(InfoSAP));
+        if (!resp.ok) throw new Error(`HTTP ${resp.status} ${resp.statusText}`);
 
-        var url = `options_almacenes.php?informacionSAP=${InfoSAPEncoded}&id_partnumber=${encodeURIComponent(id)}&id_grupo=${id_grupo}`;
+        const html = await resp.text();
 
-        Fancybox.show([{
-            src: url,
-            type: 'ajax'
-        }]);
+        // Mostrar Fancybox con el HTML devuelto
+        Fancybox.show([{ src: html, type: 'html' }]);
 
         setTimeout(() => {
             ocultarCarga();
-            Fancybox.getInstance().options = {
-                ...Fancybox.getInstance().options,
-                click: false,
-                trapFocus: false,
-                placeFocusBack: false
-            };
+            const inst = Fancybox.getInstance();
+            if (inst) {
+                inst.options = {
+                    ...inst.options,
+                    click: false,
+                    trapFocus: false,
+                    placeFocusBack: false
+                };
+            }
         }, 100);
 
     } catch (error) {
         console.error('Error al cargar la modal:', error);
     } finally {
         btn.disabled = false;
+        ocultarCarga();
     }
 }
+

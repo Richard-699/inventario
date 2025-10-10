@@ -18,8 +18,12 @@ use App\Shared\Validation\Validator;
 function onGetInfoStock(array $data): array
 {
     try {
-        $id_almacen = $data['id_almacen'];
-        $id_partnumber = $data['id_partnumber'];
+        $id_almacen = $data['id_almacen'] ?? null;
+        $id_partnumber = $data['id_partnumber'] ?? null;
+
+        if (is_null($id_almacen) || is_null($id_partnumber)) {
+            throw new Exception("Parámetros 'id_almacen' y 'id_partnumber' son requeridos.");
+        }
 
         $localizacionesService = new LocalizacionesService();
         $basesDatosSapService = new BasesDatosSapService();
@@ -27,27 +31,33 @@ function onGetInfoStock(array $data): array
 
         $informacionSAP = $basesDatosSapService->onGetInformacionSAP($id_partnumber, $id_almacen);
 
+        if (empty($informacionSAP)) {
+            throw new Exception("No se encontró información SAP para el PartNumber: {$id_partnumber} en el Almacén: {$id_almacen}.");
+        }
+
+        $localizaciones = [];
+        // Verifica si el almacén es WM01, que es el que sí tiene localizaciones
         if ($informacionSAP[0]->almacen === "WM01") {
             $localizaciones = $informacionSAP[0]->localizacionesWM;
         } else {
-            $localizaciones = $localizacionesService->onGetLocalizaciones_By__Id_Almacen($id_almacen);
+            // Para otros almacenes, obtiene las localizaciones si existen, si no, devuelve un array vacío
+            $localizaciones = $localizacionesService->onGetLocalizaciones_By__Id_Almacen($id_almacen) ?? [];
         }
 
         $stock = $stockService->onGetStock_By__Id_PartNumber_By_Id_Almacen($id_partnumber, $id_almacen);
 
-        if ($localizaciones) {
-            return [
-                'localizaciones' => $localizaciones,
-                'informacionSAP' => $informacionSAP,
-                'stock' => $stock
-            ];
-        } else {
-            throw new Exception("No se encontraron datos para este almacén.");
-        }
+        // Ahora, en lugar de lanzar una excepción, simplemente devolvemos los datos
+        // La lógica en el frontend se encargará de mostrar la tabla vacía si no hay localizaciones
+        return [
+            'success' => true,
+            'localizaciones' => $localizaciones,
+            'informacionSAP' => $informacionSAP,
+            'stock' => $stock
+        ];
     } catch (Exception $e) {
         return [
             'success' => false,
-            'message' => $e->getMessage()
+            'message' => 'Error en la consulta. Detalles: ' . $e->getMessage()
         ];
     }
 }
@@ -97,7 +107,8 @@ function onGetInfoConteoResumen(array $data): array
                 'infoPartNumbers'    => $infoConteo->infoPartNumbers ?? [],
                 'infoAlmacenes'    => $infoConteo->infoAlmacenes ?? [],
                 'infoLocalizaciones'    => $infoConteo->infoLocalizaciones ?? [],
-                'infoInventarioHwiUmb'    => $infoConteo->infoInventarioHwiUmb ?? []
+                'infoInventarioHwiUmb'    => $infoConteo->infoInventarioHwiUmb ?? [],
+                'infoLocalizacionesAlmacenes'    => $infoConteo->infoLocalizacionesAlmacenes ?? [],
             ];
 
             return [

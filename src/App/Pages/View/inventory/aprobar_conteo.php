@@ -24,7 +24,7 @@ function val($key)
             Aprobar Conteo
         </h5>
         <form id="form_aprobar_conteo">
-            <input type="text" name="id_conteo" id="id_conteo" value="<?= val('id_conteo') ?>">
+            <input type="hidden" name="id_conteo" id="id_conteo" value="<?= val('id_conteo') ?>">
 
             <div class="mb-3">
                 <label for="observaciones" class="form-label">Observaciones (Opcional):</label>

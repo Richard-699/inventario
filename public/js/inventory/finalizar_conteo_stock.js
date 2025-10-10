@@ -114,11 +114,7 @@ $(document).ready(function () {
                 if (resp.success) {
                     notification('success', resp.message || 'El conteo se finalizó correctamente.', 3000);
                     // Opcional: Cerrar la Fancybox o redirigir al usuario
-                    setTimeout(function () {
-                        if (Fancybox.getInstance()) {
-                            Fancybox.getInstance().close();
-                        }
-                    }, 2000);
+                    location.reload();
                     // Puedes recargar la tabla principal si es necesario
                 } else {
                     notification('error', resp.message || 'Hubo un error al finalizar el conteo.', 3000);

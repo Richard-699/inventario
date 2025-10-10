@@ -58,6 +58,8 @@ function highlightCell(value) {
     // Si no, devuelve solo el valor con una clase vacía
     return { value: value, class: 'bg-success text-white fw-bold' };
 }
+
+
 function renderizarTabla(data) {
     const infoMB52 = data.infoMB52;
     const infoWM = data.infoWM;
@@ -66,6 +68,7 @@ function renderizarTabla(data) {
     const infoAlmacenes = data.infoAlmacenes || [];
     const infoLocalizaciones = data.infoLocalizaciones || [];
     const infoInventarioUmbs = data.infoInventarioHwiUmb || [];
+    const infoLocalizacionesAlmacenes = data.infoLocalizacionesAlmacenes || [];
     const tbody = $('#tablaDatos tbody');
 
     tbody.empty();
@@ -76,20 +79,12 @@ function renderizarTabla(data) {
         return;
     }
 
-    const wmMap = new Map();
-    infoWM.forEach(item => {
-        if (!wmMap.has(item.id_part_number_informacion_sap_wm)) {
-            wmMap.set(item.id_part_number_informacion_sap_wm, []);
-        }
-        wmMap.get(item.id_part_number_informacion_sap_wm).push(item);
-    });
-
+    // CORRECCIÓN: Se actualiza la clave compuesta para asegurar que coincida con la estructura de tus datos
     const stockMap = new Map();
     infoStock.forEach(item => {
-        if (!stockMap.has(item.id_informacion_sap_mb52_stock)) {
-            stockMap.set(item.id_informacion_sap_mb52_stock, []);
-        }
-        stockMap.get(item.id_informacion_sap_mb52_stock).push(item);
+        // La clave ahora incluye el id_partnumber_stock para asegurar unicidad y precisión
+        const compoundKey = `${item.id_localizacion_stock}_${item.id_almacen_stock}_${item.id_partnumber_stock}`;
+        stockMap.set(compoundKey, item);
     });
 
     const partNumberMap = new Map(infoPartNumbers.map(item => [item.id_partnumber, item.partnumber]));
@@ -97,66 +92,90 @@ function renderizarTabla(data) {
     const localizacionMap = new Map(infoLocalizaciones.map(item => [item.id_localizacion, item.descripcion_localizacion]));
     const umbMap = new Map(infoInventarioUmbs.map(item => [item.id_umb, item.descripcion_umb]));
 
+    const locsByAlmacenMap = new Map();
+    infoLocalizacionesAlmacenes.forEach(item => {
+        const idAlmacen = item.id_almacen;
+        const idLocalizacion = item.id_localizacion_localizaciones;
+        if (!locsByAlmacenMap.has(idAlmacen)) {
+            locsByAlmacenMap.set(idAlmacen, []);
+        }
+        locsByAlmacenMap.get(idAlmacen).push(idLocalizacion);
+    });
+
     infoMB52.forEach(mb52Item => {
-        const relatedWM = wmMap.get(mb52Item.id_part_number_informacion_sap_mb52) || [];
-        const relatedStock = stockMap.get(mb52Item.id_informacion_sap_mb52) || [];
         const partNumberFullData = infoPartNumbers.find(p => p.id_partnumber === mb52Item.id_part_number_informacion_sap_mb52);
+        const currentAlmacenId = mb52Item.id_almacen_informacion_sap_mb52;
+        const currentPartNumberId = mb52Item.id_part_number_informacion_sap_mb52;
+
+        const relatedWM = infoWM.filter(item => item.id_part_number_informacion_sap_wm === currentPartNumberId);
 
         const groupedWM = new Map();
         relatedWM.forEach(item => {
             const locKey = item.id_localizacion_informacion_sap_wm;
             if (!groupedWM.has(locKey)) {
-                groupedWM.set(locKey, []);
+                groupedWM.set(locKey, item);
             }
-            groupedWM.get(locKey).push(item);
         });
-        const uniqueWMItems = Array.from(groupedWM.values()).map(group => group[0]);
 
-        const numRows = Math.max(uniqueWMItems.length, relatedStock.length, 1);
+        const uniqueWMItems = Array.from(groupedWM.values());
 
-        let wmIndex = 0;
-        let stockIndex = 0;
+        let locationsToRender = locsByAlmacenMap.get(currentAlmacenId) || [];
 
-        for (let i = 0; i < numRows; i++) {
-            const wmItem = uniqueWMItems[wmIndex] || {};
-            const stockItem = relatedStock[stockIndex] || {};
+        if (mb52Item.almacen === 'WM01') {
+            locationsToRender = uniqueWMItems.map(item => item.id_localizacion_informacion_sap_wm);
+        }
 
-            // Nuevo: Determinar la clase para la celda de stock
-            const stockValue = cleanNumber(stockItem.cantidad_stock);
-            const highlightedStock = highlightCell(stockValue);
+        const numRows = locationsToRender.length;
 
-            // Obtener el valor de la observación
-            const observaciones = stockItem.observaciones_novedad_stock || 'N/A';
-
-            let rowContent = '';
-
-            if (i === 0) {
-                rowContent = `
-                    <td class="bg-secundary text-black" rowspan="${numRows}">${partNumberMap.get(mb52Item.id_part_number_informacion_sap_mb52) || 'N/A'}</td>
-                    <td class="bg-secundary text-black" rowspan="${numRows}">${umbMap.get(partNumberFullData?.id_umb_partnumber) || 'N/A'}</td>
-                    <td class="bg-secundary text-black" rowspan="${numRows}">${almacenMap.get(mb52Item.id_almacen_informacion_sap_mb52) || 'N/A'}</td>
-                    <td class="bg-secundary text-black" rowspan="${numRows}">${cleanNumber(mb52Item.cantidad_informacion_sap_mb52)}</td>
-                `;
-            }
-
-            rowContent += `
-                <td>${localizacionMap.get(wmItem.id_localizacion_informacion_sap_wm) || 'N/A'}</td>
-                <td>${cleanNumber(wmItem.stock_disponible_sap_informacion_sap_wm)}</td>
-                <td>${cleanNumber(wmItem.stock_entrada_sap_informacion_sap_wm)}</td>
-                <td>${cleanNumber(wmItem.stock_salida_sap_informacion_sap_wm)}</td>
-                <td class="${highlightedStock.class}">${highlightedStock.value}</td>
-                <td class="observaciones-cell" title="${observaciones}">${observaciones}</td>
+        if (numRows === 0) {
+            const rowContent = `
+                <td class="bg-secundary text-black" rowspan="1">${partNumberMap.get(currentPartNumberId) || 'N/A'}</td>
+                <td class="bg-secundary text-black" rowspan="1">${umbMap.get(partNumberFullData?.id_umb_partnumber) || 'N/A'}</td>
+                <td class="bg-secundary text-black" rowspan="1">${almacenMap.get(currentAlmacenId) || 'N/A'}</td>
+                <td class="bg-secundary text-black" rowspan="1">${cleanNumber(mb52Item.cantidad_informacion_sap_mb52)}</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td>N/A</td>
+                <td class="bg-danger text-white fw-bold">N/A</td>
+                <td class="observaciones-cell" title="N/A">N/A</td>
             `;
-
             const finalRow = `<tr>${rowContent}</tr>`;
             tbody.append(finalRow);
+        } else {
+            locationsToRender.forEach((locId, index) => {
+                const wmItem = uniqueWMItems.find(item => item.id_localizacion_informacion_sap_wm === locId) || {};
 
-            if (wmIndex < uniqueWMItems.length - 1) {
-                wmIndex++;
-            }
-            if (stockIndex < relatedStock.length - 1) {
-                stockIndex++;
-            }
+                // CORRECCIÓN: La clave compuesta ahora usa el ID de PartNumber del item MB52
+                const compoundKey = `${locId}_${currentAlmacenId}_${currentPartNumberId}`;
+                const stockItem = stockMap.get(compoundKey) || {};
+
+                const stockValue = cleanNumber(stockItem.cantidad_stock);
+                const highlightedStock = highlightCell(stockValue);
+                const observaciones = stockItem.observaciones_novedad_stock || 'N/A';
+
+                let rowContent = '';
+                if (index === 0) {
+                    rowContent = `
+                        <td class="bg-secundary text-black" rowspan="${numRows}">${partNumberMap.get(currentPartNumberId) || 'N/A'}</td>
+                        <td class="bg-secundary text-black" rowspan="${numRows}">${umbMap.get(partNumberFullData?.id_umb_partnumber) || 'N/A'}</td>
+                        <td class="bg-secundary text-black" rowspan="${numRows}">${almacenMap.get(currentAlmacenId) || 'N/A'}</td>
+                        <td class="bg-secundary text-black" rowspan="${numRows}">${cleanNumber(mb52Item.cantidad_informacion_sap_mb52)}</td>
+                    `;
+                }
+
+                rowContent += `
+                    <td>${localizacionMap.get(locId) || 'N/A'}</td>
+                    <td>${cleanNumber(wmItem.stock_disponible_sap_informacion_sap_wm) || 'N/A'}</td>
+                    <td>${cleanNumber(wmItem.stock_entrada_sap_informacion_sap_wm) || 'N/A'}</td>
+                    <td>${cleanNumber(wmItem.stock_salida_sap_informacion_sap_wm) || 'N/A'}</td>
+                    <td class="${highlightedStock.class}">${highlightedStock.value}</td>
+                    <td class="observaciones-cell" title="${observaciones}">${observaciones}</td>
+                `;
+
+                const finalRow = `<tr>${rowContent}</tr>`;
+                tbody.append(finalRow);
+            });
         }
     });
 }

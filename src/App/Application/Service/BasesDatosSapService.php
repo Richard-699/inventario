@@ -13,6 +13,7 @@ use App\Domain\DTO\ConteoDTO;
 use App\Domain\DTO\ExactitudDTO;
 use App\Domain\DTO\GruposDTO;
 use App\Domain\Model\Almacenes;
+use App\Domain\Model\Exactitud;
 use App\Domain\Model\HistoricoStock;
 use App\Domain\Model\InformacionSapMB52;
 use Exception;
@@ -212,7 +213,7 @@ class BasesDatosSapService implements IBasesDatosSapService
         }
     }
 
-    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador): void
+    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador, array $gruposSeleccionados): void
     {
         try {
             // 1. Iniciar la transacción para asegurar la integridad de los datos
@@ -222,11 +223,10 @@ class BasesDatosSapService implements IBasesDatosSapService
             $fechaActual = date('Y-m-d');
             $eliminarRegistrosHOY = $this->exactitudRepository->onDelete_By__fecha($fechaActual);
             if (!$eliminarRegistrosHOY) {
-                throw new Exception("Hubo un error al intentar eliminar los registrosd de hoy");
+                throw new Exception("Hubo un error al intentar eliminar los registros de hoy");
             }
 
             // 2. Cargar el único archivo de Excel
-            // Se asume que $lx03 es un array con la información de un solo archivo, por ejemplo, $_FILES['lx03']
             $spreadsheet = IOFactory::load($lx03['tmp_name']);
 
             // 3. Obtener la hoja específica
@@ -238,15 +238,23 @@ class BasesDatosSapService implements IBasesDatosSapService
             $sheet->getStyle('A1:Z1000')->getNumberFormat()->setFormatCode('@'); // Forzar modo texto
             $filas = $sheet->toArray();
 
-
-            // 4. Filtrar filas vacías o donde la columna clave (PartNumber) está vacía
-            $filasFiltradas = array_filter($filas, function ($fila, $index) {
-                // Ignora encabezado
+            // 4. Filtrar filas vacías Y por los grupos seleccionados
+            $filasFiltradas = array_filter($filas, function ($fila, $index) use ($gruposSeleccionados) {
+                // Ignorar el encabezado
                 if ($index === 0) return false;
-                // Si la fila está completamente vacía
-                if (empty(array_filter($fila))) return false;
-                // Si la columna clave (PartNumber) está vacía
-                if (empty(trim($fila[0] ?? ''))) return false;
+
+                // Verificar si la columna del Part Number (índice 0) está vacía
+                $partNumber = trim($fila[0] ?? '');
+                if (empty($partNumber)) {
+                    return false; // Ignorar la fila si el Part Number está vacío
+                }
+
+                // Verificar si el tipo de almacén (índice 5) está en los grupos seleccionados
+                $tipoAlmacen = trim($fila[5] ?? '');
+                if (!in_array($tipoAlmacen, $gruposSeleccionados)) {
+                    return false; // Ignorar la fila si el grupo no fue seleccionado
+                }
+
                 return true;
             }, ARRAY_FILTER_USE_BOTH);
 
@@ -260,13 +268,8 @@ class BasesDatosSapService implements IBasesDatosSapService
                 // Obtener ID del part number y su grupo
                 $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
                 if (!$partNumber) {
-                    $filaPreview = implode(' - ', array_slice($fila, 0, 2));
-                    if ($codigoPartNumber == "<< vacías >>") {
-                        $descripcionPartnumber = "<< vacías >>";
-                    } else {
-                        $descripcionPartnumber = "Partnumber no registrado en el sistema";
-                        /* throw new Exception("No se encontró el Part Number '{$codigoPartNumber}' en la fila con datos: [{$filaPreview}]"); */
-                    }
+                    // El resto de tu lógica para manejar part numbers no encontrados...
+                    $descripcionPartnumber = "Partnumber no registrado en el sistema";
                 } else {
                     $descripcionPartnumber = $partNumber->descripcion_breve;
                 }
@@ -285,7 +288,6 @@ class BasesDatosSapService implements IBasesDatosSapService
                     id_administrador: $id_administrador
                 );
                 $mb52Model = Mapper::ExactitudDTOToModel($dto);
-                // Aquí se debería tener la instancia del repositorio, por ejemplo:
                 $this->exactitudRepository->save($mb52Model);
             }
 
@@ -351,6 +353,12 @@ class BasesDatosSapService implements IBasesDatosSapService
                         }
                         $idPartNumber = $partNumber->id_partnumber;
                         $idGrupo = $partNumber->id_grupo_partnumber;
+
+                        // Validar si el part number no tiene grupo asignado
+                        if (empty($idGrupo)) {
+                            throw new Exception("El Part Number '{$codigoPartNumber}' no ha sido asignado a ningún grupo.");
+                        }
+                        
                         // Obtener ID del almacén por nombre
                         $almacen = $this->almacenRepository->onGet_By__descripcion($nombreAlmacen);
                         if (!$almacen) {
@@ -618,5 +626,26 @@ class BasesDatosSapService implements IBasesDatosSapService
             throw new Exception("Error al intentar obtener los registros de exactitud");
         }
         return $informacionesSapExactitud;
+    }
+
+    public function onGetExactitud_By_Id($id_exactitud): ?Exactitud
+    {
+        $informacionesSapExactitud = $this->exactitudRepository->onGet__By_Id($id_exactitud);
+        if (!$informacionesSapExactitud) {
+            throw new Exception("Error al intentar obtener los registros de exactitud");
+        }
+        return $informacionesSapExactitud;
+    }
+
+    public function updateExactitud(ExactitudDTO $exactitudDTO): bool
+    {
+        $Exactitud = Mapper::ExactitudDTOToModel($exactitudDTO);
+        $updateExactitud = $this->exactitudRepository->update($Exactitud);
+
+        if (!$updateExactitud) {
+            return false;
+        } else {
+            return true;
+        }
     }
 }
