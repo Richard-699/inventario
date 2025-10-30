@@ -1,0 +1,116 @@
+<?php
+
+namespace App\Infrastructure\Repository;
+
+use App\Domain\Model\Grupos;
+use App\Application\Interface\Repository\IGruposRepository;
+use PDO;
+
+class GruposRepository implements IGruposRepository
+{
+    private $db;
+
+    public function __construct(PDO $db)
+    {
+        $this->db = $db;
+    }
+
+    public function onGet(): array
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_grupos");
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map([Grupos::class, 'fromArray'], $rows);
+    }
+
+    public function onGet_By__Id($id): ?Grupos
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_grupos WHERE id_grupo = ?");
+        $stmt->execute([$id]);
+        $row = $stmt->fetch();
+        if (!$row) {
+            return null;
+        }
+        return Grupos::fromArray($row);
+    }
+
+    public function onGet_By__Grupo($grupo): ?Grupos
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_grupos WHERE descripcion_grupo = ?");
+        $stmt->execute([$grupo]);
+        $row = $stmt->fetch();
+
+        if (!$row) {
+            return null;
+        }
+        return Grupos::fromArray($row);
+    }
+
+    public function onGet_By__GrupoAndExcludeId(string $grupoNombre, string $idGrupoAExcluir): ?Grupos
+    {
+        $query = "SELECT id_grupo, descripcion_grupo, fecha_programacion_grupo FROM inventario_hwi_grupos
+                  WHERE descripcion_grupo = :descripcion_grupo
+                  AND id_grupo != :id_grupo_excluir LIMIT 1";
+
+        $stmt = $this->db->prepare($query);
+        $stmt->bindParam(':descripcion_grupo', $grupoNombre, \PDO::PARAM_STR);
+        $stmt->bindParam(':id_grupo_excluir', $idGrupoAExcluir, \PDO::PARAM_STR);
+        $stmt->execute();
+        $data = $stmt->fetch(\PDO::FETCH_ASSOC);
+
+        if ($data === false) {
+            return null;
+        }
+        return new Grupos($data['id_grupo'], $data['descripcion_grupo'], $data['fecha_programacion_grupo'], $data['informacion_migrada_sap_grupo']);
+    }
+
+    public function save(Grupos $grupos): bool
+    {
+        $data = $grupos->toArray();
+        $columnas = implode(', ', array_keys($data));
+        $placeholders = ':' . implode(', :', array_keys($data));
+
+        $query = "INSERT INTO inventario_hwi_grupos ($columnas) VALUES ($placeholders)";
+        $stmt = $this->db->prepare($query);
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+        return $stmt->execute();
+    }
+
+    public function delete($id): int
+    {
+        $stmt = $this->db->prepare("DELETE FROM inventario_hwi_grupos WHERE id_grupo = :id");
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
+        return $stmt->rowCount();
+    }
+
+    public function update(Grupos $grupos): bool
+    {
+        $data = $grupos->toArray();
+        $id = $data['id_grupo'];
+        $set = implode(', ', array_map(fn($key) => "$key = :$key", array_keys($data)));
+
+        $query = "UPDATE inventario_hwi_grupos SET $set WHERE id_grupo = :id_grupo";
+
+        $stmt = $this->db->prepare($query);
+        foreach ($data as $campo => $valor) {
+            $stmt->bindValue(":$campo", $valor);
+        }
+
+        $stmt->bindValue(':id_grupo', $id, \PDO::PARAM_STR);
+
+        return $stmt->execute();
+    }
+
+    public function update_estado_migration($idGrupo, $id_estado_migracion): void
+    {
+        $query = "UPDATE inventario_hwi_grupos SET informacion_migrada_sap_grupo = :id_estado_migracion WHERE id_grupo = :id_grupo";
+        $statement = $this->db->prepare($query);
+        $statement->bindValue(':id_grupo', $idGrupo, PDO::PARAM_STR);
+        $statement->bindValue(':id_estado_migracion', $id_estado_migracion, PDO::PARAM_STR);
+        $statement->execute();
+    }
+}

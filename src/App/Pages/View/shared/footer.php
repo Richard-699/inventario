@@ -3,8 +3,8 @@
 
 </div> <!-- content -->
 
-<script src="../../../public/js/partials/header.js"></script>
-<script src="../../../public/js/utils/spinner.js"></script>
+<script src="../../../../../public/js/shared/header.js"></script>
+<script src="../../../../../public/js/utils/spinner.js"></script>
 <script>
   function toggleSidebar() {
     const sidebar = document.getElementById('sidebar');
@@ -31,6 +31,22 @@
       sidebar.classList.add('collapsed');
     } else {
       sidebar.classList.remove('collapsed');
+    }
+
+  });
+
+  // ✅ Cerrar sidebar si se hace clic fuera en pantallas pequeñas
+  document.addEventListener('click', function(event) {
+    const sidebar = document.getElementById('sidebar');
+    const toggleButton = document.getElementById('menuToggle');
+    const isSmallScreen = window.innerWidth <= 992;
+
+    if (isSmallScreen &&
+      !sidebar.contains(event.target) &&
+      !toggleButton.contains(event.target) &&
+      !sidebar.classList.contains('collapsed')) {
+      sidebar.classList.add('collapsed');
+      localStorage.setItem('menuCollapsed', true);
     }
   });
 </script>

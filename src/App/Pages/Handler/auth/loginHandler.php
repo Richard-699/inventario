@@ -4,8 +4,6 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\LoginService;
 use App\Domain\DTO\AdministradoresDTO;
-use App\Infrastructure\Repository\AdministradoresRepository;
-use App\Infrastructure\Repository\PermisosAdministradoresRepository;
 use App\Shared\Validation\Validator;
 
 header('Content-Type: application/json');
@@ -29,10 +27,7 @@ try {
 
     Validator::validateDTO($administradoresDTO);
 
-    $loginService = new LoginService(
-        new AdministradoresRepository(),
-        new PermisosAdministradoresRepository()
-    );
+    $loginService = new LoginService();
     
     $administradorLogin = $loginService->login($administradoresDTO);
 
@@ -51,7 +46,6 @@ try {
         }
         session_start();
         $_SESSION['administrador'] = $administradorLogin;
-        $_SESSION['last_activity'] = time();
         $_SESSION['sidebarinactive'] = true;
     }
     

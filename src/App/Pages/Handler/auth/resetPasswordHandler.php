@@ -6,6 +6,7 @@ use App\Application\Service\LoginService;
 use App\Domain\DTO\AdministradoresDTO;
 use App\Infrastructure\Repository\AdministradoresRepository;
 use App\Infrastructure\Repository\PermisosAdministradoresRepository;
+use App\Infrastructure\Repository\PermisosRepository;
 use App\Shared\Util\Utilidades;
 
 header('Content-Type: application/json');
@@ -18,10 +19,7 @@ try {
     $correo_hwi_administrador = $_POST['correo_hwi_administrador'] ?? '';
     $password_administrador = $_POST['password_administrador'] ?? '';
 
-    $loginService = new LoginService(
-        new AdministradoresRepository(),
-        new PermisosAdministradoresRepository()
-    );
+    $loginService = new LoginService();
 
     $passwordHash = password_hash($password_administrador, PASSWORD_DEFAULT);
     $istemporal = 0;
