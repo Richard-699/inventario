@@ -4,9 +4,6 @@ require_once __DIR__ . '/../../../../../vendor/autoload.php';
 
 use App\Application\Service\LoginService;
 use App\Domain\DTO\AdministradoresDTO;
-use App\Infrastructure\Repository\AdministradoresRepository;
-use App\Infrastructure\Repository\PermisosAdministradoresRepository;
-use App\Infrastructure\Repository\PermisosRepository;
 use App\Shared\Validation\Validator;
 
 header('Content-Type: application/json');

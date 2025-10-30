@@ -213,7 +213,7 @@ class BasesDatosSapService implements IBasesDatosSapService
         }
     }
 
-    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador, array $gruposSeleccionados): void
+    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador, array $gruposSeleccionados, string $vacias): void
     {
         try {
             // 1. Iniciar la transacción para asegurar la integridad de los datos
@@ -238,21 +238,37 @@ class BasesDatosSapService implements IBasesDatosSapService
             $sheet->getStyle('A1:Z1000')->getNumberFormat()->setFormatCode('@'); // Forzar modo texto
             $filas = $sheet->toArray();
 
-            // 4. Filtrar filas vacías Y por los grupos seleccionados
-            $filasFiltradas = array_filter($filas, function ($fila, $index) use ($gruposSeleccionados) {
+            // 4. Filtrar filas: por grupos seleccionados Y aplicar la lógica de 'vacias' (Material)
+            $filasFiltradas = array_filter($filas, function ($fila, $index) use ($gruposSeleccionados, $vacias) {
                 // Ignorar el encabezado
                 if ($index === 0) return false;
 
-                // Verificar si la columna del Part Number (índice 0) está vacía
-                $partNumber = trim($fila[0] ?? '');
-                if (empty($partNumber)) {
-                    return false; // Ignorar la fila si el Part Number está vacío
+                // Columna 'Material' (índice 0)
+                $material = trim($fila[0] ?? '');
+
+                // Columna 'Tipo almacén' (índice 5)
+                $tipoAlmacen = trim($fila[5] ?? '');
+
+                // *** 4.1. Única regla de exclusión general: Filas con Material completamente vacío ***
+                if (empty($material)) {
+                    return false;
                 }
 
-                // Verificar si el tipo de almacén (índice 5) está en los grupos seleccionados
-                $tipoAlmacen = trim($fila[5] ?? '');
+                // 4.2. Filtrar por Grupos Seleccionados (Tipo almacén)
                 if (!in_array($tipoAlmacen, $gruposSeleccionados)) {
                     return false; // Ignorar la fila si el grupo no fue seleccionado
+                }
+
+                // *** 4.3. Aplicar la lógica de 'vacias' (Columna Material) ***
+                if ($vacias === "Si") {
+                    // REGLA 1: Si $vacias es "Si", SOLO incluimos las que dicen "<< vacías >>".
+                    if ($material !== "<< vacías >>") {
+                        return false;
+                    }
+                } else {
+                    // REGLA 2 (Ajustada): Si $vacias es "No", incluimos TODO lo que no esté vacío.
+                    // Como ya se filtró empty($material) arriba, no es necesario hacer un filtro adicional aquí.
+                    // Todo lo que llegue a este punto y no sea "Si" pasa.
                 }
 
                 return true;
@@ -265,13 +281,18 @@ class BasesDatosSapService implements IBasesDatosSapService
                 $areaAlmacenamiento = trim($fila[6] ?? '');
                 $localizacion = trim($fila[7] ?? '');
 
-                // Obtener ID del part number y su grupo
-                $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
-                if (!$partNumber) {
-                    // El resto de tu lógica para manejar part numbers no encontrados...
-                    $descripcionPartnumber = "Partnumber no registrado en el sistema";
+                // Adaptar la lógica de búsqueda de Part Number
+                if ($codigoPartNumber === "<< vacías >>") {
+                    // Si la ubicación está vacía (según el archivo Excel), no buscar en la BD.
+                    $descripcionPartnumber = "Vacía";
                 } else {
-                    $descripcionPartnumber = $partNumber->descripcion_breve;
+                    // Obtener ID del part number y su grupo para Part Numbers reales
+                    $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
+                    if (!$partNumber) {
+                        $descripcionPartnumber = "Partnumber no registrado en el sistema";
+                    } else {
+                        $descripcionPartnumber = $partNumber->descripcion_breve;
+                    }
                 }
 
                 // Crear DTO y guardar en el repositorio
@@ -358,7 +379,7 @@ class BasesDatosSapService implements IBasesDatosSapService
                         if (empty($idGrupo)) {
                             throw new Exception("El Part Number '{$codigoPartNumber}' no ha sido asignado a ningún grupo.");
                         }
-                        
+
                         // Obtener ID del almacén por nombre
                         $almacen = $this->almacenRepository->onGet_By__descripcion($nombreAlmacen);
                         if (!$almacen) {

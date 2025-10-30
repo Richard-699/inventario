@@ -35,6 +35,7 @@
                         <th style="width: 20%;">Fecha Final</th>
                         <th style="width: 20%;">Encargado</th>
                         <th style="width: 20%;">Observaciones</th>
+                        <th style="width: 10%;">Estado</th>
                         <th></th>
                     </tr>
                 </thead>

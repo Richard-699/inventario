@@ -11,7 +11,8 @@ class Conteo
         public ?string $fecha_hora_inicio_conteo,
         public ?string $fecha_hora_final_conteo,
         public ?string $observaciones_conteo,
-        public ?int $estado_conteo
+        public ?string $estado_conteo,
+        public ?string $observacion_final_conteo,
     ) {}
 
     public static function fromArray(array $data): self {
@@ -22,7 +23,8 @@ class Conteo
             $data['fecha_hora_inicio_conteo'] ?? null,
             $data['fecha_hora_final_conteo'] ?? null,
             $data['observaciones_conteo'] ?? null,
-            $data['estado_conteo'] ?? null
+            $data['estado_conteo'] ?? null,
+            $data['observacion_final_conteo'] ?? null,
         );
     }
 
@@ -35,7 +37,8 @@ class Conteo
             'fecha_hora_inicio_conteo' => $this->fecha_hora_inicio_conteo,
             'fecha_hora_final_conteo' => $this->fecha_hora_final_conteo,
             'observaciones_conteo' => $this->observaciones_conteo,
-            'estado_conteo' => $this->estado_conteo
+            'estado_conteo' => $this->estado_conteo,
+            'observacion_final_conteo' => $this->observacion_final_conteo
         ];
     }
 }

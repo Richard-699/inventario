@@ -19,7 +19,7 @@ $(document).ready(function () {
 
     
     // 4. Lógica para el envío del formulario.
-    $('#form_aprobar_conteo').on('submit', function (e) {
+    $('#form_rechazar_conteo').on('submit', function (e) {
         debugger;
         e.preventDefault();
 
@@ -40,7 +40,7 @@ $(document).ready(function () {
         // Construir el objeto JSON final que incluye la acción y los datos del formulario
         const handlerUrl = '../../Handler/inventory/aprobacionHandler.php';
         const requestData = {
-            action: "aprobar_conteo_administrador",
+            action: "rechazar_conteo_administrador",
             form: formObject
         };
 
@@ -53,7 +53,7 @@ $(document).ready(function () {
             dataType: 'json',
             success: function (resp) {
                 if (resp.success) {
-                    notification('success', resp.message || 'El conteo se finalizó correctamente.', 3000);
+                    notification('success', resp.message || 'El conteo se rechazó correctamente.', 3000);
                     // Opcional: Cerrar la Fancybox o redirigir al usuario
                    /*  setTimeout(function () {
                         if (Fancybox.getInstance()) {

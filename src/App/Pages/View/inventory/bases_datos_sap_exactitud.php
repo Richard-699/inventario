@@ -36,6 +36,15 @@ $id_administrador = $_SESSION['administrador']->id_administrador;
             </div>
 
             <div class="mb-4">
+                <label for="vacias" class="form-label">¿Importar solo las ubicaciones vacías? *</label>
+                <select class="form-select" name="vacias" id="vacias">
+                    <option selected disabled value="">Selecciona una opción</option>
+                    <option value="Si">Si, solo las vacías</option>
+                    <option value="No">No, migrar todo</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
                 <label class="form-label">Filtrar por tipo de almacén:</label>
                 <div class="filtro-opciones">
                     <div class="form-check">

@@ -20,6 +20,7 @@ $(document).ready(function () {
             { "data": "fecha_hora_final_conteo", "className": "dt-center" },
             { "data": "nombre_encargado", "className": "dt-center" },
             { "data": "observaciones_conteo", "className": "dt-center observaciones-col" },
+            { "data": "estado_conteo", "className": "dt-center" },
             {
                 "data": "id_conteo",
                 "className": "dt-center",
@@ -83,7 +84,6 @@ function aprobarConteo(id_conteo) {
                 },
                 error: (fancybox, slide) => {
                     // Hay un error. Oculta el spinner.
-
                     console.error('Error al cargar la modal:', slide.error);
                 }
             }

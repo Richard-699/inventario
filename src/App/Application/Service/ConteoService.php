@@ -54,6 +54,13 @@ class ConteoService implements IConteoService
         return $conteoDTO;
     }
 
+    public function onGetConteo_By__id($id_conteo): ConteoDTO
+    {
+        $conteo = $this->conteoRepository->onGetConteo_By__id($id_conteo);
+        $conteoDTO = Mapper::modelTOConteoDTO($conteo);
+        return $conteoDTO;
+    }
+
     public function onGetInfo_Conteo_By_Grupo($id_grupo): ConteoDTO
     {
         // Iniciar transacción para validar todo el flujo

@@ -88,6 +88,7 @@ class FinalizarConteoService implements IFinalizarConteoService
             $FechaActualCronograma = $this->cronogramaService->onGetCronograma_By__Id_Grupo($id_grupo);
             $fechaBD = $FechaActualCronograma->fecha_cronograma;
             $id_estado_cronograma = $FechaActualCronograma->id_estado_cronograma;
+            $id_administrador_cronograma = $FechaActualCronograma->id_administrador_cronograma;
 
             // Se inicializan las variables con valores por defecto
             $id_nuevo_estado = null;
@@ -109,9 +110,9 @@ class FinalizarConteoService implements IFinalizarConteoService
                     throw new Exception("Estado actual del cronograma no válido para un nuevo conteo: {$id_estado_cronograma}");
                 }
             } else if ($otro_conteo_seleccionado === 'no') {
-                // Si no se necesita otro conteo, el estado cambia a "Esperar aprobación" y la fecha se adelanta 3 meses
+                // Si no se necesita otro conteo, el estado cambia a "Esperar aprobación" y la fecha se queda igual, la fecha se cambia una vez se apruebe el conteo por el administrador
                 $id_nuevo_estado = 3;
-                $fechaCronograma->modify('+3 months');
+                /* $fechaCronograma->modify('+3 months'); */
                 $nuevaFechaCronograma = $fechaCronograma;
             }
 
@@ -129,7 +130,7 @@ class FinalizarConteoService implements IFinalizarConteoService
                 fecha_cronograma: $nuevaFechaCronograma,
                 id_grupo_cronograma: $id_grupo,
                 id_estado_cronograma: $id_nuevo_estado,
-                id_administrador_cronograma: null
+                id_administrador_cronograma: $id_administrador_cronograma
             );
 
             $actualizarCronograma = $this->cronogramaService->updateCronograma($cronogramaDTO);

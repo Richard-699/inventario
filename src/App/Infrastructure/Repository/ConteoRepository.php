@@ -24,6 +24,15 @@ class ConteoRepository implements IConteoRepository
         return array_map([Conteo::class, 'fromArray'], $rows);
     }
 
+    public function onGetConteo_By__id($id_conteo): ?Conteo
+    {
+        $stmt = $this->db->prepare("SELECT * FROM inventario_hwi_conteos WHERE id_conteo = :id_conteo");
+        $stmt->bindParam(':id_conteo', $id_conteo);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? Conteo::fromArray($row) : null;
+    }
+
     public function save(Conteo $conteo): bool
     {
         $data = $conteo->toArray();
@@ -37,7 +46,6 @@ class ConteoRepository implements IConteoRepository
         }
         return $stmt->execute();
     }
-
 
     public function onGetConteo_By__Fecha_Reciente_Grupo($idGrupo): ?Conteo
     {
@@ -99,4 +107,5 @@ class ConteoRepository implements IConteoRepository
 
         return $stmt->execute();
     }
+
 }
