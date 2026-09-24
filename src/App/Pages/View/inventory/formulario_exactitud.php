@@ -47,7 +47,9 @@ function val($key)
                 name="novedad">
                 <option value="" selected disabled>Seleccione una opción</option>
                 <option value="Sin Novedad">Sin Novedad</option>
-                <option value="No">No</option>
+                <option value="Posición vacía, con material físico">Posición vacía, con material físico</option>
+                <option value="Material pertenece a otra ubicación">Material pertenece a otra ubicación</option>
+                <option value="Material cargado en sistema, posición vacía">Material cargado en sistema, posición vacía</option>
             </select>
 
             <div class="mb-3">
@@ -63,7 +65,7 @@ function val($key)
 
             <div class="d-flex justify-content-end">
                 <button type="submit" class="btn btn-success px-4 shadow-sm" id="btn-save">
-                    <i class="fa-solid fa-floppy-disk me-2"></i>Aprobar
+                    <i class="fa-solid fa-floppy-disk me-2"></i>Enviar
                 </button>
             </div>
         </form>

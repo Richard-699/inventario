@@ -29,7 +29,7 @@ use App\Domain\Model\Cronograma;
 use App\Domain\Model\Grupos;
 use App\Domain\Model\AlmacenesClasificacionesAlmacenes;
 use App\Domain\Model\HistoricoStock;
-use App\Domain\Model\InformacionSapMb52;
+use App\Domain\Model\InformacionSapMB52;
 use App\Domain\Model\InformacionSapWM;
 use App\Domain\Model\HistoricoWM;
 use App\Domain\DTO\HistoricoWMDTO;
@@ -441,7 +441,8 @@ class Mapper
             fecha_hora_inicio_conteo: $model->fecha_hora_inicio_conteo,
             fecha_hora_final_conteo: $model->fecha_hora_final_conteo,
             observaciones_conteo: $model->observaciones_conteo,
-            estado_conteo: $model->estado_conteo
+            estado_conteo: $model->estado_conteo,
+            observacion_final_conteo: $model->observacion_final_conteo,
         );
     }
 
@@ -454,7 +455,8 @@ class Mapper
             $dto->fecha_hora_inicio_conteo,
             $dto->fecha_hora_final_conteo,
             $dto->observaciones_conteo,
-            $dto->estado_conteo
+            $dto->estado_conteo,
+            $dto->observacion_final_conteo
         );
     }
 

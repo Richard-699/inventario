@@ -1,3 +1,12 @@
+<?php
+// *****************************************************************
+// INICIALIZACIÓN DE VISTA PROTEGIDA
+// Este archivo carga Composer, Inicia la Sesión, Valida la Sesión 
+// y define las variables de administrador requeridas por el header.
+// *****************************************************************
+include '../../Handler/auth/session_init.php'; 
+// Las variables $administrador, $permisosAdministradores, y $permisos ya están definidas aquí.
+?>
 <!DOCTYPE html>
 <html lang="es">
 
@@ -35,6 +44,7 @@
                         <th style="width: 20%;">Fecha Final</th>
                         <th style="width: 20%;">Encargado</th>
                         <th style="width: 20%;">Observaciones</th>
+                        <th style="width: 10%;">Estado</th>
                         <th></th>
                     </tr>
                 </thead>

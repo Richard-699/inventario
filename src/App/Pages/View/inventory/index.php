@@ -1,6 +1,14 @@
+<?php
+// *****************************************************************
+// INICIALIZACIÓN DE VISTA PROTEGIDA
+// Este archivo carga Composer, Inicia la Sesión, Valida la Sesión 
+// y define las variables de administrador requeridas por el header.
+// *****************************************************************
+include '../../Handler/auth/session_init.php'; 
+// Las variables $administrador, $permisosAdministradores, y $permisos ya están definidas aquí.
+?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -13,10 +21,10 @@
 </head>
 
 <body>
-   <?php include '../shared/header.php' ?>
+    <?php include '../shared/header.php'; ?>
 
     <video id="backgroundVideo" muted loop playsinline class="background-video" preload="auto">
-        <source src="../../../../../../VideoSmartCenter/Video Principal.mp4" type="video/mp4">
+        <source src="../../../../../../VideoSmartCenter/VideoPrincipal.mp4" type="video/mp4">
         Tu navegador no soporta el video.
     </video>
     <div class="overlay"></div>

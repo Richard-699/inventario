@@ -1,18 +1,20 @@
 <?php
-require_once __DIR__ . '/../../../../../vendor/autoload.php';
-require_once '../../Handler/auth/validateSesionHandler.php';
-include('../../../Shared/Util/spinner.php');
+// *****************************************************************
+// ZONA DE CÓDIGO CRÍTICO LIMPIADA.
+// Se asume que Autoloader, Validador y variables han sido definidas.
+// *****************************************************************
 
-if (isset($_SESSION['administrador'])) {
-    $administrador = $_SESSION['administrador'];
-    $permisosAdministradores = $administrador->permisosAdministradoresDTO;
-    $permisos = $administrador->permisosDTO;
+// ELIMINAR ESTAS LÍNEAS YA QUE ESTÁN EN index.php:
+// require_once '../../../../../vendor/autoload.php';
+// include('../../../Shared/Util/spinner.php'); 
+
+if (!isset($administrador)) {
+    // Este mensaje solo es para el desarrollador si hay un fallo en el flujo.
+    die("Error de configuración: Variable de administrador no definida.");
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -22,15 +24,13 @@ if (isset($_SESSION['administrador'])) {
     <link rel="stylesheet" href="../../../../../public/css/shared/estilos_header.css" />
     <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
 </head>
-
 <body>
-
     <div id="sidebar" class="sidebar">
         <a class="fondo-img" href="index.php"><img src="../../../../../public/img/LogoBlanco.png" class="img-logo"></a>
         <a href="javascript:void(0);" onclick="Inicio();" class="mt-3 hov"><i class="fas fa-home"></i> Inicio</a>
         <hr style="width: 93%; margin-left: 4%; color: white; margin-top: -1px; margin-bottom: -1px" />
         <?php
-
+        // ... (Tu código de bucle de permisos) ...
         foreach ($permisosAdministradores as $permisoAdministrador) {
             $id_permiso_permisos = $permisoAdministrador->id_permiso_permisos;
             foreach ($permisos as $permiso) {
@@ -64,11 +64,8 @@ if (isset($_SESSION['administrador'])) {
             }
         }
         ?>
-
         <a href="javascript:void(0);" class="hov" id="BtnCerrarSesion"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
     </div>
-
-
     <div class="content">
         <nav class="navbar navbar-expand-lg navbar-light px-3">
             <button class="menu-toggle" id="menuToggle" onclick="toggleSidebar()">☰ Menú</button>
@@ -77,5 +74,4 @@ if (isset($_SESSION['administrador'])) {
                 <a href="javascript:void(0);" id="BtnCerrarSesionMenu" class="text-dark icon-logout"><i class="fas fa-sign-out-alt fa-lg"></i></a>
             </div>
         </nav>
-
         <div class="container mt-4">

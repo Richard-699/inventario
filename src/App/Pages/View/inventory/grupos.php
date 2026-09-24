@@ -1,6 +1,14 @@
+<?php
+// *****************************************************************
+// INICIALIZACIÓN DE VISTA PROTEGIDA
+// Este archivo carga Composer, Inicia la Sesión, Valida la Sesión 
+// y define las variables de administrador requeridas por el header.
+// *****************************************************************
+include '../../Handler/auth/session_init.php'; 
+// Las variables $administrador, $permisosAdministradores, y $permisos ya están definidas aquí.
+?>
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +23,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
     <?php include('../../../Shared/Util/spinner.php'); ?>
 </head>
-
 <body>
     <?php include('../shared/header.php'); ?>
 
@@ -44,7 +51,6 @@
             </table>
         </div>
     </div>
-
     <?php include('../shared/footer.php'); ?>
     <!-- Scripts en orden -->
     <script src="../../../../../public/js/utils/libs/jquery.js"></script>

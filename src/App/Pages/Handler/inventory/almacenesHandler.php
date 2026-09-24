@@ -204,6 +204,7 @@ function onPostSaveAlmacenes(array $data)
             descripcion_almacen: $descripcion ?? null,
             clasificacionesAlmacenesDTO: $clasificaciones_selectedIds,
         );
+
         Validator::validateAlmacenesDTO($almacenesDTO);
 
         $almacenesService = new AlmacenesService();

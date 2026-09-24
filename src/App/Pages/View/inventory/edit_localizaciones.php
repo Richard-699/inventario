@@ -1,18 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="../../../../../public/css/inventory/edit_localizaciones.css" rel="stylesheet">
     <link rel="shortcut icon" href="../../../public/img/LogoBlanco.png" type="image/x-icon">
-
     <link rel="stylesheet" href="../../../../../public/css/utils/libs/libs.css">
-
     <link rel="stylesheet" href="../../../../../public/css/utils/estilos_spinner.css">
 </head>
-
 <body class="p-4">
     <?php
 

@@ -1,24 +1,36 @@
 $(document).ready(function () {
 
-    document.getElementById('formBdsSap').addEventListener('submit', async function (e) {
+    // 💡 CAMBIO CLAVE: Delegación de eventos. Funciona aunque el modal cargue un segundo después.
+    $(document).on('submit', '#formBdsSap', async function (e) {
         e.preventDefault();
-        mostrarCarga();
+        
+        // Verificamos si la función existe antes de llamarla para que no rompa el JS
+        if (typeof mostrarCarga === 'function') {
+            mostrarCarga();
+        }
 
-        const form = document.getElementById('formBdsSap');
-        const formData = new FormData(form);
+        // 'this' ahora hace referencia al formulario que disparó el evento
+        const formData = new FormData(this);
 
         // Agregamos acción como campo adicional
         formData.append('action', 'migration_bds_sap');
 
         try {
-            const response = await fetch('../../Handler/inventory/bases_datos_sapHandler.php', {
+            // Ruta absoluta para evitar la redirección que nos daba el error de Método No Permitido
+            const response = await fetch('/inventario/src/App/Pages/Handler/inventory/bases_datos_sapHandler.php', {
                 method: 'POST',
                 body: formData
             });
 
+            if (!response.ok) {
+                throw new Error(`Error del servidor: ${response.status}`);
+            }
+
             const resultado = await response.json();
 
-            ocultarCarga();
+            if (typeof ocultarCarga === 'function') {
+                ocultarCarga();
+            }
 
             if (resultado.success) {
                 notification('success', 'Se migró la información de SAP.', 2000);
@@ -28,11 +40,8 @@ $(document).ready(function () {
                         Fancybox.getInstance().close();
                     }
 
-                    // Obtén la URL actual y agrega un parámetro de caché aleatorio
                     const urlActual = window.location.href.split('?')[0];
                     const parametroCache = `?timestamp=${new Date().getTime()}`;
-
-                    // Recarga la página con la nueva URL para evitar la caché
                     window.location.href = urlActual + parametroCache;
                 }, 3000);
             } else {
@@ -40,7 +49,10 @@ $(document).ready(function () {
             }
 
         } catch (error) {
-            ocultarCarga();
+            if (typeof ocultarCarga === 'function') {
+                ocultarCarga();
+            }
+            console.error("Error en la petición:", error);
             notification('error', error.message, 5000);
         }
     });

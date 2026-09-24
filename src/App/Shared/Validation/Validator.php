@@ -178,4 +178,11 @@ class Validator
         }
     }
 
+
+        public static function validateConteoDTO(ConteoDTO $dto): void
+    {
+        if (empty($dto->observacion_final_conteo)) {
+            throw new Exception('Debe registrar una observación');
+        }
+    }
 }

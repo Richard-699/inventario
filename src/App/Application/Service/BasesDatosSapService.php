@@ -74,7 +74,8 @@ class BasesDatosSapService implements IBasesDatosSapService
         $this->exactitudRepository = new ExactitudRepository($this->db);
     }
 
-    public function procesarArchivosExcel(array $mb52File, array $wmFile, array $cero016File, string $idGrupo, string $id_administrador): void
+// Nota el uso del signo de interrogación (?array) para indicar que puede ser null
+public function procesarArchivosExcel(array $mb52File, array $wmFile, ?array $cero016File, string $idGrupo, string $id_administrador): void
     {
         try {
             // 1. Iniciar la transacción para asegurar la integridad de los datos
@@ -96,88 +97,15 @@ class BasesDatosSapService implements IBasesDatosSapService
             $ConteoStockModel = Mapper::ConteoDTOToModel($conteoDTO);
             $this->conteoRepository->save($ConteoStockModel);
 
-
-            /*             // 2. onGet de tablas Stock
-            $OnGetStock = $this->stockRepository->onGet_by_Id_grupo($idGrupo);
-            // 2.1 Si se encontraron registros en la tabla stock, se guardan en el historico y luego se eliminan.
-            if ($OnGetStock) {
-                foreach ($OnGetStock as $stockModel) {
-                    $HistoricoStockDTO = new HistoricoStockDTO(
-                        id_historico_stock: null,
-                        fecha_historico_stock: date('Y-m-d H:i:s'),
-                        cantidad_historico_stock: $stockModel->cantidad_stock,
-                        id_almacen_historico_stock: $stockModel->id_almacen_stock,
-                        id_localizacion_historico_stock: $stockModel->id_localizacion_stock,
-                        id_informacion_sap_mb52_historico_stock: $stockModel->id_informacion_sap_mb52_stock,
-                        id_partnumber_historico_stock: $stockModel->id_partnumber_stock,
-                        id_novedad_historico_stock: $stockModel->id_novedad_stock,
-                        observaciones_novedad_historico_stock: $stockModel->observaciones_novedad_stock,
-                        id_grupo_historico_stock: $stockModel->id_grupo_stock
-                    );
-
-                    // Guardar DTO en la tabla stock_historico
-                    $historicoStockModel = Mapper::HistoricoStockDTOToModel($HistoricoStockDTO);
-                    $this->stockHistoricoRepository->save($historicoStockModel);
-                }
-                // Eliminar los registros de la tabla stock
-                $this->stockRepository->delete($idGrupo);
-            } */
-
-
-            /*             // 2. onGet WM
-            $OnGetWM = $this->informacionSapWMRepository->onGet_By__Id_grupo($idGrupo);
-            // 2.1 Si se encontraron registros en la tabla wm, se guardan en el historico y luego se eliminan.
-            if ($OnGetWM) {
-                foreach ($OnGetWM as $WMModel) {
-                    $HistoricoWMDTO = new HistoricoWMDTO(
-                        id_historico_wm : null,
-                        fecha_historico_wm: date('Y-m-d H:i:s'),
-                        stock_disponible_historico_wm: $WMModel->stock_disponible_sap_informacion_sap_wm,
-                        stock_entrada_historico_wm: $WMModel->stock_entrada_sap_informacion_sap_wm,
-                        stock_salida_historico_wm: $WMModel->stock_salida_sap_informacion_sap_wm,
-                        id_localizacion_historico_wm: $WMModel->id_localizacion_informacion_sap_wm,
-                        id_partnumber_historico_wm: $WMModel->id_part_number_informacion_sap_wm,
-                        id_grupo_historico_wm : $WMModel->id_grupo_informacion_sap_wm ,
-                        id_informacion_sap_mb52_historico_wm : $WMModel->id_informacion_sap_mb52_informacion_sap_wm 
-                    );
-
-                    // Guardar DTO en la tabla historicowm
-                    $historicoWMModel = Mapper::HistoricoWMDTOToModel($HistoricoWMDTO);
-                    $this->HistoricoWMRepository->save($historicoWMModel);
-                }
-               
-            }
- */
-            /*             // 3. onGet MB52
-            $OnGetMB52 = $this->informacionSapMB52Repository->onGet_By__Id_grupo($idGrupo);
-            // 3.1 Si se encontraron registros en la tabla wm, se guardan en el historico y luego se eliminan.
-            if ($OnGetMB52) {
-                foreach ($OnGetMB52 as $MB52Model) {
-                    $HistoricoMB52DTO = new HistoricoMB52DTO(
-                        id_historico_mb52 : null,
-                        id_informacion_sap_mb52_historico_mb52: $MB52Model->id_informacion_sap_mb52,
-                        fecha_historico_mb52: date('Y-m-d H:i:s'),
-                        cantidad_historico_mb52: $MB52Model->cantidad_informacion_sap_mb52,
-                        fechaRegistro_historico_mb52: $MB52Model->fecha_registro_informacion_sap_mb52,
-                        id_part_number_historico_mb52: $MB52Model->id_part_number_informacion_sap_mb52,
-                        id_almacen_historico_mb52: $MB52Model->id_almacen_informacion_sap_mb52,
-                        id_grupo_historico_mb52 : $MB52Model->id_grupo_informacion_sap_mb52
-                    );
-
-                    // Guardar DTO en la tabla historicowm
-                    $historicoMB52Model = Mapper::HistoricoMB52DTOToModel($HistoricoMB52DTO);
-                    $this->HistoricoMB52Repository->save($historicoMB52Model);
-                }
-               
-            } */
+            // [TUS BLOQUES COMENTADOS DE HISTORICOS SE MANTIENEN IGUAL...]
 
             // 2. Eliminar información de las tablas WM y MB52 por ID de grupo
             // Eliminar los registros de la tabla WM (Con esto ya se eliminan de las dos tablas por la relacion FK ON DELETE IN CASCADE)
             $this->informacionSapWMRepository->onDelete_By__IdGrupo($idGrupo);
-            /* $this->informacionSapMB52Repository->onDelete_By__IdGrupo($idGrupo); */
 
             // 3.1 Obtener el cronograma para evaluar su estado
             $cronograma = $this->cronogramaRepository->onGet_by_Id_grupo($idGrupo);
+            
             // 3.2 Asignacion de nuevo estado
             $nuevoEstado = 1;
             if ($cronograma) {
@@ -200,20 +128,24 @@ class BasesDatosSapService implements IBasesDatosSapService
             // 5. Procesar los nuevos archivos Excel
             $this->procesarArchivo($mb52File, $this->informacionSapMB52Repository, 'mb52');
             $this->procesarArchivo($wmFile, $this->informacionSapWMRepository, 'wm');
-            $this->procesarArchivo($cero016File, $this->informacionSapWMRepository, 'cero016');
+            
+            // VALIDACIÓN NUEVA: Solo procesar 0016 si se envió un archivo
+            if ($cero016File !== null) {
+                $this->procesarArchivo($cero016File, $this->informacionSapWMRepository, 'cero016');
+            }
 
-            // 5. Confirmar la transacción (commit)
+            // 6. Confirmar la transacción (commit)
             $this->db->commit();
         } catch (Exception $e) {
-            // 6. Revertir la transacción (rollback) en caso de cualquier error
+            // 7. Revertir la transacción (rollback) en caso de cualquier error
             $this->db->rollBack();
 
-            // 7. Relanzar la excepción para que el Handler la capture
+            // 8. Relanzar la excepción para que el Handler la capture
             throw new Exception("Error al procesar los archivos. La transacción ha sido revertida. Detalles: " . $e->getMessage());
         }
     }
 
-    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador, array $gruposSeleccionados): void
+    public function procesarArchivosExcelExactitud(array $lx03, string $id_administrador, array $gruposSeleccionados, string $vacias): void
     {
         try {
             // 1. Iniciar la transacción para asegurar la integridad de los datos
@@ -238,21 +170,37 @@ class BasesDatosSapService implements IBasesDatosSapService
             $sheet->getStyle('A1:Z1000')->getNumberFormat()->setFormatCode('@'); // Forzar modo texto
             $filas = $sheet->toArray();
 
-            // 4. Filtrar filas vacías Y por los grupos seleccionados
-            $filasFiltradas = array_filter($filas, function ($fila, $index) use ($gruposSeleccionados) {
+            // 4. Filtrar filas: por grupos seleccionados Y aplicar la lógica de 'vacias' (Material)
+            $filasFiltradas = array_filter($filas, function ($fila, $index) use ($gruposSeleccionados, $vacias) {
                 // Ignorar el encabezado
                 if ($index === 0) return false;
 
-                // Verificar si la columna del Part Number (índice 0) está vacía
-                $partNumber = trim($fila[0] ?? '');
-                if (empty($partNumber)) {
-                    return false; // Ignorar la fila si el Part Number está vacío
+                // Columna 'Material' (índice 0)
+                $material = trim($fila[0] ?? '');
+
+                // Columna 'Tipo almacén' (índice 5)
+                $tipoAlmacen = trim($fila[5] ?? '');
+
+                // *** 4.1. Única regla de exclusión general: Filas con Material completamente vacío ***
+                if (empty($material)) {
+                    return false;
                 }
 
-                // Verificar si el tipo de almacén (índice 5) está en los grupos seleccionados
-                $tipoAlmacen = trim($fila[5] ?? '');
+                // 4.2. Filtrar por Grupos Seleccionados (Tipo almacén)
                 if (!in_array($tipoAlmacen, $gruposSeleccionados)) {
                     return false; // Ignorar la fila si el grupo no fue seleccionado
+                }
+
+                // *** 4.3. Aplicar la lógica de 'vacias' (Columna Material) ***
+                if ($vacias === "Si") {
+                    // REGLA 1: Si $vacias es "Si", SOLO incluimos las que dicen "<< vacías >>".
+                    if ($material !== "<< vacías >>") {
+                        return false;
+                    }
+                } else {
+                    // REGLA 2 (Ajustada): Si $vacias es "No", incluimos TODO lo que no esté vacío.
+                    // Como ya se filtró empty($material) arriba, no es necesario hacer un filtro adicional aquí.
+                    // Todo lo que llegue a este punto y no sea "Si" pasa.
                 }
 
                 return true;
@@ -265,13 +213,18 @@ class BasesDatosSapService implements IBasesDatosSapService
                 $areaAlmacenamiento = trim($fila[6] ?? '');
                 $localizacion = trim($fila[7] ?? '');
 
-                // Obtener ID del part number y su grupo
-                $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
-                if (!$partNumber) {
-                    // El resto de tu lógica para manejar part numbers no encontrados...
-                    $descripcionPartnumber = "Partnumber no registrado en el sistema";
+                // Adaptar la lógica de búsqueda de Part Number
+                if ($codigoPartNumber === "<< vacías >>") {
+                    // Si la ubicación está vacía (según el archivo Excel), no buscar en la BD.
+                    $descripcionPartnumber = "Vacía";
                 } else {
-                    $descripcionPartnumber = $partNumber->descripcion_breve;
+                    // Obtener ID del part number y su grupo para Part Numbers reales
+                    $partNumber = $this->partNumberRepository->onGet_By__Codigo($codigoPartNumber);
+                    if (!$partNumber) {
+                        $descripcionPartnumber = "Partnumber no registrado en el sistema";
+                    } else {
+                        $descripcionPartnumber = $partNumber->descripcion_breve;
+                    }
                 }
 
                 // Crear DTO y guardar en el repositorio
@@ -358,7 +311,7 @@ class BasesDatosSapService implements IBasesDatosSapService
                         if (empty($idGrupo)) {
                             throw new Exception("El Part Number '{$codigoPartNumber}' no ha sido asignado a ningún grupo.");
                         }
-                        
+
                         // Obtener ID del almacén por nombre
                         $almacen = $this->almacenRepository->onGet_By__descripcion($nombreAlmacen);
                         if (!$almacen) {

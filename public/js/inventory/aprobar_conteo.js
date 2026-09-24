@@ -38,8 +38,9 @@ $(document).ready(function () {
         });
 
         // Construir el objeto JSON final que incluye la acción y los datos del formulario
+        const handlerUrl = '../../Handler/inventory/aprobacionHandler.php';
         const requestData = {
-            action: "finalizar_Conteo",
+            action: "aprobar_conteo_administrador",
             form: formObject
         };
 
@@ -54,11 +55,12 @@ $(document).ready(function () {
                 if (resp.success) {
                     notification('success', resp.message || 'El conteo se finalizó correctamente.', 3000);
                     // Opcional: Cerrar la Fancybox o redirigir al usuario
-                    setTimeout(function () {
+                   /*  setTimeout(function () {
                         if (Fancybox.getInstance()) {
                             Fancybox.getInstance().close();
                         }
-                    }, 2000);
+                    }, 2000); */
+                    location.reload();
                     // Puedes recargar la tabla principal si es necesario
                 } else {
                     notification('error', resp.message || 'Hubo un error al finalizar el conteo.', 3000);

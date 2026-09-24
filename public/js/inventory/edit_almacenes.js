@@ -1,14 +1,19 @@
-$(document).ready(function() {
+$(document).ready(function () {
 
     document.getElementById('formUpdateAlmacen').addEventListener('submit', async function (e) {
         e.preventDefault();
         mostrarCarga();
-    
+
         const form = document.getElementById('formUpdateAlmacen');
         const formData = new FormData(form);
-
+        debugger;
         const formObj = {};
         formData.forEach((value, key) => {
+
+            if (key.endsWith("[]")) {
+                key = key.slice(0, -2);
+            }
+
             if (formObj[key] === undefined) {
                 formObj[key] = value;
             } else if (Array.isArray(formObj[key])) {
@@ -19,7 +24,7 @@ $(document).ready(function() {
         });
 
         const action = "updateAlmacen";
-        debugger;
+
         try {
             const response = await fetch('../../Handler/inventory/almacenesHandler.php', {
                 method: 'POST',

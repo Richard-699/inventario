@@ -15,12 +15,13 @@ class AdministradoresDTO {
         public ?int $cedula_administrador = null,
         public ?string $nombre_administrador = null,
         public ?string $apellidos_administrador = null,
-        public ?string $correo_hwi_administrador,
-        public ?string $password_administrador,
+        public ?string $correo_hwi_administrador = null,
+        public ?string $password_administrador = null,
         public ?int $password_is_temporal = null,
         public ?int $estado_administrador = null,
         public ?array $permisosAdministradoresDTO = null,
         public ?string $type = null,
         public ?array $permisosDTO = null
     ) {}
+
 }

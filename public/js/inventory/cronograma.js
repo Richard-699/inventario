@@ -28,15 +28,25 @@ $(document).ready(function () {
             "dataSrc": ""
         },
         "columns": [
-            { "data": "id_cronograma", "className": "dt-center" },
-            { "data": "grupo", "className": "dt-center" },
-            { "data": "fecha_cronograma", "className": "dt-center" },
-            { "data": "administrador", "className": "dt-center" },
-            { "data": "estado", "className": "dt-center" },
+            // Agregamos defaultContent a todas las columnas que mapean datos directos
+            { "data": "id_cronograma", "className": "dt-center", "defaultContent": "" },
+            { 
+                "data": "grupo", 
+                "className": "dt-center", 
+                "defaultContent": "<span class='text-muted'>Sin nombre</span>" // Puedes cambiar esto por "" si prefieres que quede totalmente en blanco
+            },
+            { "data": "fecha_cronograma", "className": "dt-center", "defaultContent": "" },
+            { "data": "administrador", "className": "dt-center", "defaultContent": "Sin asignar" },
+            { "data": "estado", "className": "dt-center", "defaultContent": "" },
             {
                 "data": "id_grupo_cronograma",
                 "className": "dt-center",
+                "defaultContent": "", // Por si el ID del grupo también viene nulo
                 "render": function (data, type, row) {
+                    // Evitamos crear el botón si no hay ID
+                    if (!data) {
+                        return '';
+                    }
                     return `
                             <button class="btn btn-primary btn-sm" onclick="abrirDetalleCronograma('${data}')">
                                 <i class="fa-solid fa-list-ul"></i>
@@ -89,6 +99,3 @@ async function abrirDetalleCronograma(id) {
     const url = `partnumbersGrupo.php?id_grupo=${id}`;
     window.open(url, '_blank');
 }
-
-
-

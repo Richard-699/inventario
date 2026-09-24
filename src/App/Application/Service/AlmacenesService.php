@@ -85,12 +85,12 @@ class AlmacenesService implements IAlmacenesService
 
             // 4. Asociar clasificaciones al almacén
             foreach ($almacenesDTO->clasificacionesAlmacenesDTO as $idClasificacion) {
-                // Crear el modelo esperado por el método save()
                 $AlmacenesClasificacionesAlmacenesModel = new AlmacenesClasificacionesAlmacenes(
                     id_almacenes_clasificaciones_almacenes: null,
                     id_almacen_almacenes_clasificaciones_almacenes: (string)$idAlmacen,
                     id_clasificacion_almacenes_almacenes_clasificaciones_almacenes: (int)$idClasificacion
                 );
+
                 $guardarRelacion = $this->AlmacenesClasificacionesAlmacenesRepository->save($AlmacenesClasificacionesAlmacenesModel);
 
                 if (!$guardarRelacion) {

@@ -27,7 +27,7 @@ function val($key)
             <input type="hidden" name="id_conteo" id="id_conteo" value="<?= val('id_conteo') ?>">
 
             <div class="mb-3">
-                <label for="observaciones" class="form-label">Observaciones (Opcional):</label>
+                <label for="observaciones" class="form-label">Observaciones *:</label>
                 <textarea
                     class="form-control"
                     name="observaciones"

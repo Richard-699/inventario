@@ -23,11 +23,11 @@ function val($key)
         <h5 class="mb-4"><i class="fa-solid fa-calculator me-2 fs-4"></i>
             Rechazar Conteo
         </h5>
-        <form id="form_aprobar_conteo">
+        <form id="form_rechazar_conteo">
             <input type="hidden" name="id_conteo" id="id_conteo" value="<?= val('id_conteo') ?>">
 
             <div class="mb-3">
-                <label for="observaciones" class="form-label">Observaciones (Opcional):</label>
+                <label for="observaciones" class="form-label">Observaciones *:</label>
                 <textarea
                     class="form-control"
                     name="observaciones"
@@ -54,7 +54,7 @@ function val($key)
     <script src="../../../../../public/js/utils/libs/select2.js"></script>
     <script src="../../../../../public/js/utils/spinner.js"></script>
     <script src="../../../../../public/js/utils/notifications.js"></script>
-    <script src="../../../../../public/js/inventory/aprobar_conteo.js"></script>
+    <script src="../../../../../public/js/inventory/rechazar_conteo.js"></script>
 </body>
 
 </html>
